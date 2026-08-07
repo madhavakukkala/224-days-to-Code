@@ -1,135 +1,176 @@
-# Day 5 — Space Complexity, Recursion Stack, Python Traps, Patterns 16–18
+# Day 5 — Space Complexity, Recursion Stack, Python Traps, Patterns 16–22
 
-Yesterday was all about "how much TIME does my code take". Today is the other half of the story: **how much MEMORY does it take**. Interviewers ask both. Always.
+Till now I only asked "how much TIME does my code take?". Today the other half: **how much MEMORY does it take?** Interviewers always ask both together.
 
 ---
 
 ## 1. What is Space Complexity?
 
-Space complexity = how much **extra memory** an algorithm needs as the input grows.
+Space complexity = how much **extra memory** an algorithm needs, and how that grows when the input grows.
 
-Same Big-O notation as time. Same rules (drop constants, keep the biggest term). Only the question changes:
+Key word: **extra**. We do not blame the algorithm for the input it was handed. We only count what it *creates* while working — variables, new lists, the recursion stack, etc.
 
-- Time complexity asks: "How many steps?"
-- Space complexity asks: "How many extra boxes of memory?"
+Just like time complexity, we write it in Big-O:
 
-Simple example:
+- `O(1)` space → uses a fixed handful of variables, no matter how big the input is.
+- `O(n)` space → creates something (a list, a set, a call stack) that grows with the input.
 
 ```python
-def total(arr):
-    s = 0            # one variable, always
+def total(arr):        # arr has n items
+    s = 0              # one variable
     for x in arr:
         s += x
-    return s
+    return s           # extra memory used: just s and x → O(1)
 ```
-
-No matter if `arr` has 10 items or 10 crore items, we only made **one** extra variable `s`. That is **O(1) space** — constant. The memory does not grow with input.
-
-Now this:
 
 ```python
 def doubled(arr):
-    result = []
+    out = []           # NEW list that grows to n items
     for x in arr:
-        result.append(2 * x)
-    return result
+        out.append(2 * x)
+    return out         # extra memory: O(n)
 ```
-
-For n items in, we build a new list of n items. Extra memory grows with n. That is **O(n) space**.
 
 ---
 
 ## 2. Auxiliary Space vs Total Space
 
-Two words you will hear in interviews. The difference is simple.
+Two words that confuse everyone once. Analogy first.
 
-- **Auxiliary space** = only the EXTRA scratch memory *you* created. Your own variables, your own lists, your recursion stack.
-- **Total space** = auxiliary space **+** the input itself.
+You run a tiffin service. A customer hands you his own big **dabba** (steel tiffin box) full of food to repack. You bring your **own small tiffin** with your tools and spare containers.
 
-Dabbawala picture: a customer hands you a full dabba (the input). You also carry your own small tiffin with your lunch (your scratch space).
+- **Auxiliary space** = only YOUR tiffin. The scratch space *you* brought — extra variables, temp lists, the recursion stack.
+- **Total space** = your tiffin **+ the customer's dabba**. Everything in the kitchen, including the input itself.
 
-- Auxiliary space = just **your tiffin**.
-- Total space = your tiffin **+ the customer's dabba**.
+So:
 
-You did not create the dabba. It was given to you. So when someone says "solve it in O(1) space", they almost always mean **O(1) auxiliary space** — you may read the input, you just cannot build big new structures.
+> **Total space = input space + auxiliary space**
 
-Example: reversing an array **in place** (swapping ends inward).
+For the `total(arr)` function above:
 
-- Total space: O(n) — the array itself sits in memory.
-- Auxiliary space: O(1) — you only used two index variables and a temp.
+- Auxiliary space: `O(1)` (just `s` and `x`)
+- Total space: `O(n)` (the input list `arr` is sitting in memory too)
 
-In interviews, when in doubt, report auxiliary space and say the word "auxiliary". It shows you know the difference.
+### The interview convention
+
+When an interviewer says *"solve it in O(1) space"*, they mean **auxiliary space**. The input is always allowed to exist — nobody expects you to make the customer's dabba disappear. If you are ever unsure, say it out loud: *"O(1) auxiliary space, O(n) total including the input"*. That one sentence sounds very polished.
 
 ---
 
-## 3. Why Recursion Costs Memory
+## 3. Recursion Has a Hidden Space Cost
 
-Here is the part people forget: **recursion is not free**, even if you create zero lists.
+Recursion = a function calling itself. Each call that has **started but not finished** must wait somewhere. That "somewhere" is the **call stack** — a special area of memory where Python keeps one frame (a small record: parameters, local variables, where to resume) per unfinished call.
 
-Every time a function calls itself, the current call cannot finish yet. It has to **wait**. Python parks that unfinished call — its variables, its position in the code — in a structure called the **call stack** (a stack = last in, first out pile).
+Think of the **hostel mess plate stack**. Every new call puts one more plate on top. Plates come off only from the top, in reverse order — last one placed, first one removed. Nothing below can leave until everything above it is done.
 
-Hostel mess analogy: every unfinished call is a **plate stacked in the mess**. Call `factorial(5)` and it stacks a plate, calls `factorial(4)`, which stacks a plate, calls `factorial(3)`... Only when `factorial(1)` returns do the plates start coming off the pile, top first.
+My own tiny example:
 
 ```python
-def factorial(n):
-    if n == 1:
-        return 1
-    return n * factorial(n - 1)
+def countdown(n):
+    if n == 0:          # base case — the stopping condition
+        print("Blast off!")
+        return
+    print(n)
+    countdown(n - 1)    # this call WAITS here until the inner one finishes
 ```
 
-- `factorial(5)` → 5 plates stacked at the peak → **O(n) auxiliary space**, even though there is no list anywhere.
-- `factorial(1000)` → 1000 plates. And here is the catch:
+Calling `countdown(3)`:
 
-> **Python's default recursion limit is about 1000.** Cross it and you get `RecursionError: maximum recursion depth exceeded`. The mess ran out of vertical space for plates.
+```
+countdown(3)  → waits
+  countdown(2)  → waits
+    countdown(1)  → waits
+      countdown(0)  → prints "Blast off!", returns
+    countdown(1) finishes
+  countdown(2) finishes
+countdown(3) finishes
+```
 
-A loop version of factorial uses O(1) space — one running variable, no plate stack. Same answer, same O(n) time, but constant memory. This is exactly why interviewers ask "what is the space complexity of your recursion?" — the loop and the recursion look equally fast, but the recursion silently eats O(depth) memory.
+At the deepest moment, **4 plates** are on the stack at once. So:
 
-Rule of thumb: **space of recursion = maximum depth of the call stack.**
+> **Recursion space = O(maximum stack depth)** — here O(n), even though no list was created anywhere.
+
+This is the classic trap: a recursive function with no arrays still costs O(n) *auxiliary* space because of the stack.
+
+### Python's recursion limit
+
+Python refuses to stack plates forever. The default limit is around **1000** frames. Go deeper and you get `RecursionError: maximum recursion depth exceeded`. So `countdown(5000)` crashes — not because the logic is wrong, but because the plate stack hit the ceiling. Check it with:
+
+```python
+import sys
+print(sys.getrecursionlimit())   # usually 1000
+```
+
+Lesson: for very deep work in Python, prefer a loop. A loop reuses the *same* frame → O(1) auxiliary space.
 
 ---
 
-## 4. Two Python Performance Traps
+## 4. Python Trap 1: `list.insert(0, x)` is O(n)
 
-These two look innocent. Both are O(n). Both have burned many people in interviews.
+`insert(0, x)` puts `x` at the **front** of a list. Looks innocent. It is not.
 
-### Trap 1: `list.insert(0, x)` is O(n)
+Python lists store items in one continuous block of memory, in order. To squeeze a new passenger into **seat 1** of a fully occupied train berth row, *every* passenger already seated must shift one seat to the right. One insert at the front = n shifts = **O(n)**.
 
-`my_list.insert(0, x)` puts `x` at the front. Feels like one step. It is not.
+`append(x)` adds at the **end** — the last seat is free, nobody moves — **O(1)**.
 
-A Python list is a row of consecutive seats in memory. To put a new passenger at **seat 1** of a full train berth row, **every single person already sitting must shift one seat to the right**. n people sitting = n shifts. So inserting at the front is O(n).
+### The O(n²) loop trap
 
 ```python
-# BAD: building a reversed list, O(n^2) total
+# BAD: builds a reversed list, but each insert shifts everything
 result = []
-for x in items:
-    result.insert(0, x)   # each insert shifts everything: O(n)
+for x in data:
+    result.insert(0, x)    # O(n) shift, done n times → O(n²) total
 ```
 
-- `append()` adds at the END — the last seat is free, nobody shifts — **O(1)** (amortised, meaning "on average").
-- Need fast inserts at the front? Use `collections.deque` — its `appendleft()` is O(1).
+n inserts × n shifts each ≈ n² work. For n = 100,000 that is ~10 billion shift operations. Your "simple" loop crawls.
 
-### Trap 2: `x in my_list` is O(n), but `x in my_set` is O(1)
-
-`in` on a **list** checks elements one by one from the start. Worst case it walks the whole list. O(n). Put that inside a loop and you have accidentally written an O(n²) program.
-
-`in` on a **set** (or dictionary keys) is **O(1) on average**. A set uses hashing — it computes a number from the value that tells it directly where to look.
-
-Hotel analogy: a list is a hotel with **no register** — to find a guest you knock on every room, one by one. A set is a hotel **with a register**: you say the name, the register instantly says "Room 204", you walk straight there.
+### The fixes
 
 ```python
-seen_list = [...]           # 'x in seen_list'  -> O(n), knocks every room
-seen_set  = set(seen_list)  # 'x in seen_set'   -> O(1) avg, checks register
+# Fix 1: append (O(1) each), reverse once at the end if needed
+result = []
+for x in data:
+    result.append(x)
+result.reverse()             # one O(n) pass, total O(n)
+
+# Fix 2: collections.deque — a "double-ended queue",
+# a structure built to accept items at BOTH ends in O(1)
+from collections import deque
+d = deque()
+d.appendleft(x)              # O(1), no shifting
 ```
 
-Classic interview move: "I'll keep a set of seen elements so each membership check is O(1)." That one line turns many O(n²) solutions into O(n). Cost of the trick: the set itself takes O(n) auxiliary space. Memory bought speed — a very common trade.
+Rule of thumb: **never `insert(0, ...)` inside a loop.**
 
 ---
 
-## 5. Patterns 16–18 (solved today)
+## 5. Python Trap 2: `x in list` is O(n)
 
-All three are in `main.py`. Shapes for n = 5:
+`in` asks "is this value present?". On a **list**, Python checks item by item, front to back — like finding your friend in a hotel by **knocking on every room door** one by one. Worst case: n knocks → **O(n)**. Do that inside a loop over n items → O(n²) again.
 
-**Pattern 16 — Alpha-Repeat Triangle.** Row i prints the i-th letter, repeated (i+1) times. Row 0 is `A` once, row 1 is `B` twice... Key line: `char = 65 + i` fixes the letter per ROW (65 is the character code for `'A'`), and the inner loop just repeats it.
+A **set** is different. A set uses **hashing** — a math trick that converts a value into a number that says exactly *which shelf* it lives on. So `x in my_set` is like asking the **hotel reception register**: one lookup, straight answer → **~O(1)** on average.
+
+```python
+rooms_list = ["Amit", "Bala", "Chitra", "Deepak"]
+rooms_set  = set(rooms_list)     # one-time O(n) conversion
+
+"Chitra" in rooms_list   # knocks door by door → O(n)
+"Chitra" in rooms_set    # asks the register  → ~O(1)
+```
+
+### The space-for-time trade-off
+
+The set is not free — it is a second copy of the data, so it costs **O(n) extra space**. You *spend memory to save time*. This trade is one of the most common moves in all of DSA: seen-before checks, duplicate detection, two-sum — all use it. Rule of thumb: **many membership checks → convert to a set first.**
+
+---
+
+## 6. Patterns 16–22
+
+New tool for letter patterns: `chr()` and `ord()`. Every character has a standard code number (ASCII). **`chr(65)` is `'A'`**, `chr(66)` is `'B'` ... `chr(90)` is `'Z'`. `ord('A')` goes the other way and gives 65. So "the i-th capital letter" is simply `chr(65 + i)`. Everything else is the same row/column thinking from patterns 1–15.
+
+For each pattern: the n = 5 shape, plus a one-line row-logic hint. No code — that is my job on paper first.
+
+### Pattern 16 — Alphabet-repeat triangle
 
 ```
 A
@@ -139,19 +180,21 @@ DDDD
 EEEEE
 ```
 
-**Pattern 17 — Alphabet Hill.** Each row climbs up the alphabet then walks back down: `A`, then `ABA`, then `ABCBA`... Centered with spaces, like the star pyramid but with letters. The tricky part is ONE variable `chars` that goes up (+1) until the middle of the row, then comes down (−1). Full trace in `notes.ipynb`.
+Hint: row `i` picks ONE letter, `chr(65 + i)`, and repeats it `i + 1` times — the letter is fixed per row, only the count grows.
+
+### Pattern 17 — Alphabet hill (palindrome pyramid)
 
 ```
     A
    ABA
   ABCBA
- ABCDBCA   <- actually ABCDCBA
+ ABCDCBA
 ABCDEDCBA
 ```
 
-(For n=5 the last row is `ABCDEDCBA` — climb to the (i+1)-th letter, then descend.)
+Hint: row `i` = `n - i - 1` spaces, then climb `A` up to the i-th letter, then walk back down without repeating the peak — go up while the column is at or before the middle of the `2i + 1` letters, come down after it.
 
-**Pattern 18 — Alpha Triangle.** Starts from the LAST letter and grows leftward each row: `E`, then `D E`, then `C D E`... Key idea: the row's first letter is `chr(64 + n - i)`, then count up to `E`.
+### Pattern 18 — Reverse-alphabet triangle
 
 ```
 E
@@ -161,73 +204,122 @@ B C D E
 A B C D E
 ```
 
-All three: **O(n²) time** (n rows, up to ~n prints per row), **O(1) auxiliary space** (just loop counters and one char variable — nothing grows with n).
+Hint: every row ENDS at the last letter `chr(64 + n)`; row `i` just starts `i` letters earlier and counts up — start code is `(64 + n) - i`.
+
+### Pattern 19 — Hourglass of stars (shrink, then grow)
+
+```
+**********
+****  ****
+***    ***
+**      **
+*        *
+*        *
+**      **
+***    ***
+****  ****
+**********
+```
+
+Hint: two triangles stacked; each row is stars + middle spaces + stars — in the top half row `i` has `n - i` stars each side and `2i` spaces between; the bottom half is the same rows in reverse.
+
+### Pattern 20 — Butterfly
+
+```
+*        *
+**      **
+***    ***
+****  ****
+**********
+****  ****
+***    ***
+**      **
+*        *
+```
+
+Hint: mirror of 19 — wings grow to a full middle row then shrink; with `i` stars per side the gap is `2 * (n - i)` spaces, and there are `2n - 1` rows in total.
+
+### Pattern 21 — Hollow rectangle
+
+```
+*****
+*   *
+*   *
+*   *
+*****
+```
+
+Hint: print `*` only when the cell is on a border — first/last row OR first/last column (one `if` with `or`s) — otherwise print a space.
+
+### Pattern 22 — Number rings
+
+```
+5 5 5 5 5 5 5 5 5
+5 4 4 4 4 4 4 4 5
+5 4 3 3 3 3 3 4 5
+5 4 3 2 2 2 3 4 5
+5 4 3 2 1 2 3 4 5
+5 4 3 2 2 2 3 4 5
+5 4 3 3 3 3 3 4 5
+5 4 4 4 4 4 4 4 5
+5 5 5 5 5 5 5 5 5
+```
+
+Hint: a `(2n-1) × (2n-1)` grid where each cell's value = `n` minus its distance from the NEAREST edge — that distance is `min(i, j, size-1-i, size-1-j)`.
 
 ---
 
-## 6. Pending Problems — Approach and Hints Only
+## 7. Maths Problems — Approach + Hints Only
 
-These are next up (`main.py`'s last comment says so). No full solutions here — think first, then code.
+### Trailing zeroes in n! (factorial)
 
-### a) Patterns 19–22
+`n!` (n factorial) = 1 × 2 × 3 × ... × n. Question: how many zeroes at the END of that number? Example: 10! = 3,628,800 → two trailing zeroes.
 
-- **Pattern 19:** two triangles stacked — top half shrinks (stars, gap in the middle grows), bottom half grows back. Think: each row = stars + spaces + stars.
-- **Pattern 20:** the mirror of 19 — grows first, then shrinks. Same "stars-spaces-stars" skeleton, flipped.
-- **Pattern 21:** hollow rectangle. Print `*` only when you are on a border: first row, last row, first column, or last column. One `if` with `or`s.
-- **Pattern 22:** the number-square (for n=4, outermost ring is all 4s, then 3s inside, ...). Hint: the value at cell (i, j) is `n − min(distance to nearest edge)`. Compute `min(i, j, size−1−i, size−1−j)` where size = 2n−1.
+Do **NOT** compute n! — it explodes in size. Think instead:
 
-### b) Trailing zeroes in n!
+- Every trailing zero is one factor of **10**, and 10 = **2 × 5**. So count (2, 5) pairs.
+- Factors of 2 are everywhere (every second number). Factors of **5 are the rare ones** — so the answer = number of 5s hiding inside 1..n.
+- Count them: `n//5 + n//25 + n//125 + ...` until the term becomes 0.
+- Why the extra terms? **25 = 5 × 5 contributes TWO fives**, but `n//5` counted it only once — `n//25` adds its second five. Same idea: 125 gives a third five via `n//125`.
+- Sanity check with n = 25: `25//5 = 5`, `25//25 = 1` → 6 trailing zeroes.
 
-Question: how many zeros at the END of n factorial? (10! = 3628800 → 2 trailing zeros.)
+### Digit sum
 
-**Do NOT compute n! and count zeros.** n! explodes — 100! has 158 digits. There is a pure counting trick.
+Sum of digits of 5341 → 5 + 3 + 4 + 1 = 13.
 
-Why do trailing zeros even appear? A trailing zero = one factor of **10** = one pair of **2 × 5** inside the product. Now, in 1×2×3×...×n, factors of 2 are everywhere (every second number gives one). Factors of **5 are rarer** — only every fifth number. So the 5s are the bottleneck: **count the 5s, and each is guaranteed a 2 to pair with.**
+- `n % 10` (remainder on dividing by 10) peels off the **last** digit.
+- `n // 10` (whole-number division) **removes** that last digit.
+- Loop while `n > 0`: add the peel, then shrink. 5341 → 534 → 53 → 5 → 0.
+- Time O(number of digits) = O(log₁₀ n) — each step chops the number to a tenth.
 
-Counting the 5s:
+### Count of digits WITHOUT a loop
 
-- `n // 5` → numbers that contribute at least one 5 (5, 10, 15, ...)
-- `n // 25` → numbers like 25, 50 contribute a SECOND 5 (25 = 5×5) — add them again
-- `n // 125` → a third 5, and so on until the divisor exceeds n
+Two ways:
 
-So the answer is `n//5 + n//25 + n//125 + ...` — a tiny loop multiplying the divisor by 5 each round. Time O(log₅ n), space O(1). Check yourself: n = 100 should give 24.
-
-### c) Digit sum
-
-Sum of digits of n (e.g. 1234 → 10). Same two tools as Day 4's extract-digits problem:
-
-- `n % 10` peels off the LAST digit (like taking the last coin off a stack of rupee coins).
-- `n // 10` throws that digit away.
-
-Loop while `n > 0`, keep adding `n % 10` into a total. O(number of digits) = O(log₁₀ n) time, O(1) space. Edge case to handle: negative n (take `abs` first) and n = 0 (answer is 0 — make sure your loop doesn't skip it).
-
-### d) Count of digits WITHOUT a loop
-
-Two one-liners; know both and why they work.
-
-1. **String way:** `len(str(n))` — turn the number into text, count the characters. Honest and readable. (Careful: for negatives the minus sign gets counted — `abs` first.)
-2. **Log way:** `floor(log10(n)) + 1`. The gentle idea: log₁₀(n) asks "10 to the power WHAT gives n?". Powers of 10 are exactly the digit boundaries — 10¹ = 10 (2 digits start), 10² = 100 (3 digits start), 10³ = 1000 (4 digits start). So any 3-digit number n sits between 100 and 999, meaning log₁₀(n) is between 2 and 2.99..., and `floor` of that is 2. Add 1 → 3 digits. In code: `math.floor(math.log10(n)) + 1`. Edge cases: n = 0 breaks it (log of 0 is undefined) — handle it separately; negatives need `abs`.
+1. **String way:** `len(str(n))` — turn the number into text, count the characters. Handle the minus sign for negatives.
+2. **Maths way:** `floor(log10(n)) + 1`. The gentle idea: digit count changes exactly at **powers of 10**. Numbers 1–9 (below 10¹) have 1 digit; 10–99 (below 10²) have 2; 100–999 have 3. `log10(n)` tells you which power-of-10 band `n` sits in: log10 of anything from 100 to 999 is between 2 and 2.99..., floor gives 2, plus 1 → 3 digits.
+3. Edge cases for the log way: `n = 0` (log10(0) is undefined — answer is 1) and negative numbers (take `abs(n)` first).
 
 ---
 
 ## Common mistakes
 
-- Saying "O(1) space" for a recursive solution. The recursion stack counts! Depth d ⇒ O(d) auxiliary space.
-- Mixing up auxiliary and total space. When an interviewer says "constant space", they mean auxiliary — the input does not count against you.
-- Using `result.insert(0, x)` inside a loop and thinking it's O(1). Every insert-at-front shifts the whole list. Use `append` + reverse at the end, or a `deque`.
-- Writing `if x in big_list` inside a loop → hidden O(n²). Convert to a set once, then check.
-- Trying to actually compute n! to count trailing zeros. Count factors of 5 instead.
-- Forgetting `n // 25`, `n // 125`... in the trailing-zeros formula (25 gives TWO fives, not one).
-- `len(str(n))` on a negative number counts the `-` sign as a digit.
-- Recursing ~1000 deep in Python and getting a `RecursionError` — the default limit is around 1000.
+- Saying an algorithm is O(1) space while ignoring the **recursion stack**. Recursion depth IS auxiliary space.
+- Mixing up auxiliary and total space. When asked "space complexity" in an interview, they almost always mean **auxiliary**.
+- Using `insert(0, x)` inside a loop and wondering why the code is slow — that is an accidental O(n²).
+- Writing `x in some_list` inside a loop. Convert to a set first when there are many lookups.
+- Forgetting the base case in recursion → infinite calls → `RecursionError` at depth ~1000.
+- In pattern 17, printing the peak letter twice — the descent must start immediately *after* the middle column.
+- In trailing zeroes, counting 2s or actually computing n! — count only 5s, with the `//25`, `//125` corrections.
+- `log10` method crashing on 0 or negatives — handle those separately.
+
+---
 
 ## Quick recap
 
-- Space complexity = how the EXTRA memory grows with input. Same Big-O language as time.
-- Auxiliary = your tiffin (scratch space). Total = your tiffin + the customer's dabba (input). Report auxiliary.
-- Recursion space = max stack depth. `factorial(n)` recursion = O(n) space; the loop version = O(1).
-- `list.insert(0, x)` → O(n) (everyone shifts a seat). `append` → O(1).
-- `x in list` → O(n) (knock every room). `x in set` → O(1) avg (hotel register).
-- Patterns 16–18: letter triangles/hill, all O(n²) time, O(1) space.
-- Trailing zeros in n! = count of 5s = `n//5 + n//25 + ...` (5s are rarer than 2s).
-- Digit sum: `% 10` to peel, `// 10` to drop. Digit count without loop: `len(str(n))` or `floor(log10(n)) + 1`.
+- Space complexity = growth of **extra** memory. Auxiliary = your scratch space (your tiffin); total = auxiliary + input (plus the customer's dabba). "O(1) space" in interviews = auxiliary.
+- Every unfinished recursive call is a plate on the mess stack. Space = **max depth**. Python's stack limit ≈ 1000.
+- `insert(0, x)` shifts every element (train-berth seat 1) → O(n); in a loop → O(n²). Use `append` + one reverse, or `deque.appendleft`.
+- `x in list` = knocking every room, O(n). `x in set` = hotel register via hashing, ~O(1), at the cost of O(n) extra space.
+- Letter patterns run on `chr(65 + i)`; hill pattern climbs then descends; butterfly/hourglass = stars + gap + stars; hollow rectangle = border `if`; rings = `n − min(distance to each edge)`.
+- Trailing zeroes in n! = count of 5s: `n//5 + n//25 + ...`. Digit sum = `%10` and `//10`. Digit count without loop = `len(str(n))` or `floor(log10(n)) + 1`.

@@ -1,318 +1,296 @@
-# Day 1 — Python Basics + First 5 Number Problems
+# Day 1 — Setup + Python Basics + First 5 Number Problems
 
-Today was setup day plus the first real problems. These notes go from absolute zero to the level an interviewer expects. No skipping steps.
-
----
-
-## 1. Setup (VS Code + Python)
-
-- Installed Python and VS Code.
-- Installed the **Python extension** in VS Code (it gives colours, error squiggles, and the Run button).
-- To run a file: open the terminal in VS Code and type `python main.py`.
-- One folder per day. Inside it, `main.py` is where I actually write code.
-
-That's it. Setup is boring but it only happens once.
+Goal for today: get the machine ready, learn the absolute basics of Python, and understand the digit-play pattern that powers the first five practice problems. Zero to hero — no step skipped.
 
 ---
 
-## 2. What is a variable?
+## 1. Setup checklist
 
-A **variable** is a labelled box that stores a value.
+- **VS Code** — the code editor. Install it, then add the official *Python* extension (it gives colours, error squiggles, and a Run button).
+- **Python 3.12** — the language itself. After installing, check in the terminal: `python --version` should print `3.12.x`.
+- **LeetCode account** — the site where interview problems live. Free account is enough.
+- **GFG (GeeksforGeeks) account** — great for topic-wise practice and articles in simple language.
+- Keep one folder per day (`Day-01`, `Day-02`, ...) with a `main.py` for solutions and these notes beside it.
 
-Think of the dabbawala system in Mumbai. Every tiffin box has a code painted on it. The code tells you whose lunch is inside. A variable is the same: a name stuck on a value so you can find it later.
+---
+
+## 2. Variables — labelled dabbas
+
+A **variable** is a name that points to a value. Think of steel dabbas (tiffin boxes) in the kitchen with labels: the dabba labelled `sugar` holds sugar today; tomorrow you can put tea powder in it. The label stays, the content can change.
 
 ```python
-runs = 87          # a box named "runs" holding the number 87
-player = "Kohli"   # a box named "player" holding some text
+runs = 74          # an integer (whole number)
+price = 10.5      # a float (number with a decimal point)
+name = "Rohit"    # a string (text, inside quotes)
+is_out = False     # a boolean (only True or False)
 ```
 
-Two technical words:
+Rules worth remembering:
 
-- **Integer (int)** — a whole number. `87`, `0`, `-5`.
-- **String (str)** — text, always inside quotes. `"Kohli"`, `"hello"`.
-
-You can change what's in the box anytime:
-
-```python
-runs = 87
-runs = 90   # the old 87 is gone, the box now holds 90
-```
-
----
-
-## 3. print() — showing output
-
-`print()` displays something on the screen. Whatever you put inside the brackets gets shown.
+- No need to declare a type. Python figures it out from the value. This is called **dynamic typing**.
+- Names are case-sensitive: `Runs` and `runs` are two different dabbas.
+- Use snake_case: `total_price`, not `TotalPrice`.
+- `type(x)` tells you what kind of value `x` holds.
 
 ```python
-print("Chai is ready")   # shows: Chai is ready
-print(87)                # shows: 87
+print(type(runs))   # <class 'int'>
+print(type(price))  # <class 'float'>
 ```
 
 ---
 
-## 4. input() — taking input (THE trap)
+## 3. print() and input()
 
-`input()` asks the user to type something and hands it to your program.
-
-**The trap: input() ALWAYS gives you a string.** Even if the user types `25`, you get the text `"25"`, not the number 25.
+**`print()`** shows things on the screen.
 
 ```python
-age = input("Enter your age: ")
-print(age + 5)   # CRASH! You can't add text and a number
+print("Chai ready")
+print("Score:", 74)     # comma adds a space automatically
 ```
 
-Why does this matter? `"25" + "25"` gives `"2525"` (text glued together), not `50`. Like writing two scores next to each other on a scoreboard instead of adding them.
-
-The fix is type casting (next section):
+**`input()`** asks the user to type something and waits.
 
 ```python
-age = int(input("Enter your age: "))
-print(age + 5)   # works, shows 30
+name = input("Enter your name: ")
 ```
+
+### The #1 beginner trap: input() ALWAYS returns a string
+
+Even if the user types `25`, Python receives it as the **text** `"25"`, not the number 25. Text and numbers behave very differently:
+
+```python
+age = input("Age: ")     # user types 25
+print(age + 5)           # CRASH! Can't add text and a number
+print(age + "5")         # "255" — string joining, not maths!
+```
+
+To do maths, convert first (next section).
 
 ---
 
-## 5. Type casting — converting between types
+## 4. Type casting — changing the container
 
-**Type casting** means converting a value from one type to another.
+**Type casting** means converting a value from one type to another. Like pouring chai from a kulhad into a steel glass — same chai, different container.
 
-| Function | What it does | Example |
+```python
+int("25")      # 25       string → integer
+float("10.5")  # 10.5     string → float
+str(74)        # "74"     number → string
+int(10.9)      # 10       float → int CHOPS the decimal, no rounding!
+int("10.5")    # CRASH — "10.5" is not a whole-number string
+```
+
+The standard pattern for reading a number:
+
+```python
+n = int(input("Enter a number: "))
+```
+
+Read inside-out: `input()` gives a string, `int()` converts it, `n` stores the result.
+
+---
+
+## 5. f-strings — filling blanks in a sentence
+
+An **f-string** is a string with an `f` before the quote. Anything inside `{ }` gets replaced by its value. Like a wedding card template: "Shri ____ weds ____" with the blanks filled in.
+
+```python
+name = "Virat"
+runs = 82
+print(f"{name} scored {runs} runs")        # Virat scored 82 runs
+print(f"Next year he'll want {runs + 18}") # expressions work inside {}
+price = 33.333333
+print(f"Chai split: Rs {price:.2f} each")  # Rs 33.33 — .2f = 2 decimal places
+```
+
+Forget the `f` and Python prints the braces literally: `{name} scored {runs} runs`. Classic mistake.
+
+---
+
+## 6. The two heroes of digit problems: % and //
+
+Every one of today's problems plays with the digits of a number. Two operators do all the work. Learn these two and Day 1 is 80% done.
+
+### % (modulo) — the remainder
+
+`a % b` gives the **remainder** when `a` is divided by `b`.
+
+Think of an auto ride costing Rs 47, paid with tens: 4 notes of Rs 10 go in, and Rs 7 is left over. That leftover is the modulo: `47 % 10 = 7`.
+
+The magic case is `% 10`:
+
+```python
+453 % 10   # 3  — the LAST digit
+88 % 10    # 8
+7 % 10     # 7  (7 divided by 10: quotient 0, remainder 7)
+```
+
+**`num % 10` peels off the last digit** — like taking the bottom coin off a stack of coins, one at a time.
+
+### // (floor division) — divide and drop the decimals
+
+`a // b` divides and **throws away everything after the decimal point** (rounds down).
+
+```python
+47 / 10    # 4.7   normal division, gives a float
+47 // 10   # 4     floor division, gives an int
+453 // 10  # 45  — the number WITHOUT its last digit
+7 // 10    # 0   — number smaller than 10 becomes 0
+```
+
+**`num // 10` chops off the last digit.**
+
+### The universal digit loop
+
+Combine them and you can visit every digit of any number:
+
+```python
+# skeleton — visits digits from LAST to FIRST
+while num > 0:
+    digit = num % 10   # look at the last digit
+    # ... do something with digit ...
+    num //= 10         # chop it off (same as num = num // 10)
+```
+
+Dry run with 453: see digit 3 (num becomes 45) → see digit 5 (num becomes 4) → see digit 4 (num becomes 0) → loop stops. Three digits, three rounds. This one loop, with different "do something" lines, solves problems 2–5 below.
+
+One more friend: `**` means "to the power of". `5 ** 3` is 125.
+
+---
+
+## 7. Practice problems — idea, approach, hints (NO solutions)
+
+Solve each of these yourself in `main.py`. Notes below give the thinking, not the code.
+
+Quick word on complexity before we start:
+
+- **Time complexity** = how much work grows as input grows. **O(n)** means work grows in step with n. **O(1)** means fixed work no matter the input.
+- A number `n` has roughly **log₁₀(n)** digits (1000 has 4 digits, not 1000 digits). So a loop that runs once per digit is **O(log n)** — very fast.
+- **Space complexity** = extra memory used. A handful of variables = **O(1)**.
+
+### Problem 1 — Sum of first N numbers
+
+**What it asks:** given n, find 1 + 2 + 3 + ... + n. For n = 10, answer is 55.
+
+**Key idea:** keep a running total, like a cricket scoreboard adding runs ball by ball.
+
+**Approach in words:**
+1. Start a total at 0.
+2. Loop i from 1 to n (careful: `range(1, n+1)` — range stops one *before* the end).
+3. Add i into the total each round.
+4. Return the total.
+
+**Dry run, n = 3:** total goes 0 → 1 → 3 → 6. Answer 6.
+
+**Edge cases:** n = 0 should give 0. n = 1 should give 1.
+
+**Complexity:** O(n) time, O(1) space.
+
+**Interview bonus:** there is a famous formula that gives the same answer with zero looping — O(1) time. Gauss found it as a schoolboy. Look up "sum of first n natural numbers formula" *after* your loop version works, and code that too.
+
+### Problem 2 — Reverse a number
+
+**What it asks:** 453 → 354. 1200 → 21 (yes, leading zeros vanish — 0021 is just 21).
+
+**Key idea:** peel the last digit off the old number, push it onto the *back* of a new number. The push trick: `new = new * 10 + digit`. Multiplying by 10 shifts existing digits left one place, making room in the ones place — like adding a zero to a price tag.
+
+**Approach in words:**
+1. Start a new number at 0.
+2. While the old number > 0: peel the last digit with `% 10`, push it with `new * 10 + digit`, chop with `// 10`.
+3. Return the new number.
+
+**Dry run, 453 → 354:**
+
+| old number | digit peeled | new number after push |
 |---|---|---|
-| `int(x)` | makes a whole number | `int("25")` → `25` |
-| `float(x)` | makes a decimal number | `float("2.5")` → `2.5` |
-| `str(x)` | makes text | `str(100)` → `"100"` |
+| 453 | 3 | 0×10 + 3 = 3 |
+| 45 | 5 | 3×10 + 5 = 35 |
+| 4 | 4 | 35×10 + 4 = 354 |
+| 0 | — | loop stops |
 
-A **float** is just a number with a decimal point, like `99.50` — think price of petrol per litre.
+**Edge cases:** single digit (returns itself), trailing zeros (120 → 21), 0 itself. Think: what would you do for a negative number if asked?
 
-Notes:
+**Complexity:** O(log n) time — one round per digit. O(1) space.
 
-- `int("abc")` crashes. Python can't magically turn "abc" into a number.
-- `int(7.9)` gives `7` — it chops off the decimal part, it does NOT round.
+### Problem 3 — Count digits
 
----
+**What it asks:** how many digits in a number? 1082945 → 7.
 
-## 6. f-strings — clean printing
+**Key idea:** keep chopping the last digit and count the chops. Like counting how many rotis are in a stack by removing one at a time.
 
-An **f-string** is a string with an `f` before the quotes. Inside it, anything in `{curly braces}` gets replaced by its value.
+**Approach in words:**
+1. Counter starts at 0.
+2. While number > 0: add 1 to the counter, chop with `// 10`.
+3. Return the counter.
 
-```python
-name = "Rohit"
-runs = 264
-print(f"{name} scored {runs} runs")   # Rohit scored 264 runs
-```
+Notice: you never even need the digit's *value* here — only the number of chops. No `% 10` required.
 
-Without f-strings you'd be juggling commas and `str()` calls. With f-strings it reads like a normal sentence. Use them everywhere.
+**Dry run, 305:** 305 → 30 (count 1) → 3 (count 2) → 0 (count 3). Answer 3.
 
----
+**Edge cases:** the sneaky one is **0**. The loop condition `> 0` never runs, so you'd return 0 — but 0 has 1 digit! Handle it separately if the interviewer asks.
 
-## 7. The two heroes of digit problems: `%` and `//`
+**Complexity:** O(log n) time, O(1) space.
 
-Every single problem today uses these two operators, so understand them cold.
+### Problem 4 — Palindrome number
 
-### Modulo `%` — the remainder
+**What it asks:** does the number read the same forwards and backwards? 121 yes, 32523 yes, 453 no. Like the word MADAM, or the station name "Malayalam" written in English.
 
-`a % b` gives the **remainder** after dividing a by b.
+**Key idea:** reverse the number (Problem 2's exact loop!) and check if reverse equals original.
 
-```python
-17 % 5   # 2  (5 goes into 17 three times, 2 left over)
-453 % 10 # 3
-```
+**Approach in words:**
+1. **Save a copy of the original first.** The reversing loop grinds its number down to 0 — if you don't keep a copy, you'll end up comparing the reverse against 0. This is the classic bug of this problem.
+2. Reverse the copy using the Problem 2 loop.
+3. Return whether reverse equals the saved original. (The comparison `a == b` itself produces `True`/`False` — a **boolean** — so you can return it directly. No if-else needed.)
 
-**The magic: `num % 10` gives you the LAST digit of num.**
-It's like taking the last coin off a stack of coins — you peel off just the bottom-most digit.
+**Dry run, 121:** reverse builds 1 → 12 → 121. Compare 121 == 121 → True.
 
-### Floor division `//` — divide and drop the decimals
+**Edge cases:** single digits are always palindromes. 10 is not (reverse is 1). Negative numbers are usually defined as not palindromes (-121 reversed "looks like" 121-).
 
-`a // b` divides and **throws away everything after the decimal point**.
+**Complexity:** O(log n) time, O(1) space.
 
-```python
-17 // 5    # 3   (not 3.4)
-453 // 10  # 45
-```
+### Problem 5 — Armstrong number
 
-**The magic: `num // 10` REMOVES the last digit of num.**
+**What it asks:** a number with d digits is an **Armstrong number** if the sum of each digit raised to the power d equals the number itself. 153 has 3 digits: 1³ + 5³ + 3³ = 1 + 125 + 27 = 153. Match → Armstrong. (Other examples to test: 370, 371, 9474. And 154 should fail.)
 
-### Together they dismantle a number
+**Key idea:** two passes over the digits. Pass 1 = count the digits (Problem 3). Pass 2 = rebuild the power-sum using `digit ** count` and compare with the original.
 
-Auto-rickshaw meter running backwards: `453` → peel `3`, left with `45` → peel `5`, left with `4` → peel `4`, left with `0`. Stop when 0.
+**Approach in words:**
+1. Copy the number, count its digits (Problem 3 loop). Call it `d`.
+2. **Re-copy from the original** — pass 1 destroyed your working copy, so refill it.
+3. Loop again: peel each digit, add `digit ** d` to a running sum, chop.
+4. Return whether the sum equals the original number.
 
-```python
-digit = num % 10   # look at the last digit
-num = num // 10    # throw the last digit away
-```
+**Dry run, 153 (d = 3):** sum goes 27 (from 3³) → 152 (+5³=125) → 153 (+1³=1). Compare 153 == 153 → True.
 
-This peel-and-shrink loop is the skeleton of problems 2, 3, 4 and 5 below.
+**Edge cases:** all single-digit numbers are Armstrong (d=1, so digit¹ = digit). Test 9474 (4 digits, powers of 4).
+
+**Complexity:** two passes over the digits is still O(log n) time, O(1) space.
 
 ---
 
-## 8. Quick word on complexity (plain English)
+## 8. Common mistakes
 
-- **Time complexity** — how does the work grow when the input grows? Counting how many chai cups to make for n guests: more guests, more work.
-- **Space complexity** — how much extra memory do we use, beyond the input itself?
-- **O(n)** means work grows in step with n. **O(1)** space means we only use a fixed handful of variables no matter the input.
-- For digit problems, note: a number `n` has about `log₁₀(n)` digits (1 crore = 10,000,000 has only 8 digits). So a loop that runs once per digit is **O(number of digits)**, written **O(log n)** — very fast.
-
----
-
-## 9. Problem 1 — Sum of first N numbers
-
-**Ask:** given n, return 1 + 2 + 3 + ... + n. For n = 10, answer is 55.
-
-**Idea:** keep a running total, like adding each ball's runs to the scoreboard.
-
-```python
-def Sum_of_first_N(self, n):
-    sum = 0
-    for i in range(1, n+1):
-        sum += i
-    return sum
-```
-
-- `range(1, n+1)` gives 1, 2, ..., n. The `+1` matters — `range` stops one BEFORE the second number.
-- `sum += i` means `sum = sum + i`.
-
-**Complexity:** Time O(n) — the loop runs n times. Space O(1) — just two variables.
-
-**Interview bonus:** there's a formula, `n * (n + 1) // 2`, which is O(1) time. Gauss figured it out as a schoolkid. Good to mention.
+1. **Forgetting `int()` around `input()`** — then `n + 1` crashes or `n * 2` doubles the *text* (`"25" * 2` is `"2525"`!).
+2. **`range(1, n)` instead of `range(1, n+1)`** — range stops one before the end, so n itself gets skipped.
+3. **Not copying the original** before a destroying loop (palindrome, Armstrong) — you end up comparing against 0.
+4. **Reusing a dead copy** — in Armstrong, the first loop leaves the copy at 0; refill it before loop two.
+5. **Missing the `f`** in an f-string — `{name}` prints literally instead of the value.
+6. **Confusing `/` and `//`** — `47 / 10` is `4.7` (float), `47 // 10` is `4` (int). Digit problems always want `//`.
+7. **Naming a variable `sum`** — it works, but `sum` is also a built-in Python function; `total` is safer.
+8. **Forgetting `num //= 10` inside a while loop** — the number never shrinks, the loop never ends (infinite loop). If your program hangs, check this first.
+9. **Ignoring 0 as an input** — `while num > 0` skips entirely for 0; decide what the answer should be.
 
 ---
 
-## 10. Problem 2 — Reverse a number
+## 9. Quick recap
 
-**Ask:** 453 → 354.
-
-**Idea:** peel the last digit off the old number, and push it onto the back of a new number.
-
-```python
-def reverse_a_number(self, number):
-    reverse = 0
-    while number > 0:
-        digit = number % 10
-        reverse = reverse * 10 + digit
-        number //= 10
-    return reverse
-```
-
-The key line is `reverse = reverse * 10 + digit`. Multiplying by 10 shifts existing digits left (making room), then the new digit sits in the ones place. Like a queue at a ration shop where each new person joins at the end — but here "joining at the end" builds the number backwards.
-
-Trace for 453:
-
-| number | digit | reverse |
-|---|---|---|
-| 453 | 3 | 3 |
-| 45 | 5 | 35 |
-| 4 | 4 | 354 |
-| 0 | — | done → 354 |
-
-**Complexity:** Time O(log n) — one loop run per digit. Space O(1).
-
----
-
-## 11. Problem 3 — Count digits
-
-**Ask:** 1082945 → 7.
-
-**Idea:** keep chopping off the last digit and count how many chops until nothing is left.
-
-```python
-def count_digits(self, num):
-    count = 0
-    while num > 0:
-        num % 10
-        count += 1
-        num //= 10
-    return count
-```
-
-**Did you notice?** The line `num % 10` sitting alone computes the last digit and then... throws it away. Nothing stores it. The function still works because we only need the COUNT of chops, not the digits themselves. That line can simply be deleted. Lesson: every line should earn its place.
-
-**Complexity:** Time O(log n) (once per digit). Space O(1).
-
-**Edge case to remember:** `num = 0` gives count 0 with this code, but zero has 1 digit. Interviewers love this one.
-
----
-
-## 12. Problem 4 — Palindrome number
-
-**Ask:** does the number read the same forwards and backwards? 32523 → yes. 453 → no.
-
-**Idea:** reverse the number (exactly like Problem 2), then check if the reverse equals the original. Like "MADAM" — same from both sides.
-
-```python
-def palindrome_number(self, num):
-    number = num
-    reverse = 0
-    while number > 0:
-        digit = number % 10
-        reverse = reverse * 10 + digit
-        number //= 10
-    return num == reverse
-```
-
-- We copy `num` into `number` first, because the loop destroys its copy digit by digit. We need the untouched original for the final comparison.
-- `num == reverse` is itself the answer: it's `True` or `False` (a **boolean** — a yes/no value).
-
-**Complexity:** Time O(log n). Space O(1).
-
----
-
-## 13. Problem 5 — Armstrong number
-
-**Ask:** a number is an Armstrong number if the sum of each digit raised to the power of (number of digits) equals the number itself.
-
-153 has 3 digits: `1³ + 5³ + 3³ = 1 + 125 + 27 = 153`. Yes, Armstrong.
-
-**Idea:** two passes.
-1. First pass: count the digits (that's Problem 3 again).
-2. Second pass: peel each digit, raise it to that count (`digit ** count` — `**` means "to the power of"), add it up.
-3. Compare the sum with the original.
-
-```python
-def armstrong_number(self, num):
-    temp = num
-    count = 0
-    while temp > 0:
-        temp % 10
-        count += 1
-        temp //= 10
-
-    temp = num
-    sum = 0
-    while temp > 0:
-        digit = temp % 10
-        sum += digit ** count
-        temp //= 10
-
-    return sum == num
-```
-
-- Same "did you notice?" as Problem 3: the lone `temp % 10` in the first loop does nothing and can go.
-- `temp = num` appears twice because each loop grinds `temp` down to 0, so we refill it before the second loop.
-
-**Complexity:** Time O(log n) — two passes over the digits is still proportional to the digit count. Space O(1).
-
----
-
-## Common mistakes
-
-1. **Forgetting `int()` around `input()`.** `input()` always returns a string. `"5" + 1` crashes; `"5" * 2` gives `"55"`.
-2. **`range(1, n)` instead of `range(1, n+1)`.** `range` excludes the end value, so you silently miss n. Off-by-one errors are the #1 beginner bug.
-3. **Confusing `/` and `//`.** `453 / 10` is `45.3` (a float). Digit problems need `453 // 10` = `45`. A float in the loop breaks everything.
-4. **Not saving the original before destroying it.** In palindrome/Armstrong, the loop eats the number. Copy it first (`number = num`), or the final comparison compares against 0.
-5. **Writing an expression on its own line and thinking it did something.** `num % 10` alone computes a value and discards it. It must be assigned: `digit = num % 10`.
-6. **Using `sum` as a variable name.** It works, but `sum` is also a built-in Python function; naming a variable `sum` shadows (hides) it. `total` is safer. Same story for `count` vs the string method — fine here, but worth knowing.
-7. **Ignoring edge cases:** n = 0, single-digit numbers (every single-digit number is a palindrome AND an Armstrong number).
-
----
-
-## Quick recap
-
-- Variable = named box. `input()` gives a string — cast it with `int()`.
-- f-strings: `f"{name} scored {runs}"`.
-- `% 10` peels the last digit; `// 10` throws it away. Loop until 0.
-- Reverse = peel from one number, push into another via `reverse*10 + digit`.
-- Palindrome = reverse, then compare with the saved original.
-- Armstrong = count digits, then sum of `digit ** count`, then compare.
-- All digit loops: O(log n) time (once per digit), O(1) space.
-- Pending for Day 3: prime check, GCD by Euclid, LCM.
+- Variable = labelled dabba; the label stays, contents can change.
+- `input()` ALWAYS gives a string → wrap in `int()` for maths.
+- f-string: `f"{name} scored {runs}"` — blanks filled in a template.
+- Casting: `int()`, `float()`, `str()`; `int(10.9)` chops to 10, no rounding.
+- `num % 10` → last digit (bottom coin off the stack). `num // 10` → number minus its last digit.
+- Universal digit loop: peel with `%`, chop with `//`, stop at 0. Runs once per digit → O(log n).
+- Reverse trick: `new = new * 10 + digit`.
+- Palindrome = reverse and compare (save the original first!).
+- Armstrong = count digits, then sum of digit^count, then compare.
+- Sum 1..n: loop is O(n); a formula exists that is O(1) — find it yourself.
