@@ -16,6 +16,7 @@ I am starting from absolute zero. If you are also starting from zero, this repo 
 
 ```
 Day-XX/
+├── task.md            → today's tasks — ATTEMPT THESE FIRST
 ├── DSA/
 │   ├── main.py        → problems I solved that day (my practice code)
 │   ├── notes.md       → the day's concepts in plain English
@@ -24,6 +25,8 @@ Day-XX/
     ├── index.html     → what I built that night
     └── notes.md       → the night session's concepts
 ```
+
+> 📍 The full 32-week roadmap this repo follows lives at **[dsa.inboxtales.com](https://dsa.inboxtales.com)**.
 
 ## Daily routine
 
@@ -48,10 +51,10 @@ Day-XX/
 
 ## How to use this repo
 
-1. Pick a day folder and read `DSA/notes.md` first — it builds the concept from zero.
-2. Try the problems yourself before looking at `main.py`.
-3. Stuck on a line of code? Open `notes.ipynb` — every line is explained with a trace.
-4. Doing web dev? Read `dev/notes.md`, then look at how `index.html` uses it.
+1. Open the day's `task.md` and **attempt everything yourself first** — no peeking.
+2. Then read `DSA/notes.md` — it builds the concept from zero and fills your gaps.
+3. Compare your solutions with `main.py`. Stuck on a line? Open `notes.ipynb` — every line is explained with a trace.
+4. Doing web dev? Same order: `task.md` → build it → `dev/notes.md`.
 
 ## Topics covered (growing list)
 
