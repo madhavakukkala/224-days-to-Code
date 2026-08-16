@@ -1,3 +1,5 @@
+[🏠 Today's tasks](../task.md) | [Day 02 >>](../../Day-02/dev/notes.md)
+
 # Day 01 — Night School: What is HTML?
 
 Welcome to night school! 🌙 This is the web-development half of your 224-day journey. Mornings build your problem-solving brain (Python/DSA); nights build things you can actually *see* — websites.
@@ -195,3 +197,7 @@ No internet needed! The browser reads the file straight from your disk — you a
 ## 🌙 Tomorrow night (Day 2)
 
 Tonight you built the skeleton — an empty newspaper with named regions but no news. Tomorrow we fill it with **real content**: headings and paragraphs that say something, **lists** (your daily timetable!), **links** to other pages, and **images**. The page starts looking like an actual website. Same time, same desk. 🌃
+
+---
+
+[🏠 Today's tasks](../task.md) | [Day 02 >>](../../Day-02/dev/notes.md)

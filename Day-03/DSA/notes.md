@@ -1,3 +1,5 @@
+[<< Day 02](../../Day-02/DSA/notes.md) | [🏠 Today's tasks](../task.md) | [Day 04 >>](../../Day-04/DSA/notes.md)
+
 # Day 3 — Functions (Zero to Hero) + Patterns 9–15 + Prime, GCD, LCM
 
 ## Yesterday → Today
@@ -484,3 +486,7 @@ Tests: (4, 6) → 12; (7, 5) → 35 (co-prime numbers: gcd is 1, so lcm is just 
 ## Tomorrow
 
 Now that I can *write* real code — decisions, loops, functions — the next question is unavoidable: **is my code fast or slow?** Two solutions can both be "correct" and yet one finishes in a blink while the other takes an hour. Day 4 = **Big-O**: the language for judging code speed before ever running it.
+
+---
+
+[<< Day 02](../../Day-02/DSA/notes.md) | [🏠 Today's tasks](../task.md) | [Day 04 >>](../../Day-04/DSA/notes.md)

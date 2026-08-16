@@ -1,3 +1,5 @@
+[<< Day 02](../../Day-02/dev/notes.md) | [🏠 Today's tasks](../task.md) | [Day 04 >>](../../Day-04/dev/notes.md)
+
 # Day 3 (Night) — HTML Forms and Tables
 
 ## So far → Tonight
@@ -236,3 +238,7 @@ In the 2000s people built whole page skeletons out of invisible tables. Never do
 ## Tomorrow
 
 Tomorrow night everything so far comes together: headings, lists, links, images, semantic landmarks, and tonight's forms and tables — combined into one real project: **a complete CV page**. My first page that actually looks like something worth shipping.
+
+---
+
+[<< Day 02](../../Day-02/dev/notes.md) | [🏠 Today's tasks](../task.md) | [Day 04 >>](../../Day-04/dev/notes.md)

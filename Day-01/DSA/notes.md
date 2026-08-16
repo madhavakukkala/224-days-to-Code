@@ -1,3 +1,5 @@
+[🏠 Today's tasks](../task.md) | [Day 02 >>](../../Day-02/DSA/notes.md)
+
 # Day 01 — Python Basics: Variables, Input/Output, f-strings, Type Casting
 
 Welcome! This is **Day 1 of 224**. You need **zero** prior knowledge to be here — if you have never written a line of code, you are in exactly the right place.
@@ -403,3 +405,7 @@ This right-to-left munching loop is THE pattern of Day 1. Every problem below is
 ## 🌄 Tomorrow (Day 2)
 
 Today your programs ran top-to-bottom like a train on a single track. Tomorrow we teach the computer to **make decisions** ("if the number is even, do this; otherwise, do that") and to **repeat work** without you copy-pasting lines — **conditionals and loops**. That munching loop you dry-ran by hand today? Tomorrow you'll command Python to run it for you. See you at 06:50. 🌅
+
+---
+
+[🏠 Today's tasks](../task.md) | [Day 02 >>](../../Day-02/DSA/notes.md)

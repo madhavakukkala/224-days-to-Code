@@ -1,3 +1,5 @@
+[<< Day 01](../../Day-01/dev/notes.md) | [🏠 Today's tasks](../task.md) | [Day 03 >>](../../Day-03/dev/notes.md)
+
 # Day 2 — HTML Flesh: Text, Lists, Links, Images
 
 **Yesterday → Today:** Yesterday you built the skeleton — the boilerplate, `head` vs `body`, and semantic tags that give a page its bones. Today we put flesh on that skeleton: real text with proper headings, lists that organise, links that connect pages, and images that bring it alive.
@@ -272,3 +274,7 @@ Example from this repo: from `Day-02/dev/`, reaching a file in `Day-01/dev/` is 
 ---
 
 **Tomorrow:** so far the page only *talks* to the visitor. Day 3 flips the conversation — **forms**: text boxes, buttons, checkboxes — letting the visitor talk back.
+
+---
+
+[<< Day 01](../../Day-01/dev/notes.md) | [🏠 Today's tasks](../task.md) | [Day 03 >>](../../Day-03/dev/notes.md)

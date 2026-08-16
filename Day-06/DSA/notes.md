@@ -1,3 +1,5 @@
+[<< Day 05](../../Day-05/DSA/notes.md) | [🏠 Today's tasks](../task.md) | [Day 07 >>](../../Day-07/DSA/notes.md)
+
 # Day 6 — Lists: Our First True Data Structure
 
 ## Yesterday → Today
@@ -563,3 +565,7 @@ Sorting costs O(n log n). One clever pass costs O(n). That's why "without sortin
 ## Tomorrow
 
 Day 7 is **consolidation** — honestly, the most important day of the week. No new topics. Just proving what stuck: re-solving this week's problems from a blank file, no peeking. Anything you can't rebuild from memory, you haven't learned yet — and tomorrow is exactly when we find out, while it's still cheap to fix.
+
+---
+
+[<< Day 05](../../Day-05/DSA/notes.md) | [🏠 Today's tasks](../task.md) | [Day 07 >>](../../Day-07/DSA/notes.md)

@@ -1,3 +1,5 @@
+[<< Day 06](../../Day-06/DSA/notes.md) | [🏠 Today's tasks](../task.md) | Day 08 >> *(coming soon)*
+
 # Day 07 — Consolidation: Making It Stick
 
 ## Look how far you came
@@ -127,3 +129,7 @@ Week 2 begins tomorrow: **strings** — the second workhorse of DSA — and prob
 
 - [Forgetting curve and spaced repetition (Wikipedia)](https://en.wikipedia.org/wiki/Spacing_effect) — the science behind the 2/5/10 schedule
 - [GFG — Python practice problems](https://www.geeksforgeeks.org/python-programming-language/python-exercises-practice-questions-and-solutions/) — extra blank-file material when the week's own problems run out
+
+---
+
+[<< Day 06](../../Day-06/DSA/notes.md) | [🏠 Today's tasks](../task.md) | Day 08 >> *(coming soon)*

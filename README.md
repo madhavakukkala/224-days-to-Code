@@ -41,19 +41,23 @@ Day-XX/
 
 Every 7th day is a **consolidation day** — no new topics, just re-solving the week's hardest problems from a blank file.
 
-## Progress so far
+## 📚 All days — start here
 
-| Day | DSA (morning) | Web Dev (night) |
-|-----|---------------|-----------------|
-| [Day 01](Day-01) | Setup, variables, I/O, f-strings, type casting → sum of N, reverse a number, count digits, palindrome, Armstrong | What HTML actually is — document structure, head vs body, semantic tags |
-| [Day 02](Day-02) | Conditionals, loops, range(), break/continue → Striver patterns 1–8 | Text elements, lists, links, images, alt text, absolute vs relative paths |
-| [Day 03](Day-03) | Functions: parameters, defaults, *args/**kwargs, scope → Striver patterns 9–15 | Forms: input types, labels, select, textarea, button. Tables. Accessibility |
-| [Day 04](Day-04) | Big-O: O(1) to O(2ⁿ), best/avg/worst → complexity audit of every problem so far | Semantic CV page from scratch — structure only, zero CSS |
-| [Day 05](Day-05) | Space complexity, recursion stack, Python performance traps → Striver patterns 16+ | Forms deep-dive: validation, fieldset, accessibility. Contact form on the CV |
-| [Day 06](Day-06) | Lists: indexing, slicing, aliasing vs copy vs deepcopy, comprehensions → array basics | Meta tags, favicon, Open Graph, W3C validation |
-| [Day 07](Day-07) | Consolidation: 3 hardest patterns from a blank file + Big-O cheat sheet in my own words | Core CS: interpreter, bytecode, memory — what really happens when you run a Python file |
+▶ **[Start from Day 01 >>](Day-01/task.md)** — then just follow the `<< prev | next >>` arrows on every page, like turning pages of a book. Every task and notes page has them.
 
-*(This table grows every day — 217 to go.)*
+### Week 1 — Python refresher + Big-O · HTML structure & semantics
+
+| Day | What you learn | DSA | Dev |
+|:---:|----------------|-----|-----|
+| **01** | Variables, I/O, f-strings, type casting · What HTML is, skeleton, semantic tags | [Task](Day-01/task.md) · [Notes](Day-01/DSA/notes.md) · [Notebook](Day-01/DSA/notes.ipynb) | [Notes](Day-01/dev/notes.md) |
+| **02** | Conditionals, loops, range() → Striver patterns 1–8 · Text, lists, links, images | [Task](Day-02/task.md) · [Notes](Day-02/DSA/notes.md) · [Notebook](Day-02/DSA/notes.ipynb) | [Notes](Day-02/dev/notes.md) |
+| **03** | Functions, *args/**kwargs, scope, lambda → patterns 9–15, prime, GCD, LCM · Forms & tables | [Task](Day-03/task.md) · [Notes](Day-03/DSA/notes.md) · [Notebook](Day-03/DSA/notes.ipynb) | [Notes](Day-03/dev/notes.md) |
+| **04** | Big-O: O(1) to O(2ⁿ), best/avg/worst, complexity audit · Semantic CV page, zero CSS | [Task](Day-04/task.md) · [Notes](Day-04/DSA/notes.md) · [Notebook](Day-04/DSA/notes.ipynb) | [Notes](Day-04/dev/notes.md) |
+| **05** | Space complexity, recursion stack, Python cost traps → patterns 16–22 · Form validation | [Task](Day-05/task.md) · [Notes](Day-05/DSA/notes.md) · [Notebook](Day-05/DSA/notes.ipynb) | [Notes](Day-05/dev/notes.md) |
+| **06** | Lists A to Z: slicing, aliasing, deepcopy, comprehensions → array basics · Meta tags, favicon, Open Graph | [Task](Day-06/task.md) · [Notes](Day-06/DSA/notes.md) · [Notebook](Day-06/DSA/notes.ipynb) | [Notes](Day-06/dev/notes.md) |
+| **07** | Consolidation: blank-file re-solve + own-words Big-O cheat sheet · How Python really runs (bytecode, PVM, memory) | [Task](Day-07/task.md) · [Notes](Day-07/DSA/notes.md) · [Notebook](Day-07/DSA/notes.ipynb) | [Notes](Day-07/dev/notes.md) |
+
+*(This table grows every day — 217 to go. Week 2 starts with strings.)*
 
 ## How to use this repo
 
@@ -61,6 +65,7 @@ Every 7th day is a **consolidation day** — no new topics, just re-solving the 
 2. Then read `DSA/notes.md` — it builds the concept from zero and fills your gaps.
 3. Compare your solutions with `main.py`. Stuck on a line? Open `notes.ipynb` — every line is explained with a trace.
 4. Doing web dev? Same order: `task.md` → build it → `dev/notes.md`.
+5. Move through days with the `<< prev | next >>` arrows on every page — no need to come back here. Following only one track? The arrows inside `DSA/notes.md` jump DSA-to-DSA, and `dev/notes.md` jumps dev-to-dev.
 
 ## Topics covered (growing list)
 

@@ -1,3 +1,5 @@
+[Day 02 >>](../Day-02/task.md)
+
 # Day 01 — Today's Tasks
 
 > **Rule of this repo:** attempt everything below on your own FIRST. Only after a real attempt, open `DSA/notes.md` and `DSA/notes.ipynb` to check your understanding.
@@ -28,3 +30,7 @@ Solve these in `DSA/main.py`:
 - [ ] Semantic tags: `header`, `nav`, `main`, `section`, `article`, `footer`
 
 **Done attempting? Now open [`DSA/notes.md`](DSA/notes.md), [`DSA/notes.ipynb`](DSA/notes.ipynb) and [`dev/notes.md`](dev/notes.md).**
+
+---
+
+[Day 02 >>](../Day-02/task.md)

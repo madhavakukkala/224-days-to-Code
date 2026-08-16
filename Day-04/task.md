@@ -1,3 +1,5 @@
+[<< Day 03](../Day-03/task.md) | [Day 05 >>](../Day-05/task.md)
+
 # Day 04 — Today's Tasks
 
 > **Rule of this repo:** attempt everything below on your own FIRST. Only after a real attempt, open `DSA/notes.md` and `DSA/notes.ipynb` to check your understanding.
@@ -25,3 +27,7 @@
 - [ ] Test: does it read perfectly top to bottom with zero styling? That is the mark of good semantics.
 
 **Done attempting? Now open [`DSA/notes.md`](DSA/notes.md), [`DSA/notes.ipynb`](DSA/notes.ipynb) and [`dev/notes.md`](dev/notes.md).**
+
+---
+
+[<< Day 03](../Day-03/task.md) | [Day 05 >>](../Day-05/task.md)

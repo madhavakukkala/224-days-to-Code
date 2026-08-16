@@ -1,3 +1,5 @@
+[<< Day 02](../Day-02/task.md) | [Day 04 >>](../Day-04/task.md)
+
 # Day 03 — Today's Tasks
 
 > **Rule of this repo:** attempt everything below on your own FIRST. Only after a real attempt, open `DSA/notes.md` and `DSA/notes.ipynb` to check your understanding.
@@ -30,3 +32,7 @@ In `DSA/main.py`:
 - [ ] Why semantics matter for accessibility
 
 **Done attempting? Now open [`DSA/notes.md`](DSA/notes.md), [`DSA/notes.ipynb`](DSA/notes.ipynb) and [`dev/notes.md`](dev/notes.md).**
+
+---
+
+[<< Day 02](../Day-02/task.md) | [Day 04 >>](../Day-04/task.md)

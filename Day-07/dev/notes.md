@@ -1,3 +1,5 @@
+[<< Day 06](../../Day-06/dev/notes.md) | [🏠 Today's tasks](../task.md) | Day 08 >> *(coming soon)*
+
 # Day 07 Night — What Actually Happens When You Run a Python File
 
 Your week-1 page is done: built, meta-tagged, favicon-ed, validated by W3C, and shareable with a proper preview card. That chapter is closed. So tonight we do something different — we look **under Python's hood**.
@@ -121,3 +123,7 @@ The page's skeleton is done and its engine-room is understood. Next week's night
 - [GFG — Internal working of Python](https://www.geeksforgeeks.org/python/internal-working-of-python/) — the full source → bytecode → PVM pipeline in detail
 - [W3Schools — Python introduction](https://www.w3schools.com/python/python_intro.asp) — why Python is built the way it is
 - [Python docs — the `dis` module](https://docs.python.org/3/library/dis.html) — every bytecode instruction, when you're curious
+
+---
+
+[<< Day 06](../../Day-06/dev/notes.md) | [🏠 Today's tasks](../task.md) | Day 08 >> *(coming soon)*

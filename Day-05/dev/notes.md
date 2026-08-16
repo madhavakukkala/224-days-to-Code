@@ -1,3 +1,5 @@
+[<< Day 04](../../Day-04/dev/notes.md) | [🏠 Today's tasks](../task.md) | [Day 06 >>](../../Day-06/dev/notes.md)
+
 # Day 5 (Night) — Forms That Validate Themselves
 
 ## Yesterday → Tonight
@@ -251,3 +253,7 @@ Add a contact form to the CV page. Work down this list:
 ## Tomorrow night
 
 The page gets its **passport**: meta tags — the invisible lines in `<head>` that tell browsers, Google, and WhatsApp who this page is. Including the glow-up everyone notices: making your CV link unfurl into a **proper WhatsApp preview** with title, description and image. Same page, suddenly presentable everywhere it travels.
+
+---
+
+[<< Day 04](../../Day-04/dev/notes.md) | [🏠 Today's tasks](../task.md) | [Day 06 >>](../../Day-06/dev/notes.md)

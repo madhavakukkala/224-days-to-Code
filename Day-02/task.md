@@ -1,3 +1,5 @@
+[<< Day 01](../Day-01/task.md) | [Day 03 >>](../Day-03/task.md)
+
 # Day 02 — Today's Tasks
 
 > **Rule of this repo:** attempt everything below on your own FIRST. Only after a real attempt, open `DSA/notes.md` and `DSA/notes.ipynb` to check your understanding.
@@ -29,3 +31,7 @@ Solve Striver pattern problems **1 to 8** in `DSA/main.py`:
 - [ ] Absolute vs relative paths
 
 **Done attempting? Now open [`DSA/notes.md`](DSA/notes.md), [`DSA/notes.ipynb`](DSA/notes.ipynb) and [`dev/notes.md`](dev/notes.md).**
+
+---
+
+[<< Day 01](../Day-01/task.md) | [Day 03 >>](../Day-03/task.md)

@@ -1,3 +1,5 @@
+[<< Day 05](../../Day-05/dev/notes.md) | [🏠 Today's tasks](../task.md) | [Day 07 >>](../../Day-07/dev/notes.md)
+
 # Day 6 (Night) — The `<head>`: Meta Tags, Favicon, Open Graph, W3C Validation
 
 ## Where We Are
@@ -241,3 +243,7 @@ Think of a vehicle's **PUC certificate**. The bike may run fine without it — b
 ## Next Week
 
 The structure is complete and certified. Next week: **CSS** — colours, fonts, spacing, layout. The CV finally stops looking like a 1995 document and starts looking like *you*. The skeleton is done; time to dress it up.
+
+---
+
+[<< Day 05](../../Day-05/dev/notes.md) | [🏠 Today's tasks](../task.md) | [Day 07 >>](../../Day-07/dev/notes.md)

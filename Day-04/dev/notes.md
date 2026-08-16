@@ -1,3 +1,5 @@
+[<< Day 03](../../Day-03/dev/notes.md) | [🏠 Today's tasks](../task.md) | [Day 05 >>](../../Day-05/dev/notes.md)
+
 # Day 4 (night) — The Semantic CV: Zero CSS, Full Meaning
 
 ## So far → Tonight
@@ -206,3 +208,7 @@ Second test, if you can: press Tab repeatedly. Focus should jump through your li
 ## Tomorrow night
 
 The CV gets interactive. Tomorrow we return to its contact form and make it actually **validate input** — required fields, email format checks, number ranges — using HTML's built-in validation before a single line of JavaScript. Structure tonight, behaviour tomorrow.
+
+---
+
+[<< Day 03](../../Day-03/dev/notes.md) | [🏠 Today's tasks](../task.md) | [Day 05 >>](../../Day-05/dev/notes.md)

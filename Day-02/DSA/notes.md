@@ -1,3 +1,5 @@
+[<< Day 01](../../Day-01/DSA/notes.md) | [🏠 Today's tasks](../task.md) | [Day 03 >>](../../Day-03/DSA/notes.md)
+
 # Day 2 — Control Flow: Teaching the Program to Decide and Repeat
 
 **Yesterday → Today:** Yesterday you learned to store data in labelled dabbas (variables) and to talk to the program (`input()` / `print()`). But the program was a straight road — line 1, line 2, line 3, done. Today it learns two superpowers: to **DECIDE** (if/elif/else) and to **REPEAT** (while/for). Every program you'll ever write is just these two powers mixed with yesterday's storage.
@@ -556,3 +558,7 @@ Attempt each in `main.py` before peeking at hints. All shapes shown for **n = 5*
 ---
 
 **Tomorrow:** your code is getting longer — and you're already copy-pasting bits of it. Day 3 fixes that: **functions** — packing reusable logic into a named box you can call again and again. Write once, use forever.
+
+---
+
+[<< Day 01](../../Day-01/DSA/notes.md) | [🏠 Today's tasks](../task.md) | [Day 03 >>](../../Day-03/DSA/notes.md)

@@ -1,3 +1,5 @@
+[<< Day 04](../../Day-04/DSA/notes.md) | [🏠 Today's tasks](../task.md) | [Day 06 >>](../../Day-06/DSA/notes.md)
+
 # Day 5 — Space Complexity, Recursion Stack, Python Traps, Patterns 16–22
 
 ## Yesterday → Today
@@ -436,3 +438,7 @@ Two ways:
 ## Tomorrow
 
 Day 6 = our **first real data structure: the list**, properly. Everything priced today — the shifting seats, the door-to-door search, the copy-making slices — stops being theory and becomes daily practice. You now know the cost of every move before you make it. Tomorrow you make the moves.
+
+---
+
+[<< Day 04](../../Day-04/DSA/notes.md) | [🏠 Today's tasks](../task.md) | [Day 06 >>](../../Day-06/DSA/notes.md)

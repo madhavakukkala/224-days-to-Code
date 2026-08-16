@@ -1,3 +1,5 @@
+[<< Day 03](../../Day-03/DSA/notes.md) | [🏠 Today's tasks](../task.md) | [Day 05 >>](../../Day-05/DSA/notes.md)
+
 # Day 4 — Big-O: The Day I Learn to Judge Code
 
 ## So far → Today
@@ -277,3 +279,7 @@ Now open your own solutions from this week and grade them yourself. **No copying
 ## Tomorrow
 
 Today was one half of the coin: **time**. Tomorrow, Day 5, is the other half — **memory**. Space complexity in full, plus Python's hidden costs: what a list *really* stores, why strings are sneakily expensive to build in a loop, and why `append` is cheap. Bring your audit table — the Space column gets an upgrade.
+
+---
+
+[<< Day 03](../../Day-03/DSA/notes.md) | [🏠 Today's tasks](../task.md) | [Day 05 >>](../../Day-05/DSA/notes.md)

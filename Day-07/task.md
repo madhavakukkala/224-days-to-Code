@@ -1,3 +1,5 @@
+[<< Day 06](../Day-06/task.md) | Day 08 >> *(coming soon)*
+
 # Day 07 — Today's Tasks (Consolidation — no new topics)
 
 > **Rule of this repo:** attempt everything below on your own FIRST. Only after a real attempt, open `DSA/notes.md` and `DSA/notes.ipynb` to check your understanding.
@@ -27,3 +29,7 @@ Today you learn NOTHING new. Today you find out what actually stayed in your hea
 | 23:45 – 00:00 | **Commit**: push the code. Write tomorrow's first task on a sticky note. |
 
 **Done attempting? Now open [`DSA/notes.md`](DSA/notes.md), [`DSA/notes.ipynb`](DSA/notes.ipynb) and [`dev/notes.md`](dev/notes.md).**
+
+---
+
+[<< Day 06](../Day-06/task.md) | Day 08 >> *(coming soon)*

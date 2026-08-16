@@ -1,3 +1,5 @@
+[<< Day 05](../Day-05/task.md) | [Day 07 >>](../Day-07/task.md)
+
 # Day 06 — Today's Tasks
 
 > **Rule of this repo:** attempt everything below on your own FIRST. Only after a real attempt, open `DSA/notes.md` and `DSA/notes.ipynb` to check your understanding.
@@ -28,3 +30,7 @@ In `DSA/main.py`:
 - [ ] Run your page through the [W3C validator](https://validator.w3.org) and fix EVERY warning
 
 **Done attempting? Now open [`DSA/notes.md`](DSA/notes.md), [`DSA/notes.ipynb`](DSA/notes.ipynb) and [`dev/notes.md`](dev/notes.md).**
+
+---
+
+[<< Day 05](../Day-05/task.md) | [Day 07 >>](../Day-07/task.md)
