@@ -1,239 +1,238 @@
 # Day 3 (Night) — HTML Forms and Tables
 
-Two big topics tonight: **forms** (how a webpage collects information from the user) and **tables** (how it displays rows-and-columns data). Both are everywhere — login pages, railway booking, exam results.
+## So far → Tonight
+
+Every page I've built so far only talks **AT** the visitor — headings, paragraphs, images, links. The visitor reads, clicks, leaves. Tonight the conversation becomes two-way: **forms** let visitors talk **BACK** — type a name, pick a city, press submit. And **tables** let me show rows-and-columns data properly — exam results, train timetables, price lists.
 
 ---
 
 ## 1. What is a form?
 
-Think of a **bank challan**. It has boxes for your name, account number, amount, date — you fill them, sign, and submit it at the counter. The clerk (the server) then processes it.
+Think of a **bank challan**. It has boxes for name, account number, amount — you fill them, sign, and hand it over at the counter. The clerk (the server) processes it.
 
-An HTML **form** is the digital challan. `<form>` is the paper, inputs are the boxes, and the submit button is handing it to the clerk.
+An HTML form is the digital challan. `<form>` is the paper, inputs are the boxes, the submit button is handing it to the clerk.
 
 ```html
 <form action="/register" method="post">
   <!-- input boxes go here -->
-  <button type="submit">Submit</button>
+  <button type="submit">Register</button>
 </form>
 ```
 
-- **`action`** — *where* the filled data is sent (a URL on the server).
-- **`method`** — *how* it travels:
-  - `get` — data is stuck onto the URL (`?name=Rahul&city=Pune`). Visible, bookmarkable. For searches and filters.
-  - `post` — data goes hidden inside the request body. For passwords, registrations, payments — anything sensitive or anything that *changes* data.
+- **`action`** — *where* the filled data goes (a URL on the server).
+- **`method`** — *how* it travels. One-liner: **GET sticks data onto the URL** (`?name=Rahul&city=Pune` — visible, bookmarkable, for searches); **POST hides it in the request body** (for passwords, registrations, anything sensitive or anything that *changes* data).
 
 Rule of thumb: reading data → `get`, sending/changing data → `post`.
 
 ---
 
-## 2. `<input>` and its types
+## 2. The `name` attribute — why submission needs it
 
-`<input>` is one box on the challan. One tag, but its `type` attribute completely changes its behaviour — same actor, different roles.
-
-```html
-<input type="text" name="username" placeholder="Enter username">
-```
-
-- **`name`** — the label under which the value travels to the server (`username=rahul21`). No `name` = the value is NOT sent at all. Most common beginner bug.
-- **`placeholder`** — the grey hint text inside the box. It disappears when you type — so it is *not* a replacement for a label.
-
-The important types:
-
-| type | what it does |
-|------|--------------|
-| `text` | plain single-line text |
-| `email` | text, but the browser checks for a valid email shape (`a@b.c`) on submit; phone keyboards show `@` |
-| `password` | hides typing as dots — like covering your ATM PIN with your hand |
-| `number` | numbers only, gives up/down arrows; supports `min`, `max`, `step` |
-| `date` | opens a calendar picker; no more "is it DD/MM or MM/DD" confusion |
-| `checkbox` | on/off boxes; user can tick **many** — like choosing toppings: cheese AND paneer AND corn |
-| `radio` | pick exactly **one** from a group — like an OMR answer sheet, one bubble per question |
-
-**Radio grouping trick:** radios become one group by sharing the same `name`. That's how the browser knows ticking one should untick the others.
+This one trips everyone. When the form is submitted, data travels as `name=value` pairs:
 
 ```html
-<input type="radio" name="payment" value="upi" id="upi">
-<input type="radio" name="payment" value="cod" id="cod">
+<input type="text" name="city">   <!-- user types "Pune" → server gets city=Pune -->
 ```
 
-Same `name="payment"`, different `value`. The chosen `value` is what reaches the server.
+**An input without a `name` is simply not sent.** It's a challan box with no label — the clerk has no idea what the number means, so it goes in the dustbin. Every input that should reach the server needs a `name`.
 
-Useful extras: `required` (browser blocks submit if empty), `checked` (pre-ticked), `value` (pre-filled / what gets sent). `required` is just the trailer — the full validation story (`pattern`, `minlength`, styling invalid fields) comes on Day 5.
-
-Other types worth recognising (no need to master today): `tel` (phone — shows the number keypad on mobiles), `url` (checks for a link shape), `file` (upload a file), `hidden` (travels with the form but user never sees it — e.g. an order ID), `range` (a slider), `color` (a colour picker).
+(`name` also does a second job: radio buttons sharing the same `name` become one group where only one can be picked.)
 
 ---
 
-## 3. `<label>` — and why clicking it should focus the input
+## 3. `<input>` and its types
 
-A **label** is the visible caption for an input ("Email address:"). But it's not just decoration — it must be *connected* to its input using the **`for`/`id` pairing**:
+One tag, many disguises — the `type` attribute decides which box appears:
 
 ```html
-<label for="email">Email address</label>
-<input type="email" id="email" name="email">
+<input type="text"     name="username">           <!-- one-line text -->
+<input type="password" name="pin">                <!-- dots instead of letters -->
+<input type="email"    name="mail">               <!-- browser checks for @ -->
+<input type="number"   name="age" min="1" max="120">
+<input type="date"     name="dob">                <!-- calendar picker -->
+<input type="checkbox" name="veg">                <!-- ZERO or MORE choices -->
+<input type="radio"    name="size" value="s">     <!-- exactly ONE of a group -->
+<input type="submit"   value="Send">              <!-- old-style submit button -->
 ```
 
-`for` on the label = `id` on the input. Same value. Once paired:
+- **checkbox** = "tick all that apply" (like choosing toppings).
+- **radio** = "pick exactly one" (like choosing S/M/L — same `name` makes them one group; give each a different `value`).
 
-1. **Clicking the label focuses (or toggles) the input.** Huge for checkboxes and radios — the tiny box becomes a big clickable area. Try ticking a checkbox on a phone without this; it's like threading a needle in a moving local train.
-2. **Screen readers announce the label** when a blind user reaches the input. Without the pairing, they hear only "edit text" — a box with no clue what to type. With it: "Email address, edit text".
+Quick list of the remaining useful types — recognise them on sight:
 
-Alternative: wrap the input inside the label (`<label>Email <input ...></label>`) — then no `for`/`id` needed. The explicit `for`/`id` version is the habit to build.
-
-`placeholder` is not a label. It vanishes on typing, is low-contrast, and screen reader support is unreliable. Always give a real `<label>`.
+| Type | What it gives |
+|---|---|
+| `tel` | phone number box (mobile shows the number keypad) |
+| `url` | website address box |
+| `file` | a "Choose file" upload button |
+| `hidden` | invisible box — data the site sends along without showing the user |
+| `range` | a slider (volume-control style) |
+| `color` | a colour picker |
 
 ---
 
-## 4. `<select>` + `<option>` — the dropdown
-
-For choosing one item from a long list (like picking your state — 28+ options as radios would be madness):
+## 4. `<label>` — and why placeholder is NOT a label
 
 ```html
-<label for="state">State</label>
-<select id="state" name="state">
-  <option value="">-- Choose --</option>
-  <option value="MH">Maharashtra</option>
-  <option value="KA" selected>Karnataka</option>
-  <option value="TN">Tamil Nadu</option>
+<label for="mail">Email</label>
+<input type="email" id="mail" name="mail" placeholder="you@example.com">
+```
+
+- The `for` of the label matches the `id` of the input — they become linked. Clicking the label focuses the box (a big deal for tiny checkboxes), and screen readers announce the label when a blind user reaches the field.
+- Note the three different attributes doing three different jobs: `id` links to the label, `name` travels to the server, `placeholder` is the faint hint inside the box.
+
+**Placeholder ≠ label.** The placeholder vanishes the moment you type — mid-form you forget what the box was for, and screen readers may skip it entirely. Placeholder is the faint pencil example inside a challan box; the label is the printed heading beside it. Always give a real `<label>`; placeholder is optional extra help.
+
+---
+
+## 5. `<select>`, `<option>`, `<optgroup>` — dropdowns
+
+```html
+<label for="city">City</label>
+<select id="city" name="city">
+  <optgroup label="Maharashtra">
+    <option value="mum">Mumbai</option>
+    <option value="pun" selected>Pune</option>
+  </optgroup>
+  <optgroup label="Telangana">
+    <option value="hyd">Hyderabad</option>
+  </optgroup>
 </select>
 ```
 
-- `<select>` is the dropdown; each `<option>` is one choice.
-- The user sees the text ("Maharashtra"), the server receives the `value` ("MH").
-- `selected` pre-picks an option. `multiple` allows many selections.
-- `<optgroup label="South">` can group related options under a heading.
+- `<select>` is the dropdown, each `<option>` a choice; `selected` pre-picks one.
+- The `value` is what the server receives; the text between the tags is what the human sees.
+- `<optgroup>` draws grouped headings inside the list — like a menu card split into "Veg" and "Non-veg".
+- Related cousins to recognise: `<textarea>` (next), `<datalist>` (a text box with suggestions), `<fieldset>` + `<legend>` (a titled box grouping related fields), `<output>` (shows a calculated result).
 
 ---
 
-## 5. `<textarea>` — the big text box
-
-`<input type="text">` is one line. For a paragraph (address, feedback, complaint), use `<textarea>`:
+## 6. `<textarea>` — the big text box
 
 ```html
-<label for="addr">Delivery address</label>
-<textarea id="addr" name="address" rows="4" cols="40"></textarea>
+<label for="msg">Your message</label>
+<textarea id="msg" name="msg" rows="4" cols="40"></textarea>
 ```
 
-- It has a **closing tag**, and any text between the tags becomes pre-filled content (unlike `<input>`, which is self-closing and uses `value`).
-- `rows`/`cols` set the visible size (real sizing is better done with CSS).
-- Careful: whitespace between `<textarea>` and `</textarea>` shows up inside the box. Keep the tags snug.
+For multi-line text — feedback, address, complaint. `rows`/`cols` set the starting size. Unlike `<input>`, it has a closing tag; anything between the tags becomes pre-filled text.
 
 ---
 
-## 6. Button types — submit vs button
-
-A `<button>` inside a form has a `type`, and the default surprises everyone:
+## 7. `<button>` and the default-submit trap
 
 ```html
-<button type="submit">Register</button>   <!-- sends the form -->
-<button type="button">Show/Hide</button>  <!-- does nothing by itself; for JS -->
-<button type="reset">Clear</button>       <!-- wipes all fields (rarely wanted) -->
+<button type="submit">Send</button>   <!-- submits the form -->
+<button type="reset">Clear</button>   <!-- wipes all fields -->
+<button type="button">Hi</button>     <!-- does nothing until JavaScript arrives -->
 ```
 
-- **`submit`** — fills the challan and hands it to the counter: the browser validates (`required`, `email` etc.) and sends the data to `action`.
-- **`button`** — an inert button. It only does what your JavaScript tells it to. Use it for toggles, "show password", calculators.
-- **The trap:** inside a `<form>`, a `<button>` with **no type is `submit` by default**. So your innocent "Show password" button reloads the whole page. Habit: *always* write the `type` explicitly.
+**The trap:** inside a form, a `<button>` with no `type` defaults to `type="submit"`. So that innocent "Show password" button you added? Clicking it submits the whole form and reloads the page. Rule: **inside a form, always write the `type` explicitly.**
 
 ---
 
-## 7. Tables — the railway timetable
+## 8. `required` — the bare minimum check
 
-A **table** is for genuine rows-and-columns data. Picture the big timetable at the station: train number, name, departure, platform — columns with headings, one row per train.
+```html
+<input type="email" name="mail" required>
+```
+
+The browser refuses to submit while the box is empty, free of cost. Combined with `type="email"`, `type="number"` + `min`/`max`, you already get basic checking with zero JavaScript. Deeper validation (patterns, custom messages, styling invalid fields) comes on **Day 5** — tonight, just know `required` exists.
+
+---
+
+## 9. Tables — rows and columns done right
+
+A **railway reservation chart**: rows of passengers, columns of Seat / Name / Age. That grid in HTML:
 
 ```html
 <table>
+  <caption>Class 10-B — Term Results</caption>
   <thead>
     <tr>
-      <th>Train</th>
-      <th>Departure</th>
-      <th>Platform</th>
+      <th scope="col">Name</th>
+      <th scope="col">Marks</th>
     </tr>
   </thead>
   <tbody>
     <tr>
-      <td>Deccan Queen</td>
-      <td>17:10</td>
-      <td>1</td>
+      <td>Ananya</td>
+      <td>92</td>
     </tr>
     <tr>
-      <td>Rajdhani Exp</td>
-      <td>16:55</td>
-      <td>4</td>
+      <td>Rohan</td>
+      <td>85</td>
     </tr>
   </tbody>
+  <tfoot>
+    <tr>
+      <td>Class average</td>
+      <td>88.5</td>
+    </tr>
+  </tfoot>
 </table>
 ```
 
-The tags, one by one:
+- `<table>` — the whole grid. `<tr>` — one **row**. Cells go *inside* rows, never loose.
+- `<th>` — a **header** cell (bold, and announced as a heading by screen readers). `<td>` — a normal **data** cell.
+- `<thead>` / `<tbody>` / `<tfoot>` — label the header rows, the data rows, and the summary row. The page looks the same without them, but they give structure meaning — and long printed tables can repeat the `<thead>` on every page.
+- `<caption>` — the table's title, first thing inside `<table>`. Like the heading printed on top of the reservation chart.
 
-- **`<table>`** — the whole board.
-- **`<tr>`** — table **r**ow. One horizontal line.
-- **`<th>`** — table **h**eader cell. Bold + centered by default, but the real value is *meaning*: "this cell names a column (or row)".
-- **`<td>`** — table **d**ata cell. The actual values.
-- **`<thead>` / `<tbody>`** — group the heading row(s) and the data rows. (`<tfoot>` exists too, for totals.) They add structure: styling hooks, sticky headers via CSS, and screen readers can tell headings from data.
-
-Extras worth knowing:
-
-- `<caption>` — a title for the table, placed right after `<table>`. Screen readers announce it first.
-- `colspan="2"` / `rowspan="2"` — a cell stretching across columns/rows (like "SLEEPER CLASS" spanning several columns on a reservation chart).
-- `scope="col"` or `scope="row"` on `<th>` — states exactly what the header describes. Helps screen readers say "Departure: 17:10" instead of just "17:10".
-
-**Golden rule:** tables are for *data*, never for page layout. Layout is CSS's job (flexbox/grid). Using tables for layout is a 1999 habit that breaks accessibility and responsiveness.
-
----
-
-## 8. Why semantics matter — accessibility
-
-**Semantics** = choosing tags by *meaning*, not by looks. A `<div>` styled to look like a button *looks* the same but *means* nothing.
-
-Who depends on the meaning:
-
-1. **Screen readers** (software that reads pages aloud for blind users — NVDA, JAWS, TalkBack). They don't see the page; they read the tag structure. And their users don't move top-to-bottom line by line — they **jump by landmarks**: "list all headings", "jump to the form", "next table", "list all links". Semantic tags (`<header>`, `<nav>`, `<main>`, `<form>`, `<table>`, `<h1>`–`<h6>`) are the signboards that make those jumps possible. A page built only from `<div>`s is a station with no signboards — you can walk, but you can't *navigate*.
-2. **Keyboard users** — real `<button>`, `<input>`, `<select>` are focusable with Tab and work with Enter/Space *for free*. A click-handler `<div>` gets none of that.
-3. **Browsers** — free validation (`type="email"`, `required`), the right mobile keyboard (number pad for `number`, `@` for `email`), autofill for name/email/address.
-4. **Search engines** — better understanding of the page, better results.
-
-Concrete form checklist:
-
-- Every input has a `<label>` paired via `for`/`id`.
-- Correct `type` on every input (not `text` for everything).
-- Related radios/checkboxes wrapped in `<fieldset>` with a `<legend>` caption:
+### `colspan` and `rowspan` — merged cells
 
 ```html
-<fieldset>
-  <legend>Payment method</legend>
-  <label><input type="radio" name="pay" value="upi"> UPI</label>
-  <label><input type="radio" name="pay" value="card"> Card</label>
-</fieldset>
+<td colspan="2">Total</td>   <!-- one cell stretching across 2 columns -->
+<td rowspan="3">North</td>   <!-- one cell stretching down 3 rows -->
 ```
 
-Without the `<legend>`, a screen reader user hearing just "UPI, radio button" has no idea what question is being answered.
+Exactly like merged cells in Excel. Careful: a cell spanning 2 columns means that row now writes one fewer `<td>` — count your cells per row or the grid goes crooked.
 
-Accessibility isn't charity work — it's correctness. And the semantic version is usually *less* code than the div-soup version.
+### Never use tables for page layout
+
+In the 2000s people built whole page skeletons out of invisible tables. Never do this. Tables are for **data that is genuinely rows-and-columns** (results, timetables, prices). Page layout is CSS's job — coming soon. Screen readers read tables cell by cell; a layout-table becomes word salad for them.
+
+---
+
+## 10. Accessibility notes for tonight
+
+- **Landmarks still apply** — the form sits inside `<main>`, navigation in `<nav>`, as learned on Day 2. Screen-reader users jump between landmarks like bookmarks.
+- **Every input gets a `<label for>`** matched to its `id`. This is the single biggest accessibility win in forms.
+- **`scope` on table headers** — `<th scope="col">` says "I head this column", `<th scope="row">` says "I head this row". A screen reader can then announce "Marks: 92" instead of a bare "92".
+- Group related radio buttons/checkboxes in a `<fieldset>` with a `<legend>` question — the question gets read out with each option.
 
 ---
 
-## Common mistakes
+## Common mistakes I must not make
 
-1. **Forgetting `name` on inputs** — the field silently never reaches the server.
-2. **Using `placeholder` instead of `<label>`** — hint vanishes while typing; screen readers may say nothing.
-3. **`for` not matching `id`** (or duplicate `id`s on the page) — label clicks and announcements break. `for` pairs with `id`, NOT with `name`.
-4. **Radios with different `name`s** — they stop being a group; the user can select all of them.
-5. **`<button>` without an explicit `type` inside a form** — it defaults to `submit` and reloads the page.
-6. **Using checkbox where only one choice is valid** (or radio where many are) — checkbox = many, radio = one.
-7. **`<input type="text">` for passwords, emails, numbers** — you lose masking, validation, and the right mobile keyboard.
-8. **Tables for page layout** — data only. CSS handles layout.
-9. **Skipping `<th>`/`<thead>`** and making header cells with bold `<td>`s — looks the same, means nothing to assistive tech.
-10. **`get` for sensitive data** — the password ends up printed in the URL and browser history.
-
----
+1. **Input without `name`** — the field silently never reaches the server.
+2. **Placeholder used as the only label** — vanishes on typing, unreliable for screen readers. Real `<label>` always.
+3. **`for`/`id` mismatch** (or missing `id`) — the label looks fine but is linked to nothing.
+4. **Radio buttons with different `name`s** — they stop being a group, and all can be selected at once.
+5. **`<button>` without `type` inside a form** — becomes a surprise submit button.
+6. **GET for passwords** — the password lands in the URL, browser history, and server logs. Sensitive data → POST.
+7. **`<td>` outside a `<tr>`** — cells must live inside rows.
+8. **Wrong cell count after `colspan`/`rowspan`** — the grid shifts and looks broken.
+9. **Tables for layout** — data only.
 
 ## Quick recap
 
-- Form = digital bank challan: `<form action method>` wraps inputs; `get` reads, `post` sends.
-- `<input type>` decides behaviour: text, email, password, number, date, checkbox (many), radio (one — grouped by same `name`). Also exist: tel, url, file, hidden, range, color. `required` blocks empty submits; deeper validation is Day 5.
-- Every input needs a `name` (to travel) and a `<label for>` ↔ `id` pairing (to be clickable and announced).
-- `<select>`/`<option>` = dropdown; `<textarea>` = multi-line; content goes between its tags.
-- Button types: `submit` sends, `button` is for JS, missing type = `submit` (trap!).
-- Table = timetable: `table > thead/tbody > tr > th/td`; `caption` and `scope` for accessibility; never for layout.
-- Semantics = meaning. Screen readers navigate by landmarks and labels; correct tags give focus, keyboards, validation and autofill for free.
+- `<form action method>` is the challan; GET = data on the URL (reads), POST = data in the body (sensitive/changes).
+- Data travels as `name=value`; no `name`, no data.
+- `<input type>` picks the box: text, password, email, number, date, checkbox (many), radio (one per `name` group) — plus tel, url, file, hidden, range, color.
+- `<label for>` ↔ `id`: clickable + screen-reader friendly. Placeholder is a hint, never a label.
+- `<select>`/`<option>`/`<optgroup>` = dropdowns; `<textarea>` = multi-line; `<button>` needs an explicit `type` inside forms.
+- `required` = free browser-side check; real validation on Day 5.
+- Tables: `table > thead/tbody/tfoot > tr > th/td`, `caption` for the title, `colspan`/`rowspan` to merge, `scope` on `<th>` — and never for layout.
+
+## Learn more
+
+- HTML forms — https://www.w3schools.com/html/html_forms.asp
+- Form elements — https://www.w3schools.com/html/html_form_elements.asp
+- Input types (full list) — https://www.w3schools.com/html/html_form_input_types.asp
+- Tables — https://www.w3schools.com/html/html_tables.asp
+- MDN on `<form>` — https://developer.mozilla.org/en-US/docs/Web/HTML/Element/form
+
+---
+
+## Tomorrow
+
+Tomorrow night everything so far comes together: headings, lists, links, images, semantic landmarks, and tonight's forms and tables — combined into one real project: **a complete CV page**. My first page that actually looks like something worth shipping.

@@ -1,20 +1,25 @@
 # Day 3 — Functions (Zero to Hero) + Patterns 9–15 + Prime, GCD, LCM
 
-Big day. Functions are the point where code stops being a script and starts being a toolbox. Everything later — recursion, sorting, trees — is built out of functions. So today I go from "what even is a function" all the way to interview-level details.
+## Yesterday → Today
+
+By the end of Day 2 my code could **decide** (`if`) and **repeat** (loops). That is real power. But look at my files honestly: they are one long script, top to bottom, like a kitchen where every dish is cooked in one giant pot. If I want the same star pattern twice, I copy-paste the loop. If the loop has a bug, I fix it in five places.
+
+Today that ends. Today I learn to pack logic into small **reusable machines** called functions. The loops from Day 2 don't disappear — they move *inside* functions and get a name, a doorbell, and a delivery slot.
 
 ---
 
-## 1. What is a function?
+## 1. What is a function, and why should I care?
 
-Think of mom's **chai recipe**. She wrote it once in her head — boil water, add tea leaves, milk, sugar, ginger, strain. Now anyone in the house can "run" that recipe any number of times. Nobody re-invents chai every morning.
+Think of mom's **chai recipe**. She figured it out once — boil water, add tea, milk, sugar, ginger, strain. Now anyone in the house can "run" the recipe any number of times. Nobody re-invents chai every morning.
 
-A **function** is exactly that: a named block of code, written **once**, used **many times**.
+A **function** is exactly that: a named block of code, written **once**, used **many times**. It only runs when somebody *calls* it.
 
-Why bother?
+Why functions matter:
 
 - **No repetition.** Write the logic once, call it 100 times.
-- **Naming.** `is_prime(29)` reads like English. The same 6 lines pasted inline do not.
-- **Fixing bugs in one place.** If the recipe is wrong, you fix the recipe — not 50 copies of it.
+- **Names that read like English.** `is_prime(29)` tells me instantly what is happening. The same six lines pasted inline do not.
+- **Fix bugs in one place.** Wrong recipe? Fix the recipe — not 50 copies of it.
+- **Building blocks.** Everything ahead — recursion, sorting, trees — is functions calling functions. Today is the foundation of the next 221 days.
 
 ---
 
@@ -30,96 +35,99 @@ make_chai()   # runs the recipe
 make_chai()   # runs it again
 ```
 
-Two separate moments:
+Three things to burn into memory:
 
-- **`def`** means "define" — I am *writing down* the recipe. Python reads it, remembers it, runs **nothing**.
-- **`make_chai()`** — the brackets `()` mean "run it **now**". This is called **calling** the function.
+1. `def` **defines** but does not run. Writing the recipe on paper cooks nothing.
+2. The parentheses `()` are the "go" button. `make_chai` (no brackets) just *points at* the function; `make_chai()` *runs* it.
+3. Everything indented under `def` is the function's body — same indentation rule as `if` and `for` from Day 1 and 2.
 
-Writing a recipe on paper never made chai. Only cooking does. The number one beginner confusion: defining a function, running the file, and wondering why nothing printed. Answer: it was never called.
+Naming rules are the same as variables: letters, numbers, underscores; can't start with a number; case-sensitive. Convention: `snake_case`, and the name should say what the function *does* — `calculate_bill`, not `cb`.
 
-Also: the body must be **indented** (shifted right, usually 4 spaces). Indentation is how Python knows which lines belong inside the function.
+One small extra: if you want to reserve a name now and write the body later, `pass` is the official placeholder:
+
+```python
+def coming_soon():
+    pass   # empty body, no error
+```
 
 ---
 
 ## 3. Parameters vs arguments
 
-The recipe can take inputs: "make chai for `n` cups".
-
 ```python
-def make_chai(cups):
-    print("Making", cups, "cups of chai")
+def greet(name):          # name  -> PARAMETER (the empty box in the definition)
+    print("Namaste,", name)
 
-make_chai(2)   # Making 2 cups of chai
-make_chai(5)   # Making 5 cups of chai
+greet("Priya")            # "Priya" -> ARGUMENT (the actual value you pass)
 ```
 
-Two words that sound same but are not:
+Easy memory trick: **P**arameter = **P**laceholder. **A**rgument = **A**ctual value. The parameter is the blank on the form; the argument is what you write in the blank.
 
-- **Parameter** — the *placeholder name* in the definition. Here: `cups`. It is the empty labelled bowl waiting on the counter.
-- **Argument** — the *actual value* you pass while calling. Here: `2` or `5`. It is what you actually put into the bowl.
-
-Parameters live in the `def` line. Arguments live in the call. In interviews people use them interchangeably, but knowing the difference makes error messages ("missing 1 required positional argument") suddenly readable.
-
-Multiple parameters work left to right by position:
-
-```python
-def make_chai(cups, sugar_spoons):
-    print(cups, "cups,", sugar_spoons, "spoons sugar")
-
-make_chai(2, 3)              # positional: 2 -> cups, 3 -> sugar_spoons
-make_chai(sugar_spoons=3, cups=2)   # keyword arguments: order no longer matters
-```
-
-`name=value` in a call is a **keyword argument** — you name the bowl yourself, so order stops mattering.
+A function can take many parameters, separated by commas — and then the call must supply a matching set of arguments.
 
 ---
 
-## 4. Default parameters
-
-Most days, chai has 2 spoons of sugar. Why say it every time? Set a **default**:
+## 4. Positional vs keyword arguments
 
 ```python
-def make_chai(cups, sugar_spoons=2):
+def chai_order(cups, sugar_spoons):
     print(cups, "cups,", sugar_spoons, "spoons sugar")
 
-make_chai(3)      # 3 cups, 2 spoons sugar   (default used)
-make_chai(3, 1)   # 3 cups, 1 spoons sugar   (default overridden)
+chai_order(3, 2)                          # POSITIONAL: matched by order
+chai_order(sugar_spoons=2, cups=3)        # KEYWORD: matched by name, order free
 ```
 
-Rule: parameters **with** defaults must come **after** parameters without defaults. `def f(a=1, b)` is a syntax error — Python cannot tell which argument goes where.
+- **Positional** — Python matches by position: first argument → first parameter. Swap them by mistake and you get 2 cups with 3 spoons of sugar. Python won't complain; your tea will.
+- **Keyword** — you name each value. Order stops mattering, and the call becomes self-documenting.
 
-### Advanced note — the mutable default trap (interview favourite)
+Rule: in one call you can mix them, but **positional ones must come first**. `chai_order(3, sugar_spoons=2)` is fine; `chai_order(cups=3, 2)` is a `SyntaxError`.
 
-A **mutable** object is one that can be changed in place, like a list or dictionary. Never use one as a default:
+---
+
+## 5. Default values — and the famous trap
 
 ```python
-def add_item(item, box=[]):     # DANGER
+def chai_order(cups, sugar_spoons=2):     # default: 2 spoons
+    print(cups, "cups,", sugar_spoons, "spoons sugar")
+
+chai_order(3)        # uses the default -> 2 spoons
+chai_order(3, 1)     # overrides it     -> 1 spoon
+```
+
+Like the chaiwala who knows your "usual". Say nothing, you get the usual; say something, you get that instead. Parameters **with** defaults must come after parameters **without** defaults in the `def` line.
+
+### The mutable-default trap (interview favourite)
+
+```python
+def add_item(item, box=[]):    # DANGER
     box.append(item)
     return box
 
-add_item("roti")    # ['roti']
-add_item("sabzi")   # ['roti', 'sabzi']  <- surprise! roti is still there
+print(add_item("roti"))        # ['roti']
+print(add_item("sabzi"))       # ['roti', 'sabzi']  <- surprise!
 ```
 
-Why? The default `[]` is created **once**, when `def` runs — not fresh on every call. Every call without a `box` argument shares that *same* list, like a "fresh" tiffin box that never got washed — yesterday's roti is still inside.
+Why? The default `[]` is created **once**, at `def` time — not fresh on every call. Every call that relies on the default shares that one list. It's a tiffin box that never gets washed: yesterday's roti is still inside.
 
-The standard fix:
+The fix everyone uses:
 
 ```python
 def add_item(item, box=None):
     if box is None:
-        box = []        # a genuinely new list, every call
+        box = []               # genuinely new list each call
     box.append(item)
     return box
 ```
 
+Rule of thumb: never use a list, dict, or set as a default. Use `None` and create it inside.
+
 ---
 
-## 5. `*args` — the tiffin box
+## 6. `*args` and `**kwargs` — "however many you bring"
 
-Sometimes I don't know how many inputs are coming. A **tiffin box** doesn't demand exactly 3 items — you pack whatever mom gives: 2 rotis today, roti-sabzi-achar-sweet tomorrow.
+Sometimes you don't know in advance how many arguments will come.
 
-`*args` (star-args) collects **any number of positional arguments** into a **tuple** (a fixed, ordered collection):
+### `*args` — collects extra positional arguments into a **tuple**
 
 ```python
 def pack_tiffin(*items):
@@ -129,17 +137,9 @@ pack_tiffin("roti")                       # Packed 1 items: ('roti',)
 pack_tiffin("roti", "sabzi", "achar")     # Packed 3 items: ('roti', 'sabzi', 'achar')
 ```
 
-The magic is the `*`, not the name — `*items`, `*args`, `*stuff` all work. `args` is just the convention everyone uses.
+A tiffin box that stretches: bring 1 item or 10, everything gets packed into one tuple called `items`.
 
-Real use: Python's own `print("a", "b", "c")` accepts any count of values — that is `*args` at work. You can also loop over it: `for item in items:`.
-
----
-
-## 6. `**kwargs` — the labelled masala dabba
-
-A **masala dabba** is that round steel box with small labelled bowls — haldi here, jeera there, mirchi in the corner. Every item has a **name**.
-
-`**kwargs` (keyword-args) collects **any number of `name=value` arguments** into a **dictionary** (a name → value store):
+### `**kwargs` — collects extra keyword arguments into a **dictionary**
 
 ```python
 def masala_dabba(**spices):
@@ -147,205 +147,166 @@ def masala_dabba(**spices):
         print(name, "->", qty)
 
 masala_dabba(haldi="1 tsp", jeera="2 tsp", mirchi="half tsp")
-# haldi -> 1 tsp
-# jeera -> 2 tsp
-# mirchi -> half tsp
 ```
 
-So:
+A masala dabba where every compartment carries a **label**. Inside the function, `spices` is a dict: `{'haldi': '1 tsp', ...}`.
 
-- `*args` = tiffin box: any number of items, **no labels**, order matters → tuple.
-- `**kwargs` = masala dabba: any number of items, **each labelled**, accessed by name → dictionary.
+The names `args` and `kwargs` are just convention — the magic is in `*` and `**`.
 
-Full parameter order (worth memorising for interviews):
+### The full ordering rule in a `def` line
 
 ```python
-def f(normal, default=1, *args, keyword_only=10, **kwargs):
+def f(a, b, /, c, d=4, *args, e, f=6, **kwargs):
 ```
 
-normal params → defaults → `*args` → keyword-only params → `**kwargs`. Any other order errors out.
+Left to right, always this order:
 
-**Keyword-only?** Any parameter written *after* `*args` can only be passed by name — `f(1, 2, keyword_only=99)` works, but there is no position that reaches it. Even without `*args`, a lone `*` in the def line does the same job: `def f(a, *, mode)` forces `mode` to be passed as `mode=...`. Libraries use this so calls stay readable.
+1. **Positional-only** parameters, ended by a bare `/` (rare; you'll see it in `help()` output of built-ins).
+2. **Normal** parameters (positional or keyword), defaults after non-defaults.
+3. `*args` — soaks up any extra positional values. Writing a **bare `*`** here instead means "no extras allowed, but everything after me must be passed by keyword".
+4. **Keyword-only** parameters — anything after `*args` or the bare `*`. Callers *must* name them: `f(..., e=5)`.
+5. `**kwargs` — soaks up any extra keyword values. Always last.
+
+You will mostly write `def f(a, b=1, *args, **kwargs)`. But now nothing in this line can scare you.
+
+```python
+def transfer(amount, *, confirm):     # bare *: confirm is keyword-only
+    ...
+
+transfer(5000, confirm=True)   # works
+transfer(5000, True)           # TypeError — a safety feature, on purpose
+```
 
 ---
 
 ## 7. `return` vs `print` — the most important section today
 
-- **`print`** *shows* a value on the screen. For humans. The value then evaporates.
-- **`return`** *hands the value back* to whoever called the function. For code. Now the caller can store it, add to it, pass it on.
+This confuses every beginner, so slowly:
 
-Analogy: `print` is the chaiwala **shouting** "chai ready!" across the street — you heard it, but you have no cup in hand. `return` is him **handing you the glass** — now you can drink it, share it, put it down for later.
+- `print` **shows** a value on the screen. For human eyes only. The program itself cannot use what was printed.
+- `return` **hands the value back** to whoever called the function. The program can store it, add to it, pass it onward.
+
+The dosa-stall picture: `print` is the cook *announcing* "dosa ready!" — you heard it, but your plate is empty. `return` is the cook actually *placing the dosa on your plate*.
 
 ```python
 def add_print(a, b):
-    print(a + b)          # only shows
+    print(a + b)          # announces 5, hands back nothing
 
 def add_return(a, b):
-    return a + b          # hands back
+    return a + b          # hands 5 back
+
+r1 = add_print(2, 3)      # screen shows 5, but...
+print(r1)                 # None  <- the function returned nothing
+r2 = add_return(2, 3)
+print(r2 + 10)            # 15   <- usable value
 ```
 
-### The classic bug
+Three facts:
 
-Every function in Python gives back *something*. If there is no `return`, it gives back **`None`** — a special value meaning "nothing here". So:
+1. A function without `return` (or with a bare `return`) gives back **`None`**. That's where the classic bug `TypeError: unsupported operand ... 'NoneType'` comes from — you tried `r1 + 10` on a `None`.
+2. `return` **exits the function instantly**. Lines after it never run. (We'll use this as an early exit in prime checking today.)
+3. A function may have **multiple `return` statements** — e.g. one in the `if` branch, one at the end — but only one ever fires per call.
 
-```python
-result = add_print(2, 3)   # screen shows 5 ... but that was print doing its thing
-print(result)              # None  <- the function returned nothing!
-total = result + 10        # TypeError: unsupported operand ... 'NoneType'
-```
-
-It *looked* like it worked because 5 appeared on screen. But `result` holds `None`, and math on `None` crashes. Meanwhile:
-
-```python
-result = add_return(2, 3)  # screen shows nothing
-total = result + 10        # 15 — the value actually came back
-```
-
-Two more things:
-
-- `return` **immediately exits** the function. Lines after it never run. (Useful: return early when the answer is known.)
-- Rule of thumb for DSA: functions should **return** answers. Printing is only for the final display step. `lcm` can only reuse `gcd` if `gcd` *returns* its answer.
-
-### Returning more than one value
-
-A function can hand back several things at once — like a parcel with two items packed together:
+### Returning multiple values — tuple unpacking
 
 ```python
 def min_max(nums):
-    return min(nums), max(nums)    # comma = Python packs them into a tuple
+    return min(nums), max(nums)     # the comma packs ONE tuple
 
-result = min_max([4, 9, 1, 7])     # (1, 9) — one tuple, two values inside
-lo, hi = min_max([4, 9, 1, 7])     # tuple unpacking: lo = 1, hi = 9
+print(min_max([4, 9, 1, 7]))        # (1, 9)
+lo, hi = min_max([4, 9, 1, 7])      # unpacked into two names
 ```
 
-Secretly there is still only **one** return value — a tuple. The comma on the `return` line packs; the comma on the left of `=` unpacks. Just keep the counts matching: two names on the left need exactly two values in the parcel, else `ValueError`.
+Secretly it is still one return value — a tuple. The comma on the `return` line packs; the commas on the left of `=` unpack. Counts must match, or `ValueError`.
 
 ---
 
-## 8. Docstrings — the label on the jar
+## 8. Docstrings, `help()`, and a one-line look at type hints
 
-Mom's pickle jars have labels: "Mango, extra spicy, March 2025." Without the label you open every jar and sniff. A **docstring** is that label for a function — a string, in triple quotes, as the **first line** of the body:
+A **docstring** is a triple-quoted string as the *first* statement of the body — the label on the pickle jar saying what's inside:
 
 ```python
-def gcd(a, b):
-    """Return the greatest common divisor of a and b."""
-    while b:
-        a, b = b, a % b
-    return a
+def chai_bill(cups, price_per_cup=10):
+    """Return the total bill for the given cups of chai."""
+    return cups * price_per_cup
+
+help(chai_bill)     # prints the signature + your docstring
 ```
 
-- Triple quotes `""" """` let the text span multiple lines if needed. One clear sentence is usually enough: what it takes, what it returns.
-- It is not a comment — Python stores it, and `help(gcd)` prints it. That's how `help(print)` and `help(len)` work too: their docstrings.
-- Good habit from day one: every non-trivial function gets a one-line docstring. In interviews it reads as professionalism; six months later it reads as mercy on future-me.
+`help()` works on your functions exactly like it works on `print` — same mechanism. Write a one-line docstring for every non-trivial function; future-you is the main beneficiary.
 
-**Modern-practice note — type hints (one line):** you'll often see `def gcd(a: int, b: int) -> int:` — those `: int` and `-> int` are **type hints**, notes for humans and tools about what goes in and comes out. Python does not enforce them; they're documentation that editors can check. Just recognise them for now.
+**Type hints in one line:** `def chai_bill(cups: int, price: int = 10) -> int:` — optional notes saying what types go in and come out. Python does **not** enforce them; they help humans and editors. Know the syntax, use them when ready.
 
 ---
 
-## 9. Local vs global scope
-
-**Scope** = the region of code where a variable exists.
-
-What happens in the kitchen stays in the kitchen. Variables created **inside** a function are **local** — they are born when the function is called and destroyed when it ends. The outside world cannot see them.
+## 9. Scope — who can see which variable
 
 ```python
+shop_name = "Sharma Chai Corner"    # GLOBAL: whole file can read it
+
 def kitchen():
-    secret_masala = "kasuri methi"   # local
-    print(secret_masala)             # works here
+    secret_masala = "kasuri methi"  # LOCAL: exists only inside kitchen()
+    print(shop_name)                # reading a global: allowed
 
 kitchen()
-print(secret_masala)   # NameError: name 'secret_masala' is not defined
+print(secret_masala)                # NameError!
 ```
 
-Variables created at the top level of the file are **global** — every function can *read* them:
+- **Local** variable: born inside a function, dies when the function ends. What happens in the kitchen stays in the kitchen.
+- **Global** variable: created at file level; every function can *read* it.
 
-```python
-shop_name = "Sharma Chai Corner"   # global
-
-def board():
-    print(shop_name)    # reading global: fine
-
-board()
-```
-
-But *assigning* inside a function creates a **new local** variable — it does not touch the global:
+But **re-assigning** a global inside a function needs a declaration:
 
 ```python
 count = 0
 
 def sell():
-    count = count + 1   # UnboundLocalError!
-```
-
-Python sees `count = ...` inside the function and decides "count is local here" — then `count + 1` tries to read a local that doesn't exist yet. To really modify the global, declare it:
-
-```python
-def sell():
-    global count
+    global count        # without this: UnboundLocalError
     count = count + 1
 ```
 
-Use `global` rarely. Cleaner style: take the value as a parameter, return the new value.
+Without `global`, Python assumes `count = ...` creates a *new local* — and then panics because you read it before assigning.
 
-### LEGB (light touch)
-
-When Python meets a name, it searches in this order:
+**LEGB** — the order Python searches for a name:
 
 1. **L**ocal — inside the current function
-2. **E**nclosing — inside any function wrapping this one (nested functions)
-3. **G**lobal — top level of the file
-4. **B**uilt-in — Python's own names (`print`, `len`, `range`)
+2. **E**nclosing — the function wrapping this one (nested functions)
+3. **G**lobal — file level
+4. **B**uilt-in — Python's own names (`print`, `len`, ...)
 
-First match wins. This is also why naming a variable `list` or `print` is a bad idea — it hides the built-in.
+Like looking for your keys: your pocket → your room → the house → the neighbourhood. First match wins.
 
-**Advanced one-liner:** for a function *inside* a function, `nonlocal` is the cousin of `global` — it reassigns a variable from the Enclosing layer instead of the Global one. File it away; it matters when I reach closures and decorators.
+For the Enclosing layer there is a cousin of `global` called `nonlocal` — it lets an inner function re-assign a variable of its *outer function*. File it away; it matters when we meet closures and decorators later.
 
 ---
 
-## 10. Lambda — the one-line throwaway function (advanced note)
-
-Sometimes I need a tiny function for **one moment** — like borrowing a pen just to sign, not to keep. A **lambda** is a nameless one-liner function:
+## 10. Lambda — the one-line throwaway function
 
 ```python
 square = lambda x: x * x     # same as: def square(x): return x * x
 ```
 
-Shape: `lambda inputs: expression`. No `def`, no name, no `return` — the expression's value *is* the return. Only one expression allowed; no multi-line logic.
+Shape: `lambda inputs: expression`. No name, no `return` keyword — the expression's value *is* the return. Any number of inputs, exactly **one** expression.
 
-Where it actually shines — passed straight into another function, like a sorting rule:
+Like borrowing a pen just to sign one form — you don't take it home. Lambdas shine when a function needs a tiny rule *passed into* another function:
 
 ```python
 students = [("Rahul", 82), ("Priya", 95), ("Aman", 74)]
-students.sort(key=lambda s: s[1])    # sort by marks, not by name
-# [('Aman', 74), ('Rahul', 82), ('Priya', 95)]
-
-doubles = list(map(lambda x: x * 2, [1, 2, 3]))   # [2, 4, 6]
+students.sort(key=lambda s: s[1])        # sort by marks, not name
+print(list(map(lambda x: x * 2, [1, 2, 3])))   # [2, 4, 6]
 ```
 
-`key=` asks "what should I compare?" and the lambda answers "the marks, `s[1]`". Rule of thumb: if the function deserves a name or a second line, use `def`. Lambda is for tiny, use-once rules.
+`filter(lambda x: x % 2 == 0, nums)` is the third classic teammate.
+
+**When NOT to use lambda:** the moment logic needs two steps, an `if/elif` chain, or a name you'll reuse — write a proper `def`. Assigning a lambda to a variable just to reuse it (like `square` above, shown only for teaching) defeats the point; `def` gives better error messages and a docstring slot.
 
 ---
 
-## Common mistakes
+# Practice targets — patterns 9–15 (shapes + hints only)
 
-1. **Defining but never calling.** `def` alone runs nothing. Add `make_chai()`.
-2. **Using a printed result.** `x = f()` where `f` only prints → `x` is `None` → crash later. Return the value.
-3. **Forgetting `return` exits immediately.** Code placed after `return` is dead code.
-4. **Mutable default (`def f(x=[])`).** Shared across calls. Use `x=None` and create inside.
-5. **Default before non-default.** `def f(a=1, b)` is a syntax error.
-6. **Confusing `*args` (tuple, positional) with `**kwargs` (dict, named).**
-7. **Assigning to a global inside a function** without `global` → `UnboundLocalError`.
-8. **Shadowing built-ins** — naming a variable `sum`, `list`, `max` and then wondering why the built-in stopped working.
-9. **Unpacking count mismatch** — `a, b = f()` when `f` returns one or three values → `ValueError`. Names on the left must match values in the tuple.
-10. **Stuffing real logic into a lambda.** If it needs a name, an `if/else` chain, or two lines — it wants to be a `def`.
+I solve these myself in `main.py`. All shapes use `n = 5`. Day 2 reminders: `print(x, end="")` stays on the line; bare `print()` ends a row. New rule for today: **each pattern becomes a function** taking `n` — the loops from Day 2 now live inside functions.
 
----
-
-## Patterns 9–15 (shapes + hints only — I solve them myself)
-
-All shapes shown for `n = 5`. Reminders: `print(x, end="")` stays on the same line; a bare `print()` moves to the next row.
-
-### Pattern 9 — Diamond
+## Pattern 9 — Diamond
 
 ```
     *
@@ -360,9 +321,9 @@ All shapes shown for `n = 5`. Reminders: `print(x, end="")` stays on the same li
     *
 ```
 
-**Hint:** a diamond is just the pyramid (Day 2) with the inverted pyramid stacked directly under it — two outer loops, one after the other. Notice the widest row appears twice.
+**Hint:** Day 2's pyramid + inverted pyramid stacked — two outer loops back to back. The widest row appears twice.
 
-### Pattern 10 — Half diamond / hourglass of stars
+## Pattern 10 — Half diamond
 
 ```
 *
@@ -376,9 +337,9 @@ All shapes shown for `n = 5`. Reminders: `print(x, end="")` stays on the same li
 *
 ```
 
-**Hint:** star counts go 1→n then n−1→1. Either two loops (grow, then shrink), or one loop of about `2n` rows with an `if` deciding which phase you're in.
+**Hint:** star counts climb 1→n then fall n−1→1. Either two loops, or one loop of about 2n rows with an `if` picking the phase.
 
-### Pattern 11 — Binary 0-1 triangle
+## Pattern 11 — Binary 0-1 triangle
 
 ```
 1
@@ -388,9 +349,9 @@ All shapes shown for `n = 5`. Reminders: `print(x, end="")` stays on the same li
 1 0 1 0 1
 ```
 
-**Hint:** each row's *first* digit depends on whether the row number is even or odd; after that, flip every step — and `1 - num` toggles 1↔0 without any `if`.
+**Hint:** odd-numbered rows start with 1, even-numbered rows with 0. Inside a row, `1 - num` flips 1↔0 with no `if` needed.
 
-### Pattern 12 — Number palindrome pyramid
+## Pattern 12 — Number palindrome pyramid
 
 ```
 1        1
@@ -400,9 +361,9 @@ All shapes shown for `n = 5`. Reminders: `print(x, end="")` stays on the same li
 1234554321
 ```
 
-**Hint:** every row = numbers counting **up** + a middle gap of spaces + the same numbers counting **down**; the gap shrinks by 2 each row so total width stays `2n`.
+**Hint:** each row = count up + a shrinking middle gap of spaces + count back down. The gap shrinks by 2 per row, so every row is exactly `2n` characters wide.
 
-### Pattern 13 — Increasing-number triangle
+## Pattern 13 — Increasing-number triangle
 
 ```
 1
@@ -412,9 +373,9 @@ All shapes shown for `n = 5`. Reminders: `print(x, end="")` stays on the same li
 11 12 13 14 15
 ```
 
-**Hint:** one counter initialised **before** the outer loop and never reset — like bank token numbers, the next row continues where the last one stopped.
+**Hint:** one counter created **before** the outer loop and never reset — bank-token style, each row continues where the last stopped.
 
-### Pattern 14 — Alphabet triangle
+## Pattern 14 — Alphabet triangle
 
 ```
 A
@@ -424,9 +385,9 @@ ABCD
 ABCDE
 ```
 
-**Hint:** letters are numbers underneath — `chr(65)` is `'A'`, `chr(66)` is `'B'`; reset the code to 65 at the start of **every** row, then count up `i+1` times.
+**Hint:** characters are numbers underneath — `ord('A')` is 65, `chr(65)` is `'A'`. Reset a code to `ord('A')` at the start of each row, print `chr(code)` and step +1; row `i` holds `i + 1` letters.
 
-### Pattern 15 — Reverse alphabet triangle
+## Pattern 15 — Reverse alphabet triangle
 
 ```
 ABCDE
@@ -436,90 +397,90 @@ AB
 A
 ```
 
-**Hint:** identical to Pattern 14, only the row length shrinks — row `i` prints `n - i` letters, still starting from `'A'` each row.
+**Hint:** same machinery as Pattern 14; only the row length changes — row `i` prints `n − i` letters.
 
 ---
 
-## Prime check — approach only
+# Practice targets — prime, GCD, LCM (approach only, no code here)
 
-A **prime** is a number with exactly two divisors: 1 and itself. So 2, 3, 5, 7, 11... Note: 0 and 1 are **not** prime — handle `n < 2` first.
+These are functions that **return** answers — today's lesson applied.
 
-### Why checking till √n is enough
+## Prime check — and why √n is enough
 
-Divisors come in **pairs** that multiply to `n`. For 36: (1,36), (2,18), (3,12), (4,9), (6,6). In every pair, one partner is small and one is big — and the small one is always ≤ √36 = 6. If 36 had *any* divisor bigger than 6, its partner would necessarily be smaller than 6, and I'd have already met it. So if no divisor exists up to √n, none exists at all. This turns a 10-crore-step loop (for n = 10⁸) into a 10,000-step loop.
+A prime has exactly two divisors: 1 and itself. So 0 and 1 are **not** prime — handle `n < 2` first.
 
-### Pseudocode in words
+The naive way checks every number from 2 to n−1. The smart way rests on one observation: **divisors come in pairs** that multiply back to n. For 36: 2×18, 3×12, 4×9, 6×6. In every pair, the smaller partner is at most √36 = 6. So if n had *any* divisor, one member of its pair sits at or below √n — checking beyond √n re-finds pairs we already saw.
 
-- If n is less than 2, answer is "not prime".
-- Start a checker at 2. While checker × checker is ≤ n:
-  - if n divides evenly by checker (remainder 0), return "not prime" immediately;
-  - otherwise move checker up by 1.
-- If the loop finishes with no divisor found, return "prime".
+**Approach in words:** if n is below 2, answer no. Otherwise try each candidate i starting from 2, continuing while i×i is still at most n (that *is* the √n check, with no square-root function needed). The moment a candidate divides n with remainder 0, return "not prime" immediately — `return` exits on the spot. If the loop finishes with no divisor found, return "prime".
 
-Tip: write `i * i <= n` instead of computing an actual square root — avoids decimal rounding issues. Test with 1 (no), 2 (yes), 9 (no — catches a wrong boundary), 25 (no), 29 (yes).
+Test set: 1 (no), 2 (yes), 9 (no — catches a wrong loop boundary), 25 (no — catches missing the i×i = n case), 29 (yes).
 
----
+## GCD — Euclid's algorithm
 
-## GCD by Euclid — approach only
+GCD of two numbers = the biggest number dividing both. School method: list all divisors of each, pick the largest common one. Works, but slow.
 
-**GCD** (Greatest Common Divisor / HCF) of two numbers = the largest number dividing both. GCD(48, 18) = 6.
+**Euclid's insight (~2300 years old):** `gcd(a, b) == gcd(b, a % b)`. Replacing the bigger number by the remainder doesn't change the gcd — anything dividing both a and b also divides `a % b` — but the numbers shrink *fast* (this is why it runs in about log(min(a, b)) steps).
 
-### The idea, with a change-making feel
+**Change-making picture:** you owe someone ₹48 and only have some ₹18 notion of "notes". Give two 18s (₹36), a remainder of ₹12 is left. Now settle 18 using 12: one 12, remainder 6. Now settle 12 using 6: exactly two 6s, remainder **0**. The last non-zero remainder — **6** — measures both numbers perfectly. That's the gcd.
 
-Like breaking a big amount into smaller and smaller notes: keep replacing the pair with a smaller equivalent pair until one side hits zero. Euclid's identity:
+**Trace of gcd(48, 18)** — do this by hand before coding:
 
-> gcd(a, b) = gcd(b, a mod b)
+```
+(48, 18) -> 48 % 18 = 12 -> (18, 12)
+(18, 12) -> 18 % 12 =  6 -> (12, 6)
+(12,  6) -> 12 %  6 =  0 -> (6, 0)
+second number is 0 -> answer = 6
+```
 
-(`a mod b` = remainder when a is divided by b, written `a % b`.) Why it works: any number that divides both `a` and `b` also divides the remainder `a - q·b` — so the set of common divisors never changes while the numbers shrink fast. When the second number becomes 0, the first **is** the answer, because gcd(x, 0) = x.
+**Approach in words:** while b is not zero, replace the pair (a, b) with (b, a % b). When b hits zero, a is the gcd. Edge check: start with (18, 48) — the first step swaps them automatically, no special case needed.
 
-### Trace: gcd(48, 18)
+## LCM — via GCD, no loop
 
-| step | a  | b  | a % b |
-|------|----|----|-------|
-| 1    | 48 | 18 | 12    |
-| 2    | 18 | 12 | 6     |
-| 3    | 12 | 6  | 0     |
-| 4    | 6  | 0  | —  → **answer 6** |
-
-### Pseudocode in words
-
-- While b is not zero: replace the pair (a, b) with (b, a % b) — in Python one swap line does both at once.
-- When b is zero, return a.
-
-Nice bonus: if the smaller number comes first, e.g. (18, 48), the very first step swaps them automatically — 18 % 48 is 18. No special case needed.
-
----
-
-## LCM — approach only
-
-**LCM** (Least Common Multiple) = the smallest number that both a and b divide into. LCM(4, 6) = 12.
-
-No loop needed. Use the identity:
+The smallest number divisible by both. Don't hunt for it with a loop; use the identity:
 
 > a × b = gcd(a, b) × lcm(a, b)
 
-So: **lcm = (a × b) ÷ gcd(a, b)**.
+**Approach in words:** lcm = (a × b) divided by gcd(a, b), using integer division. Reuse the gcd function you just wrote — possible *only* because gcd **returns** its answer instead of printing it. Today's whole lesson in one line.
 
-### Pseudocode in words
-
-- Compute g = gcd(a, b) by *calling the gcd function I just wrote* — this only works because gcd **returns** its answer instead of printing it. Today's whole lesson in one line.
-- Return (a × b) divided by g, using integer division (`//`) so the result stays a whole number.
-- Slightly safer order for big numbers: divide first, multiply after — (a // g) × b.
-
-Test: (4, 6) → 12; (7, 5) → 35 (co-prime, gcd = 1, so lcm = product).
+Tests: (4, 6) → 12; (7, 5) → 35 (co-prime numbers: gcd is 1, so lcm is just the product).
 
 ---
 
+## Common mistakes I must not make
+
+1. **`return` vs `print` confusion** — storing the "result" of a printing function and getting `None`. If the value is needed later, `return` it.
+2. **Forgetting `()`** — `make_chai` does nothing visible; `make_chai()` runs it.
+3. **Code after `return`** — unreachable, silently never runs.
+4. **Mutable default (`def f(x, box=[])`)** — shared across calls. Default to `None`, create inside.
+5. **Positional after keyword** — `f(cups=3, 2)` is a `SyntaxError`; positionals go first.
+6. **Assigning to a global without `global`** — gives `UnboundLocalError`, not the change you wanted.
+7. **Prime loop stopping at `i * i < n`** instead of `<=` — declares 25 prime. Test with a perfect square.
+8. **Multi-line logic crammed into a lambda** — if it doesn't fit one honest expression, it wants a `def`.
+9. **Indentation drift** — a line accidentally un-indented falls out of the function body.
+
 ## Quick recap
 
-- Function = recipe written once, called many times. `def` writes it; `name()` runs it.
-- **Parameter** = placeholder in `def`; **argument** = actual value in the call.
-- Defaults fill in missing arguments; never use a mutable (list/dict) as a default.
-- `*args` = tiffin box → tuple of unnamed extras. `**kwargs` = masala dabba → dict of named extras. Order: normal, defaults, `*args`, keyword-only, `**kwargs`.
-- `return` hands the value back (usable); `print` only displays it and the function returns `None`. Storing a printed "result" is the classic bug.
-- `return a, b` packs a tuple; `x, y = f()` unpacks it — multiple answers from one function.
-- Docstring = `"""one-line label"""` as the first line; `help(f)` reads it back. Type hints (`a: int) -> int`) are optional notes, not enforced.
-- Locals live and die inside the function; globals are readable everywhere but need `global` to be reassigned (`nonlocal` for the nested-function case). Lookup order: LEGB.
-- Lambda = nameless one-expression function; best as a `key=` rule for `sort`/`sorted` or inside `map`. Anything bigger deserves a `def`.
-- Diamond = pyramid + inverted pyramid. One never-resetting counter → increasing triangle. `chr(65)` = `'A'` unlocks alphabet patterns.
-- Prime: divisors pair up, so checking up to √n suffices. GCD: keep taking remainders till zero. LCM = (a×b) ÷ gcd — possible only because gcd *returns*.
+- Function = named, reusable block; `def` defines, `name()` runs.
+- Parameter = placeholder in the def; argument = actual value in the call.
+- Positional args match by order; keyword args match by name; positionals first.
+- Defaults make arguments optional; never default to a mutable — use `None`.
+- `*args` → tuple of extra positionals; `**kwargs` → dict of extra keywords; ordering: positional-only `/`, normal, `*args` (or bare `*`), keyword-only, `**kwargs`.
+- `print` shows; `return` hands back. No return → `None`. `return` exits instantly. `return a, b` packs a tuple; unpack with `lo, hi = ...`.
+- Docstring = first-line label; read it back with `help()`. Type hints are optional notes.
+- Scope: local dies with the function; LEGB is the lookup order; `global`/`nonlocal` allow re-assignment upward.
+- Lambda = one-expression nameless function; great as `key=`/`map`/`filter` rules, wrong for anything bigger.
+- Prime: check divisors only up to √n (divisor pairs). GCD: Euclid, `(a, b) → (b, a % b)`. LCM: `a*b // gcd`.
+
+## Learn more
+
+- Python functions — https://www.w3schools.com/python/python_functions.asp
+- Lambda — https://www.w3schools.com/python/python_lambda.asp
+- `*args` / `**kwargs` — https://www.geeksforgeeks.org/python/args-kwargs-python/
+- Euclidean algorithm — https://www.geeksforgeeks.org/dsa/euclidean-algorithms-basic-and-extended/
+- Official tutorial on defining functions — https://docs.python.org/3/tutorial/controlflow.html#defining-functions
+
+---
+
+## Tomorrow
+
+Now that I can *write* real code — decisions, loops, functions — the next question is unavoidable: **is my code fast or slow?** Two solutions can both be "correct" and yet one finishes in a blink while the other takes an hour. Day 4 = **Big-O**: the language for judging code speed before ever running it.

@@ -1,464 +1,558 @@
-# Day 2 — Conditionals, Loops, and Star Patterns (Striver 1–8)
+# Day 2 — Control Flow: Teaching the Program to Decide and Repeat
 
-Plan for today: learn how Python makes decisions (`if`), how it repeats work (`for`, `while`), and then use loops to draw star/number patterns. Patterns look childish but they quietly build the exact muscle interviews test: turning a picture into a formula.
+**Yesterday → Today:** Yesterday you learned to store data in labelled dabbas (variables) and to talk to the program (`input()` / `print()`). But the program was a straight road — line 1, line 2, line 3, done. Today it learns two superpowers: to **DECIDE** (if/elif/else) and to **REPEAT** (while/for). Every program you'll ever write is just these two powers mixed with yesterday's storage.
 
 ---
 
-## 1. Conditionals: if / elif / else
+## 1. `if` — the program's first decision
 
-A **conditional** is a decision point in code. "If this is true, do this. Otherwise, do that."
-
-Think of an auto-rickshaw meter with fare slabs:
-
-- First 1.5 km → flat ₹25
-- Up to 5 km → ₹25 + ₹15 per extra km
-- Beyond 5 km → higher rate per km
+Think of a traffic signal. The rule in your head is: *if the light is green, go*. Python writes that thought almost word for word:
 
 ```python
-km = 4.0
+light = "green"
+if light == "green":
+    print("Go!")
+```
 
-if km <= 1.5:
-    fare = 25
-elif km <= 5:
-    fare = 25 + (km - 1.5) * 15
+Three things to notice:
+
+- The condition ends with a colon `:` — Python's way of saying "here comes the action".
+- The action line is pushed 4 spaces in. This **indentation** is not decoration — it's how Python knows which lines belong to the `if`. Forget it and you get `IndentationError`.
+- Everything indented under the `if` runs only when the condition is `True`. The moment you un-indent, you're back outside the `if`.
+
+```python
+marks = 82
+if marks >= 35:
+    print("Pass!")           # runs only if condition is True
+    print("Party tonight")   # also inside the if
+print("Result declared")     # NOT indented — runs always
+```
+
+## 2. `else` — the "otherwise" plan
+
+```python
+marks = 30
+if marks >= 35:
+    print("Pass!")
 else:
-    fare = 25 + 3.5 * 15 + (km - 5) * 18
-
-print(fare)
+    print("Supplementary exam in July")
 ```
 
-How to read this:
+Exactly one of the two blocks runs. Never both, never neither.
 
-- `if` — the first check. If true, its block runs and everything below is skipped.
-- `elif` — short for "else if". Checked **only** when the checks above it failed.
-- `else` — the catch-all. Runs when nothing above matched. No condition allowed on it.
+## 3. `elif` — many doors, first open one wins
 
-Two rules that save you from bugs:
-
-1. **Order matters.** Python checks top to bottom and stops at the first true condition. If you put `km <= 5` before `km <= 1.5`, a 1 km ride would wrongly enter the `km <= 5` slab — because 1 is also ≤ 5. Always put the narrowest slab first.
-2. **Exactly one block runs** in an `if/elif/else` chain. Never two, never zero (as long as `else` exists).
-
-Also note the **colon** `:` at the end of each condition line, and the **indentation** (the 4 spaces). In Python, indentation is not decoration — it is how Python knows which lines belong inside the `if`.
-
-### `==` vs `=` — and the rest of the comparison family
-
-`=` **stores**, `==` **asks**. `x = 5` puts 5 into the box named `x`. `x == 5` asks "is the box holding 5?" and answers `True` or `False`. Writing `if x = 5:` is a syntax error — Python refuses to even run it.
-
-| Operator | Asks |
-|---|---|
-| `==` | equal? |
-| `!=` | not equal? |
-| `<` , `>` | strictly smaller / bigger? |
-| `<=` , `>=` | smaller-or-equal / bigger-or-equal? |
-
-Every comparison produces a `True` or `False` — and that is exactly what `if` eats.
-
-**Chained comparison** — a Python speciality. Instead of writing `1 < x and x < 10`, write it like maths:
+`elif` = "else if". Use it when there are more than two possibilities — like grading:
 
 ```python
-if 1 < x < 10:
-    print("x sits between 1 and 10")
+marks = 78
+if marks >= 90:
+    print("Grade A")
+elif marks >= 75:
+    print("Grade B")
+elif marks >= 60:
+    print("Grade C")
+else:
+    print("Grade D")
 ```
 
-Both ends get checked in one go. Reads exactly like the maths teacher wrote it on the board.
+### Order matters — a lot
 
-### Combining checks: `and`, `or`, `not`
-
-Real decisions often need two conditions at once. Metro smart-card gate: it opens only if the card is valid **and** the balance covers the minimum fare.
+Python checks conditions **top to bottom** and runs the **first** one that is `True`, then skips the rest completely. Watch this trap:
 
 ```python
-card_valid = True
-balance = 12
-
-if card_valid and balance >= 10:
-    print("Gate opens")
+marks = 95
+if marks >= 60:
+    print("Grade C")     # 95 >= 60 is True, so THIS runs!
+elif marks >= 90:
+    print("Grade A")     # never even checked
 ```
 
-- `and` — True only when **both** sides are True. Strict parent: homework done AND room clean, only then TV.
-- `or` — True when **at least one** side is True. Priority queue at the bank: senior citizen OR differently-abled → separate line.
-- `not` — flips the answer. `not True` is `False`.
+A topper gets Grade C because the loose condition came first. Rule of thumb: **put the strictest condition first**. It's like security check at the airport — VIP gate check happens before the general gate, otherwise VIPs end up in the general queue.
 
-The classic trap: `if x == 5 or 6:` does NOT mean "x is 5 or 6". Python reads it as `(x == 5) or (6)`, and a bare `6` counts as True on its own — so the condition is *always* true. Repeat the variable: `if x == 5 or x == 6:`.
+## 4. Nested `if` — a decision inside a decision
 
-### Nested ifs — a check inside a check
-
-An `if` can sit inside another `if`. Airport security: the first gate checks your ticket; only after you pass that does the baggage scan even happen.
+You can put an `if` inside another `if`. Like entering a movie theatre: first the guard checks your ticket, and only *then* checks if you have outside food.
 
 ```python
 has_ticket = True
-bag_ok = True
+age = 15
 
 if has_ticket:
-    if bag_ok:
-        print("Board the flight")
+    if age >= 18:
+        print("Watch any movie")
     else:
-        print("Bag needs a re-check")
+        print("U/A movies only")
 else:
-    print("No entry without a ticket")
+    print("Ticket counter is that way")
 ```
 
-Each level goes 4 more spaces in. Two levels are fine; three or more usually means the logic can be flattened. Notice: if both failures gave the *same* message, `if has_ticket and bag_ok:` would do the whole job in one line — nest only when the different failures need different handling.
+Each level goes 4 more spaces in. Two or three levels is fine; more than that and the code becomes a ladder nobody wants to climb — we'll fix that with `and` in a minute.
 
-### One-line if — the ternary
+## 5. Comparison operators — the questions you can ask
 
-When each branch just picks a value, Python has a one-liner:
-
-```python
-result = "Pass" if marks >= 35 else "Fail"
-```
-
-Read it left to right: "result is Pass — if marks ≥ 35 — otherwise Fail." Same as a four-line `if/else`, but for simple pick-one-of-two cases. If it stops reading like a sentence, go back to the full `if`.
-
-### Advanced note: truthiness — what counts as False
-
-`if` does not strictly need a `True`/`False`. Give it any value and it asks: "is this *something* or *nothing*?" The "nothing" values — called **falsy** — are:
-
-- `0` and `0.0`
-- `""` (empty string)
-- `[]` (empty list — you will meet lists in a few days)
-- `None`
-
-Everything else is truthy — including `-1` and even the string `"False"`. So `if name:` is Pythonic shorthand for "if name is not empty". Handy — and it is also exactly why the `x == 5 or 6` trap above always fires: the bare `6` is truthy.
-
----
-
-## 2. `for` vs `while` — when to use which
-
-Both are **loops** — a way to repeat lines of code without copy-pasting them.
-
-**`for` loop = T20 match.** You know before the innings starts: exactly 20 overs, not 21, not 19. When the repeat-count is known in advance, use `for`.
-
-```python
-for over in range(1, 21):   # overs 1 to 20
-    print("Bowling over", over)
-```
-
-**`while` loop = filling a bucket from a tap.** You do not know how many mugs it will take. You keep pouring **while** the bucket is not full. When you only know the *stopping condition*, not the count, use `while`.
-
-```python
-bucket = 0          # litres currently in bucket
-capacity = 10
-
-while bucket < capacity:
-    bucket = bucket + 3   # one mug = 3 litres
-print("Full! Bucket has", bucket)
-```
-
-The `while` loop checks the condition **before** every round. The moment `bucket < capacity` becomes false, the loop ends and the line after it runs.
-
-### Two ways to `for`-loop: by counter, or over the items
-
-`for` can walk a counter (`range`) — or walk **directly over the items** of anything that holds items, like the letters of a string:
-
-```python
-name = "CHAI"
-
-for i in range(len(name)):   # by counter: i = 0, 1, 2, 3
-    print(i, name[i])
-
-for letter in name:          # over items: letter = 'C', 'H', 'A', 'I'
-    print(letter)
-```
-
-The second style is cleaner when you only need each item. Use the counter style when you also need the **position** (the index). Same choice comes back with lists in a few days — remember it.
-
-**Danger with `while`:** if you forget the line that changes `bucket`, the condition never becomes false and the loop runs forever. That is called an **infinite loop**. Rule of thumb: every `while` loop must have a line inside it that pushes it towards the exit.
-
-For today's patterns we always know the number of rows in advance, so patterns are `for`-loop territory.
-
----
-
-## 3. `range()` — the counting machine
-
-`range()` generates a sequence of numbers for a `for` loop to walk through. Three forms:
-
-```python
-range(5)          # 0, 1, 2, 3, 4
-range(2, 6)       # 2, 3, 4, 5
-range(1, 10, 2)   # 1, 3, 5, 7, 9   (step of 2)
-```
-
-Full form: `range(start, stop, step)`.
-
-- `start` — where counting begins (default 0).
-- `stop` — where counting **ends, but is never included**.
-- `step` — jump size (default 1).
-
-### The number-one gotcha: stop is EXCLUDED
-
-`range(5)` gives five numbers, but the number 5 itself is **not** one of them. It is like a local train announcement "this train goes up to Dadar" — meaning it stops *before* entering the next station. If you want to actually print 1 to n, you must write `range(1, n + 1)`.
-
-### Negative step — counting down
-
-```python
-range(5, 0, -1)   # 5, 4, 3, 2, 1
-```
-
-For a countdown, `start` must be bigger than `stop`, and `step` must be negative. Common mistake: `range(5, 0)` with no step gives **nothing** — the default step is +1, and you cannot climb from 5 up to 0.
-
-Quick self-test: how many numbers does `range(3, 10, 2)` give? Answer: 3, 5, 7, 9 → four numbers. If you got that, `range` is yours.
-
----
-
-## 4. Nested loops — a loop inside a loop
-
-**Nested** simply means one thing placed inside another. A nested loop is a loop whose body contains another loop.
-
-Picture the seating at a shaadi: 5 rows of chairs, 4 chairs in each row. To greet every guest, you walk along row 1 chair by chair, then move to row 2 and repeat.
-
-```python
-for row in range(1, 6):          # 5 rows
-    for chair in range(1, 5):    # 4 chairs per row
-        print("Row", row, "Chair", chair)
-```
-
-The rule to burn into memory:
-
-> **For every ONE step of the outer loop, the inner loop runs COMPLETELY.**
-
-So the outer loop runs 5 times, the inner loop runs 4 times *per outer step*, giving 5 × 4 = 20 greetings. Outer loop = which row. Inner loop = movement within that row. Every pattern problem today is exactly this shape.
-
----
-
-## 5. `break` vs `continue`
-
-Two keywords that change a loop's flow from inside.
-
-**`break` = batsman is out.** The innings (loop) ends immediately. Nothing more happens inside the loop; control jumps to the first line after the loop.
-
-```python
-for ball in range(1, 7):
-    if ball == 4:
-        print("OUT on ball", ball)
-        break
-    print("Ball", ball, "- runs scored")
-# prints balls 1,2,3 then "OUT on ball 4" and stops
-```
-
-**`continue` = dot ball.** That one delivery gives nothing, but the over is not finished — skip the rest of *this* round and go straight to the next one.
-
-```python
-for ball in range(1, 7):
-    if ball == 3:
-        continue          # skip ball 3 entirely
-    print("Ball", ball, "- counted")
-# prints balls 1,2,4,5,6 — ball 3 is silently skipped
-```
-
-Memory hook: **break = out of the loop. continue = on to the next round.**
-
-One more subtlety for interviews: in a *nested* loop, `break` only exits the **innermost** loop it sits in — the outer loop keeps going.
-
-### `pass` — the do-nothing placeholder
-
-`pass` means "nothing here, carry on". Python refuses an empty block — every `if`, `for`, `while` must contain at least one line. `pass` is the legal filler while the real code is still pending, like a "Work in Progress" board on a dug-up road.
-
-```python
-for ball in range(1, 7):
-    if ball == 3:
-        pass        # TODO: decide later what happens on ball 3
-    print("Ball", ball)
-# prints ALL six balls — pass changed nothing
-```
-
-Do not confuse it with `continue`: `continue` skips the rest of that round; `pass` skips nothing at all — it is pure filler.
-
-### Advanced note: the loop's `else` clause
-
-A `for` or `while` loop can carry an `else` block. Strange but true: it runs when the loop finished **without hitting `break`**.
-
-```python
-for seat in range(1, 6):        # searching this row for seat 10
-    if seat == 10:
-        print("Found it!")
-        break
-else:
-    print("Not in this row")    # loop ended naturally → no break happened
-```
-
-Memory hook: loop-`else` = "**no break happened**". Its classic use is exactly this search-and-report-failure shape. Rarely written in real code, but interviewers love asking what it does.
-
----
-
-## 6. The universal 3-step pattern recipe
-
-Every pattern problem — all 8 today, and the harder ones later — falls to the same recipe:
-
-1. **Outer loop = rows.** Count the rows in the picture. If there are `n` rows, write `for i in range(n)` (or `range(1, n+1)` if 1-based maths feels cleaner).
-2. **Inner loop(s) = what one row contains, as a formula in `i`.** Stare at row `i` and ask: how many spaces? how many stars/numbers? Write each count as an expression using `i` and `n`. If a row has spaces *then* stars, use two inner loops one after the other.
-3. **A bare `print()` at the end of each row.** Inside a row we print with `print("*", end="")` — `end=""` means "do not jump to a new line". The empty `print()` after the inner loop(s) is what moves us to the next row.
-
-The whole game is step 2: **make a small table of row number vs count, then find the formula.**
-
-### Worked example (my demo, not one of the 8): right-ALIGNED triangle of `#`
-
-Target for `n = 5` (dots shown where spaces go, just for clarity):
-
-```
-....#
-...##
-..###
-.####
-#####
-```
-
-**Step 1 — rows:** 5 rows → outer loop `for i in range(1, n + 1)` with `i` = 1 to 5.
-
-**Step 2 — the table.** For each row, count spaces and hashes straight off the picture:
-
-| row `i` | spaces | hashes |
+| Operator | Question it asks | Example (`a=7, b=3`) |
 |---|---|---|
-| 1 | 4 | 1 |
-| 2 | 3 | 2 |
-| 3 | 2 | 3 |
-| 4 | 1 | 4 |
-| 5 | 0 | 5 |
+| `==` | are they equal? | `a == b` → `False` |
+| `!=` | are they NOT equal? | `a != b` → `True` |
+| `>` | left bigger? | `a > b` → `True` |
+| `<` | left smaller? | `a < b` → `False` |
+| `>=` | bigger or equal? | `a >= 7` → `True` |
+| `<=` | smaller or equal? | `b <= 3` → `True` |
 
-Now find formulas. Hashes column is just `i`. Spaces column: 4,3,2,1,0 against `i` = 1..5 → each is `5 - i`, i.e. **`n - i`**. Check the edges: `i=1` → 4 spaces ✓, `i=5` → 0 spaces ✓. Edges correct → formula correct.
+### `=` vs `==` — the classic beginner burn
 
-**Step 3 — write it:**
+- `=` **assigns** — "put this value in the dabba": `x = 5`
+- `==` **compares** — "is the dabba's value 5?": `x == 5`
+
+```python
+x = 5        # assignment: x is now 5
+x == 5       # comparison: True
+if x = 5:    # SyntaxError! Python refuses to let you assign inside an if
+```
+
+Good news: Python catches this mistake for you with an error instead of silently doing the wrong thing.
+
+### Chained comparisons — Python's gift
+
+Maths teachers write `0 <= marks <= 100`. Most languages force you to split that. Python lets you write it as-is:
+
+```python
+marks = 82
+if 0 <= marks <= 100:
+    print("Valid marks")
+```
+
+This means `0 <= marks` **and** `marks <= 100`. Clean.
+
+## 6. Logical operators — combining questions
+
+| Operator | True when... | Kitchen version |
+|---|---|---|
+| `and` | BOTH sides are True | chai needs milk **and** tea powder |
+| `or` | AT LEAST one side is True | payment works by cash **or** UPI |
+| `not` | flips True↔False | `not raining` = it's dry |
+
+```python
+age = 20
+has_id = True
+if age >= 18 and has_id:
+    print("Voter slip issued")
+
+day = "Sunday"
+if day == "Saturday" or day == "Sunday":
+    print("Weekend!")
+
+is_raining = False
+if not is_raining:
+    print("Match is on")
+```
+
+`and`/`or` also let you flatten yesterday's nested movie-theatre example:
+
+```python
+if has_ticket and age >= 18:
+    print("Watch any movie")
+```
+
+### ⚠️ The `x == 5 or 6` trap
+
+This looks right and is completely wrong:
+
+```python
+x = 100
+if x == 5 or 6:          # WRONG — always True!
+    print("runs every single time")
+```
+
+Python reads it as `(x == 5) or (6)`. And a bare `6` is truthy (next section), so the whole thing is always `True`. You must repeat the comparison:
+
+```python
+if x == 5 or x == 6:     # correct
+```
+
+In English "if x is 5 or 6" makes sense. Python is not English. Each side of `or` must be a complete question.
+
+## 7. Truthiness — everything has a True/False shadow
+
+Put any value inside an `if` and Python converts it to `True` or `False`:
+
+- **Falsy** (act like `False`): `0`, `0.0`, `""` (empty string), `None`, and empty containers like `[]`
+- **Truthy** (act like `True`): everything else — `1`, `-5`, `"hello"`, even `"False"` (it's a non-empty string!)
+
+```python
+name = input("Your name: ")
+if name:                      # same as: if name != ""
+    print("Hello,", name)
+else:
+    print("You typed nothing!")
+```
+
+Like a dabba check — an empty dabba is "nothing there" (falsy), a dabba with even one grain is "something there" (truthy).
+
+## 8. Ternary — one-line if/else
+
+For tiny decisions, Python has a shorthand:
+
+```python
+marks = 40
+result = "Pass" if marks >= 35 else "Fail"
+print(result)    # Pass
+```
+
+Read it as English: *result is "Pass" if marks are enough, else "Fail"*. Use it only when it fits on one readable line. If it needs scrolling, go back to the full `if/else`.
+
+---
+
+## 9. `while` — repeat as long as a condition holds
+
+`while` is a chowkidar (watchman) at a gate. Before every round, he checks the condition. Condition `True`? One more round. `False`? Duty over.
+
+```python
+count = 1
+while count <= 5:
+    print("Round", count)
+    count = count + 1     # remember from yesterday: same as count += 1
+print("Done")
+```
+
+```
+Round 1
+Round 2
+Round 3
+Round 4
+Round 5
+Done
+```
+
+Every `while` loop has 3 mandatory pieces:
+
+1. **Setup** before the loop: `count = 1`
+2. **Condition** checked each round: `count <= 5`
+3. **Update** inside the loop: `count += 1`
+
+### Infinite loops — forget the update, run forever
+
+```python
+count = 1
+while count <= 5:
+    print("Round", count)
+    # forgot count += 1  →  count is 1 forever  →  loop never ends!
+```
+
+Your terminal will keep printing until you press **Ctrl+C** (the emergency brake — remember this shortcut). Every programmer writes an accidental infinite loop in week one. Now you know the cure: check that something inside the loop pushes the condition towards `False`.
+
+Sometimes an infinite loop is *intentional* — `while True:` with a `break` inside is how ATMs and menus run forever until you choose "Exit". More on `break` below.
+
+## 10. `for` + `range()` — repeat a known number of times
+
+When you know *how many* times to repeat, `for` is your friend:
+
+```python
+for i in range(5):
+    print("Namaste", i)
+```
+
+```
+Namaste 0
+Namaste 1
+Namaste 2
+Namaste 3
+Namaste 4
+```
+
+### `range()` — the number machine
+
+`range(start, stop, step)` generates numbers **from `start`, up to but NOT including `stop`, jumping by `step`.**
+
+| Call | Produces | Note |
+|---|---|---|
+| `range(5)` | 0 1 2 3 4 | start defaults to 0; **5 excluded** |
+| `range(1, 6)` | 1 2 3 4 5 | start at 1, stop before 6 |
+| `range(2, 11, 2)` | 2 4 6 8 10 | step 2 — even numbers |
+| `range(5, 0, -1)` | 5 4 3 2 1 | negative step counts DOWN |
+| `range(5, 0)` | *(nothing!)* | empty — can't go 5→0 with step +1 |
+
+The stop-is-excluded rule trips everyone. Think of it like floors in a lift display "0 to 4" — five floors, but you never reach floor 5. Want 1 to n? Write `range(1, n + 1)`.
+
+The empty range is a silent bug: `range(5, 0)` doesn't crash — the loop body just never runs, and you sit wondering why nothing printed. Counting down? You **must** give step `-1`.
+
+### Counter vs items — two ways to loop
+
+`for` can walk through any sequence directly — even a string:
+
+```python
+for ch in "chai":
+    print(ch)          # c, h, a, i — one letter per round
+```
+
+So you have two styles:
+
+```python
+menu = "dosa"
+for ch in menu:              # style 1: give me the ITEMS
+    print(ch)
+
+for i in range(len(menu)):   # style 2: give me the POSITIONS (counter)
+    print(i, menu[i])        # 0 d, 1 o, 2 s, 3 a
+```
+
+Use style 1 when you only need the items. Use style 2 when you need the position number too (like "3rd letter"). Star patterns today are pure counter work — style 2 territory.
+
+## 11. Nested loops — a loop inside a loop
+
+Cricket: a match has overs, each over has 6 balls. Outer loop = overs, inner loop = balls. **The inner loop finishes ALL its rounds for every single round of the outer loop.**
+
+```python
+for over in range(1, 3):          # 2 overs
+    for ball in range(1, 7):      # 6 balls each
+        print("Over", over, "Ball", ball)
+```
+
+That prints 2 × 6 = 12 lines. The over changes slowly; the ball spins fast. This slow-outer / fast-inner rhythm is the engine behind every star pattern you'll draw today.
+
+## 12. `break`, `continue`, `pass` — the loop's remote control
+
+**`break` — stop the whole loop immediately.** You're searching a queue of dabbas for the one with sugar; the moment you find it, you stop opening the rest.
+
+```python
+for i in range(1, 11):
+    if i == 4:
+        break
+    print(i)          # 1 2 3 — the loop DIES at 4
+```
+
+**`continue` — skip this round, jump to the next.** Like a conductor skipping seat 4 because it's empty, but continuing to check seats 5, 6, 7...
+
+```python
+for i in range(1, 6):
+    if i == 3:
+        continue
+    print(i)          # 1 2 4 5 — only 3 is skipped
+```
+
+**`pass` — do nothing, but legally.** Python refuses an empty block. `pass` is a placeholder — "I'll write this later":
+
+```python
+for i in range(5):
+    pass              # loop runs 5 times doing nothing; no error
+```
+
+Quick memory hook: `break` = leave the queue, `continue` = skip your turn but stay in the queue, `pass` = stand quietly doing nothing.
+
+## 13. Loop `else` — the loop's report card (advanced)
+
+Surprise: loops can have an `else` too. The `else` block runs **only if the loop finished all rounds without hitting `break`.**
+
+```python
+for i in range(2, 7):
+    if 49 % i == 0:               # remember % from yesterday — remainder
+        print("Divisible by", i)
+        break
+else:
+    print("No divisor found")     # runs only if no break happened
+```
+
+For 49, the loop finds 7 and breaks — `else` stays silent. For 47, no divisor is found, the loop completes, and `else` fires. Think of it as: `break` = search succeeded, `else` = search came up empty. Rarely needed, but interviewers love asking about it.
+
+## 14. `for` vs `while` — which one when?
+
+| Use `for` when... | Use `while` when... |
+|---|---|
+| You KNOW how many rounds: "print 5 rows", "check each letter" | You DON'T know: "keep asking until PIN is correct" |
+| Walking through a sequence | Waiting for a condition to change |
+| Star patterns, tables, fixed counts | Menus, retries, games, `while True` + `break` |
+
+Simple test: can you finish the sentence "repeat ___ times" with a number? Use `for`. If the sentence is "repeat until ___", use `while`.
+
+---
+
+## 15. The universal 3-step pattern recipe
+
+Every star/number pattern in existence surrenders to the same recipe:
+
+1. **Outer loop = rows.** Count the rows in the target picture. That's your `for row in range(...)`.
+2. **Inner loop(s) = one row's contents.** Stare at ONE row and ask: how many spaces? how many stars/numbers? *as a formula of the row number*. Make a small table on paper: row 1 → ?, row 2 → ?, row 3 → ? until the formula jumps out.
+3. **Newline after each row.** Print the row's pieces with `end=""` (remember `end` from yesterday — it stops `print` from jumping to a new line), then one empty `print()` to close the row.
+
+### One fully-worked demo: the Hollow Square (NOT one of your 8 — those you solve yourself)
+
+Target for n = 5:
+
+```
+* * * * *
+*       *
+*       *
+*       *
+* * * * *
+```
+
+**Step 1 — rows:** 5 rows → outer loop `for row in range(1, 6)`.
+
+**Step 2 — one row's contents:** make the paper table.
+
+| row | what's in it |
+|---|---|
+| 1 | 5 stars (top border) |
+| 2, 3, 4 | star, 3 gaps, star |
+| 5 | 5 stars (bottom border) |
+
+The rule per cell: print `*` if we're on the **first/last row** OR the **first/last column** — otherwise print a gap. That's an `if` with `or` — today's two topics shaking hands!
+
+**Step 3 — code it:**
 
 ```python
 n = 5
-for i in range(1, n + 1):
-    for s in range(n - i):        # spaces first
-        print(" ", end="")
-    for h in range(i):            # then hashes
-        print("#", end="")
-    print()                       # row done, new line
+for row in range(1, n + 1):
+    for col in range(1, n + 1):
+        if row == 1 or row == n or col == 1 or col == n:
+            print("*", end=" ")
+        else:
+            print(" ", end=" ")
+    print()    # close the row
 ```
 
-That is the entire method. Picture → table → formula → code. Never try to "imagine" the formula directly; the table makes it mechanical.
+Note how we wrote `row == 1 or row == n` — NOT `row == 1 or n` (Section 6's trap, dodged!).
+
+Every pattern below is this same recipe with a different Step-2 table. Do the paper table first, every time. Code without the table is guessing.
 
 ---
 
-## 7. Practice patterns 1–8 (shapes + hints only — work them out yourself)
+## 16. Striver Patterns 1–8 — shapes + hints only
 
-For each: the expected output for `n = 5`, plus a nudge. Build the row table like above before touching the keyboard.
+Attempt each in `main.py` before peeking at hints. All shapes shown for **n = 5**. No solutions here — the struggle is the workout.
 
-### Pattern 1 — Solid rectangle
+### Pattern 1 — Solid Rectangle
 
 ```
-*****
-*****
-*****
-*****
-*****
+* * * * *
+* * * * *
+* * * * *
+* * * * *
+* * * * *
 ```
 
-Hint: every row is identical — `n` stars each, `n` rows. Neither loop needs to depend on `i`.
+*Hint:* every row is identical. Outer loop rows, inner loop columns, star every time. The "hello world" of nested loops.
 
-### Pattern 2 — Right triangle
+### Pattern 2 — Right Triangle
 
 ```
 *
-**
-***
-****
-*****
+* *
+* * *
+* * * *
+* * * * *
 ```
 
-Hint: row `i` has `i` stars (1-based). Only the inner loop's stop changes with the row. Watch out for the off-by-one if you count from 0.
+*Hint:* paper table — row 1 has 1 star, row 2 has 2... row `i` has `?` stars. The inner loop's `range` depends on the outer variable.
 
-### Pattern 3 — Number triangle (counting across)
-
-```
-1
-12
-123
-1234
-12345
-```
-
-Hint: same skeleton as Pattern 2, but print the **inner** loop variable instead of a star. Start the inner count from 1, not 0.
-
-### Pattern 4 — Number triangle (row number repeated)
+### Pattern 3 — Number Triangle (counting across)
 
 ```
 1
-22
-333
-4444
-55555
+1 2
+1 2 3
+1 2 3 4
+1 2 3 4 5
 ```
 
-Hint: one-character change from Pattern 3 — print the **outer** variable. The inner loop still decides *how many*, it just no longer decides *what*.
+*Hint:* same skeleton as Pattern 2, but instead of `*`, print the inner loop's own counter. Where should the inner counter start for that to work?
 
-### Pattern 5 — Inverted right triangle
+### Pattern 4 — Number Triangle (row number repeated)
 
 ```
-*****
-****
-***
-**
+1
+2 2
+3 3 3
+4 4 4 4
+5 5 5 5 5
+```
+
+*Hint:* again Pattern 2's skeleton — but now print the OUTER variable, `i` times. One-character change from Pattern 3. Feel the difference.
+
+### Pattern 5 — Inverted Right Triangle
+
+```
+* * * * *
+* * * *
+* * *
+* *
 *
 ```
 
-Hint: stars shrink as `i` grows — like overs remaining in a chase. Make the table 5,4,3,2,1 vs `i` = 1..5 and find the expression in `n` and `i`.
+*Hint:* row 1 → 5 stars, row 2 → 4 stars... row `i` → `?` stars. Either make the inner range shrink (`n - i + 1` style) or run the outer loop backwards with a negative step (Section 10!).
 
-### Pattern 6 — Inverted number triangle
+### Pattern 6 — Inverted Number Triangle
 
 ```
-12345
-1234
-123
-12
+1 2 3 4 5
+1 2 3 4
+1 2 3
+1 2
 1
 ```
 
-Hint: Pattern 5's shrinking length, Pattern 3's "print the counter" trick. Decide the last number of row `i` first, then remember `range` excludes its stop.
+*Hint:* Pattern 5's shrinking skeleton + Pattern 3's counting trick. Two solved ideas glued together — that's how all DSA works.
 
 ### Pattern 7 — Pyramid
 
 ```
     *
-   ***
-  *****
- *******
-*********
+   * *
+  * * *
+ * * * *
+* * * * *
 ```
 
-Hint: first pattern needing **two** inner loops — spaces first, then stars. Star counts are the odd numbers 1,3,5,7,9 (what formula in `i` gives odd numbers?). Spaces shrink by one each row. No spaces needed after the stars.
+*Hint:* the first row with spaces! Each row = (some spaces) + (some stars). Paper table with TWO columns now: row 1 → 4 spaces + 1 star; row 2 → 3 spaces + 2 stars... Find both formulas in terms of `i`. Two inner loops back-to-back, then the newline.
 
-### Pattern 8 — Inverted pyramid
+### Pattern 8 — Inverted Pyramid
 
 ```
-*********
- *******
-  *****
-   ***
+* * * * *
+ * * * *
+  * * *
+   * *
     *
 ```
 
-Hint: Pattern 7 flipped — now spaces grow and stars shrink by 2 per row. The two formulas from Pattern 7 essentially swap directions.
+*Hint:* Pattern 7 upside down — spaces grow while stars shrink. If your Pattern 7 table was right, flip the two formulas.
 
 ---
 
-## Common mistakes
+## 17. Common mistakes today
 
-1. **Forgetting `end=""`** — every star lands on its own line and the pattern becomes a tall stick.
-2. **Forgetting the bare `print()`** after the inner loop — the whole pattern comes out as one long line.
-3. **Off-by-one with `range`** — wanting 1..n but writing `range(1, n)`. Stop is excluded. Always.
-4. **`range(0)` runs zero times** — a 0-based first row with inner `range(i)` prints an empty row. Check row one on paper.
-5. **Wrong indentation of the final `print()`** — indent it under the inner loop and you get a newline after *every star* instead of every row. It must line up with the inner `for`.
-6. **Infinite `while` loops** — no line inside moves the condition towards false.
-7. **Wrong `elif` order** — a wide condition placed above a narrow one swallows all the cases.
-8. **Guessing formulas instead of tabling them** — write row vs count, check both edge rows (`i = 1` and `i = n`), then code.
-9. **`=` instead of `==` in a condition** — `=` stores, `==` asks. Python at least throws a syntax error for this one.
-10. **`x == 5 or 6`** — always True, because the bare `6` is truthy. Repeat the variable: `x == 5 or x == 6`.
-11. **`pass` when you meant `continue`** — `pass` does nothing; the rest of the round still runs.
+1. **`=` instead of `==`** in a condition — Python throws `SyntaxError`, read the arrow it points at.
+2. **`if x == 5 or 6:`** — always True. Repeat the full comparison: `x == 5 or x == 6`.
+3. **Missing colon `:`** after `if` / `elif` / `else` / `while` / `for` — instant `SyntaxError`.
+4. **Wrong indentation** — the line you *thought* was inside the loop is actually outside. Python only knows what your spaces tell it.
+5. **`elif` order wrong** — loose condition first eats all cases; strictest condition goes first.
+6. **Off-by-one with `range`** — `range(5)` is 0–4, not 1–5. Want 1 to n? `range(1, n + 1)`.
+7. **Empty range when counting down** — `range(5, 0)` runs zero times; you need `range(5, 0, -1)`.
+8. **Forgetting the update in `while`** — infinite loop. Ctrl+C, add the `+= 1`, breathe.
+9. **Forgetting `print()` after the inner loop** in patterns — everything smashes onto one line.
+10. **Coding patterns without the paper table** — five minutes on paper saves thirty on screen.
 
-## Quick recap
+## 18. Quick recap
 
-- `if / elif / else`: top-to-bottom checks, first true wins, exactly one block runs.
-- `=` stores, `==` asks. Comparisons (`==`, `!=`, `<`, `<=`...) return True/False; chain them like maths: `1 < x < 10`.
-- `and` = both sides true, `or` = at least one, `not` flips. Falsy values: `0`, `""`, `[]`, `None` — everything else is truthy.
-- Ternary for simple picks: `x if cond else y`. Nested ifs = check inside a check; flatten with `and` when messages don't differ.
-- `for` = known count (20 overs). `while` = unknown count, known stopping condition (bucket full).
-- `range(start, stop, step)`: stop is **excluded**; negative step counts down (and then start > stop).
-- Nested loops: one full inner-loop run per single outer-loop step. Outer = rows, inner = inside a row.
-- `for` walks a counter (`range`) when you need positions, or walks items directly when you don't.
-- `break` exits the loop (batsman out); `continue` skips to the next round (dot ball). `break` only exits the innermost loop. `pass` = do-nothing filler.
-- Loop `else` runs only when the loop finished with **no `break`** — the search-failed reporter.
-- Pattern recipe: rows → table → formula in `i` → `print(..., end="")` inside, bare `print()` per row.
-- Verify every formula at the edges: first row and last row. If both match, you are done.
+- `if` / `elif` / `else` — decide; first True wins, so order strictest-first.
+- `==` compares, `=` assigns. Chain freely: `0 <= x <= 100`.
+- `and` / `or` / `not` combine questions; each side of `or` must be complete.
+- Falsy: `0`, `""`, `None`, empty things. Everything else truthy.
+- Ternary: `"Pass" if marks >= 35 else "Fail"`.
+- `while` = repeat until condition fails (setup, condition, update — or infinite loop).
+- `for` + `range(start, stop, step)` = repeat a known count; stop is excluded.
+- Nested loops: outer slow, inner fast — the pattern engine.
+- `break` leaves, `continue` skips, `pass` does nothing; loop-`else` runs only without `break`.
+- Patterns: rows → table → formulas → code. Always in that order.
+
+## 19. Learn more
+
+- [W3Schools — Python Conditions](https://www.w3schools.com/python/python_conditions.asp)
+- [W3Schools — While Loops](https://www.w3schools.com/python/python_while_loops.asp)
+- [W3Schools — For Loops](https://www.w3schools.com/python/python_for_loops.asp)
+- [GeeksforGeeks — Loops in Python](https://www.geeksforgeeks.org/python/loops-in-python/)
+
+---
+
+**Tomorrow:** your code is getting longer — and you're already copy-pasting bits of it. Day 3 fixes that: **functions** — packing reusable logic into a named box you can call again and again. Write once, use forever.

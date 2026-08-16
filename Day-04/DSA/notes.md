@@ -1,271 +1,279 @@
-# Day 4 — Big-O: Learning to Count Steps
+# Day 4 — Big-O: The Day I Learn to Judge Code
 
-No new problems today. Today I learn how to *measure* code. Then I go back and measure everything I have solved so far, myself.
+## So far → Today
+
+Three days of *writing* code:
+
+- **Day 1** — variables, input/output, and my first digit loops (reverse, count digits, palindrome, Armstrong).
+- **Day 2** — loops and conditions, Striver patterns 1–8.
+- **Day 3** — functions, patterns 9–15, prime check, GCD, LCM.
+
+Today I write **zero new code**. Today I learn to *judge* code — to look at any loop and say how expensive it is before running it. This is the skill that separates coders from engineers. A coder asks "does it work?". An engineer also asks "will it still work when the input is a crore times bigger?"
+
+And my judging material is my own week: the digit loops from Day 1, the pattern grids from Days 2–3. By tonight I will have graded every one of them myself.
 
 ---
 
-## 1. Why count steps instead of seconds?
+## 1. Why count steps, not seconds?
 
 Same recipe, different stoves.
 
-If I cook dal on a slow gas stove it takes 40 minutes. On an induction top, 20 minutes. The *recipe* did not change — the stove did. Timing my code in seconds is like judging a recipe by the stove. My laptop, my friend's laptop, and the online judge's server are all different stoves.
+Dal on a slow gas stove takes 40 minutes. Same dal on induction takes 20. The **recipe** never changed — only the stove did. Timing code with a stopwatch is judging the recipe by the stove. My laptop, my friend's gaming rig, and LeetCode's server are all different stoves. The language, the compiler, the OS, even what else is running in the background — all change the seconds.
 
-So instead of seconds, we count **steps** — the basic operations the code performs (an addition, a comparison, a print). Steps depend only on the recipe (the algorithm), not the stove (the machine).
+So instead of seconds we count **steps**: the basic operations the code performs. One comparison, one addition, one assignment — each counts as one step, because each takes a fixed tiny amount of time no matter how big the input is. Steps depend only on the algorithm. They are the honest measurement.
 
-**Big-O notation** is the standard way to write "roughly how many steps, as the input gets big." The `n` in Big-O is the **input size** — how big the thing we are processing is.
+## 2. What is n?
 
-## 2. What does "grows with n" mean?
+**n is the size of the input** — the thing that can grow.
 
-The real question Big-O answers is not "how many steps for n = 10?" It is:
+- Searching a list of 1,000 numbers → n = 1000.
+- Printing a pattern with 5 rows → n = 5.
+- Reversing the number 98765 → careful! n is the *value*, but the loop runs once per **digit**, and 98765 has 5 digits. (Digits of n ≈ log₁₀ n. Keep this in your pocket — it matters for your Day 1 problems.)
 
-> **If n doubles, what happens to my step count?**
+Big-O never asks "how many steps for n = 10, exactly?" It asks a sharper question:
 
-- Stays the same? That's O(1).
-- Doubles too? That's O(n).
-- Goes up 4×? That's O(n²).
-- Barely moves? That's O(log n).
+> **When n doubles, what happens to my step count?**
 
-Big-O describes the *shape* of growth, not the exact count.
+- Stays the same → O(1)
+- Goes up by just one or two steps → O(log n)
+- Doubles too → O(n)
+- Slightly more than doubles → O(n log n)
+- Becomes 4× → O(n²)
+- Squares itself into oblivion → O(2ⁿ)
 
-## 3. The six shapes I must recognise
+Big-O describes the **shape of growth**, not the exact count. That is why we write O(n) and not "3n + 7 steps".
 
-### O(1) — constant time — *UPI balance check*
+## 3. The six shapes I must recognise on sight
 
-Checking your bank balance on UPI takes the same 2 seconds whether you have ₹100 or ₹1 crore. The size of the amount does not matter. Work does not depend on n at all.
+### O(1) — Constant. *The UPI balance check.*
+
+Checking your bank balance on UPI takes the same 2 seconds whether the account holds ₹500 or ₹5 crore. The work does not depend on the size of anything.
 
 ```python
 def get_first(items):
-    return items[0]      # one step, always
+    return items[0]        # one step, always — even for a list of 10 lakh items
 ```
 
-Doubling n changes nothing.
+### O(log n) — Logarithmic. *The phone book.*
 
-### O(log n) — logarithmic — *phone book search*
-
-Finding "Ramesh Kulkarni" in a printed phone book: you don't read page 1 onwards. You open the **middle**, see you're in "M", so throw away half the book. Open the middle of the remaining half. Every step **halves** the problem.
-
-"log n" (logarithm) just means: *how many times can I halve n before reaching 1?* For n = 1000, that's about 10 halvings. For n = 1,000,000, only about 20. Huge inputs, tiny work.
+Finding "Sharma" in a phone book: open the middle, wrong half? — throw it away. Every flip discards **half** of what remains. A 1,000-page book needs about 10 flips. A 10-lakh-page book needs about 20. The input grew 1000×; the work grew 2×.
 
 ```python
-def halving(n):
-    steps = 0
-    while n > 1:
-        n = n // 2       # throw away half
-        steps += 1
-    return steps         # ~log₂(n)
+while n > 1:
+    n = n // 2             # throw away half each time -> about log2(n) passes
 ```
 
-Any loop that divides the problem by a fixed number each round (÷2, ÷10, whatever) is logarithmic.
+`log₂(n)` just means: *how many times can I halve n before hitting 1?* Nothing scarier than that.
 
-### O(n) — linear — *serving chai to every guest*
+### O(n) — Linear. *Chai for every guest.*
 
-Ten guests at home, ten cups of chai. Twenty guests, twenty cups. Work grows in a straight line with n. Double the guests, double the work.
+Ten guests arrive, you make ten cups of chai. Twenty guests, twenty cups. Work grows in a straight line with the input.
 
 ```python
-def total(items):
-    s = 0
-    for x in items:      # runs once per item → n times
-        s += x
-    return s
+for item in items:
+    do_something(item)     # body runs exactly once per item
 ```
 
-One loop that touches each input item once = O(n).
+### O(n log n) — Log-linear. *The exam-paper merge.*
 
-### O(n log n) — *sorting exam papers into merge piles*
-
-A teacher sorting 100 answer sheets by roll number: split the stack into small piles, sort each small pile, then repeatedly **merge** pairs of sorted piles into bigger sorted piles.
-
-- Merging one full "level" of piles touches all n sheets → O(n) work per level.
-- The number of levels is how many times you can halve the stack → log n levels.
-- Total: n work × log n levels = **O(n log n)**.
+A teacher has 100 answer sheets to sort by roll number. Trick: split into small piles, sort the tiny piles (easy), then repeatedly **merge** pairs of sorted piles. Each merge round touches all n sheets, and there are about log n rounds of merging. Total: n × log n. This is the shape of every good sorting algorithm — merge sort, and Python's own `sorted()`.
 
 ```python
-def merge_levels(n):
-    work = 0
-    size = n
-    while size > 1:              # log n levels of piles
-        for sheet in range(n):   # each level touches all n sheets
-            work += 1
-        size = size // 2
-    return work                  # ≈ n × log n
+items.sort()               # Python's built-in sort: O(n log n)
 ```
 
-A halving loop with a full n-loop inside it = O(n log n). This is the speed of good sorting algorithms (merge sort, and Python's built-in `sort()`). Slightly worse than O(n), massively better than O(n²).
+### O(n²) — Quadratic. *Wedding handshakes.*
 
-### O(n²) — quadratic — *wedding handshakes*
-
-At a wedding, every guest shakes hands with every other guest. 10 guests ≈ 100 handshakes. 100 guests ≈ 10,000 handshakes. Double the guests → **4×** the handshakes.
-
-```python
-def all_pairs(items):
-    for a in items:          # n times
-        for b in items:      # n times, for EACH a
-            print(a, b)      # runs n × n = n² times
-```
-
-A loop **inside** a loop, both running about n times = O(n²).
-
-### O(2ⁿ) — exponential — *the rumour*
-
-One person hears a rumour. Every hour, everyone who knows it tells one new person. Knowers: 1 → 2 → 4 → 8 → 16... After 30 hours, over a **billion** people. Adding just one to n **doubles** the work.
-
-The shape: every item has a yes/no choice — take it or leave it. n items → 2 × 2 × ... × 2 = 2ⁿ combinations.
-
-```python
-def count_combinations(n):
-    total = 1
-    for _ in range(n):
-        total *= 2       # each new item DOUBLES the possibilities
-    return total         # 2ⁿ combinations to try
-```
-
-Code that tries *every possible combination* (every subset, every yes/no choice) behaves like this. O(2ⁿ) is fine for n up to ~20 and hopeless beyond that. If your solution is exponential, the interviewer is waiting for a better idea.
-
-### The pecking order
-
-```
-O(1)  <  O(log n)  <  O(n)  <  O(n log n)  <  O(n²)  <  O(2ⁿ)
-fast  ────────────────────────────────────────────►  slow
-```
-
-For n = 1000: 1 step, ~10 steps, 1000 steps, ~10,000 steps, 1,000,000 steps, more-steps-than-atoms-in-your-body.
-
-### Where the famous things sit — my reference map
-
-When someone names an algorithm, this is the shelf it lives on:
-
-| Task | Class | Why |
-|---|---|---|
-| Grab an item by index, check even/odd, use a formula | O(1) | No loop — n doesn't matter |
-| **Binary search** (on *sorted* data only) | O(log n) | Throws away half each step, like the phone book |
-| **Linear search**, one pass over a list | O(n) | Checks items one by one |
-| Good sorting: **merge sort**, Python's built-in `sort()` | O(n log n) | log n levels × n work per level |
-| Compare all pairs, simple sorts (bubble sort) | O(n²) | Every item against every item |
-| Try **every subset** / brute-force every combination | O(2ⁿ) | Each item doubles the choices |
-
-## 4. Rules of thumb for calculating Big-O
-
-**Rule 1 — Drop constants.** O(2n), O(n/2), O(500n) are all just **O(n)**. Big-O cares about the shape of growth; a constant multiplier is just a faster or slower stove.
-
-**Rule 2 — Drop smaller terms.** O(n² + n + 7) = **O(n²)**. When n = 10,000, the n² part is 100,000,000 and the n part is 10,000 — a rounding error. Keep only the biggest term.
-
-**Rule 3 — Sequential loops ADD.**
-
-```python
-for i in range(n):   # n steps
-    ...
-for j in range(n):   # then n more steps
-    ...
-# total: n + n = 2n → O(n)
-```
-
-One loop *after* another: add them (then Rule 1 usually eats the constant).
-
-**Rule 4 — Nested loops MULTIPLY.**
-
-```python
-for i in range(n):        # n times
-    for j in range(n):    # n times per i
-        ...
-# total: n × n → O(n²)
-```
-
-A loop *inside* a loop: multiply them.
-
-**Rule 5 — The triangle sum.** What if the inner loop runs `i` times instead of n?
+At a wedding, every guest greets every other guest. 10 guests → about 100 greetings. 100 guests → about 10,000. Double the guests, **quadruple** the greetings. This is any loop inside a loop where both run n times.
 
 ```python
 for i in range(n):
-    for j in range(i):    # 0, then 1, then 2, ... then n-1 times
-        ...
+    for j in range(n):
+        greet(i, j)        # n * n = n² steps
 ```
 
-Total steps = 1 + 2 + 3 + ... + n = **n(n+1)/2** = n²/2 + n/2. Rule 1 drops the ½, Rule 2 drops the n/2 → still **O(n²)**. "The inner loop is shorter" does *not* save you from quadratic. Half the wedding's handshakes is still a wedding's worth of handshakes.
+Your pattern grids live here — n rows × n columns of printing.
 
-## 5. Best, average, worst case — the attendance register
+### O(2ⁿ) — Exponential. *The rumour that doubles.*
 
-I'm searching for my name in the college attendance register, page by page.
+One person tells a rumour to 2 people, each tells 2 more... After 10 rounds: ~1,000 know. After 30 rounds: over 100 crore — more than the population of India. Each +1 to n **doubles** the work. Code that tries every possible subset of n items has 2ⁿ subsets to try. These solutions die before n even reaches 40.
 
-- **Best case:** my name is on the very first page. One step. O(1). Pure luck.
-- **Average case:** my name is somewhere in the middle. About n/2 pages. Drop the constant → O(n).
-- **Worst case:** my name is on the last page — or not in the register at all. All n pages. O(n).
+```python
+def all_subsets(items):    # every item: either IN or OUT -> 2^n combinations
+    ...
+```
 
-When someone says "the complexity is X" with no qualifier, they almost always mean the **worst case** — the guarantee. Interviews want worst case unless they say otherwise. Best case is trivia; worst case is a promise.
+### The speed ladder (fast → slow)
 
-### Advanced corner — words interviewers throw around (just recognise them)
+```
+O(1)  <  O(log n)  <  O(n)  <  O(n log n)  <  O(n²)  <  O(2ⁿ)
+```
 
-- **Ω (Omega) and Θ (Theta).** Big-O technically means "at most this much" (an upper bound). Ω means "at least this much" (a lower bound). Θ means "exactly this shape" — both at once. When an interviewer asks for the **tight bound**, they mean Θ: the true growth shape, not a lazy over-estimate. In everyday interview talk, saying "it's O(n)" is usually already meant as the tight bound — I just need to recognise the symbols.
-- **Amortized.** The average cost per operation over a long run. Python's `list.append` is **O(1) amortized** — once in a while the list must grow behind the scenes (an expensive step), but spread across many appends, each one averages out to constant. Like a yearly train pass: one big payment, tiny cost per ride.
+Feel the difference at n = 1,000,000:
 
-## 6. Space complexity — the second question
+| Shape | Steps (roughly) | If 1 step = 1 microsecond |
+|---|---|---|
+| O(1) | 1 | instant |
+| O(log n) | 20 | instant |
+| O(n) | 10⁶ | 1 second |
+| O(n log n) | 2 × 10⁷ | 20 seconds |
+| O(n²) | 10¹² | **11 days** |
+| O(2ⁿ) | astronomical | longer than the universe |
 
-**Space complexity** = how much *extra* memory my code creates, as a function of n. "Extra" (also called *auxiliary*) means: not counting the input itself.
+## 4. Famous algorithms — the reference map
 
-- A fixed handful of variables (`i`, `count`, `total`) — same handful whether n is 5 or 5 million → **O(1) space**.
-- Building a new list with one entry per input item → **O(n) space**.
-- Printing to the screen does **not** count — printed characters are gone, not stored.
+Memorise this table. It is the multiplication table of DSA.
 
-## 7. Self-audit: measuring MY OWN solved problems
+| Algorithm / operation | Big-O | One-line why |
+|---|---|---|
+| Access `arr[i]` by index | O(1) | Jump straight to the address |
+| Binary search — **sorted data only!** | O(log n) | Halve the search space each check |
+| Linear search | O(n) | May have to look at everything |
+| Merge sort / Python's `sorted()` | O(n log n) | log n merge rounds × n items each |
+| Compare all pairs (bubble sort, handshakes) | O(n²) | Every item vs every item |
+| Generate all subsets | O(2ⁿ) | Each item doubles the possibilities |
 
-Today's real task. For every problem from Day 1 to Day 3, I open my own code and derive its complexity myself. The method, step by step:
+The binary search warning deserves bold letters: on **unsorted** data binary search is not slow — it is **wrong**. Sorting is the fee you pay to unlock O(log n) searches.
 
-1. **Find the loops.** Loops are where all the work lives. No loop → almost certainly O(1).
-2. **Ask: what makes this loop stop?** How many times does the body run as the input grows? Count it in terms of n — don't guess, count.
-3. **Check how loops combine.** Side by side → add (Rule 3). One inside another → multiply (Rule 4). Inner loop depends on `i` → triangle sum (Rule 5).
-4. **Simplify.** Drop constants, drop smaller terms.
-5. **Then ask the space question:** what did I *create* that grows with the input? Any new list or string of size n? Or just a few loose variables?
-6. **Write it down** in the table below, with a one-line "why". If I can't write the why, I don't actually know it yet.
+## 5. The rules for computing Big-O
 
-### Hints for my problem *types* (not the answers — I derive those)
+**Rule 1 — Drop constants.** 2n steps, 5n steps, n/2 steps — all O(n). Big-O cares whether growth is a line or a curve, not how steep the line is. O(2n) → O(n). O(500) → O(1).
 
-- **Digit-loop problems** (reverse, count digits, palindrome, Armstrong): the loop does `number //= 10` — it strips one digit per pass. So it runs once per **digit**, not once per value. A number n has about log₁₀(n) + 1 digits, so these are **O(number of digits) = O(log₁₀ n)** — a 15-digit number loops only ~15 times. Now check each of mine: any sequential second loop (add it), any extra memory?
-- **Sum of first N with a loop:** how many times does that loop body run — per digit, or per value? Careful, this one is different from the others. And is there a famous formula that would make it O(1)?
-- **Pattern problems (Striver 1–15):** a full n×n grid prints about n² characters → **O(n²) time**. Triangles print n(n+1)/2 — still O(n²) by Rule 5. Spaces count as prints too. Extra memory is usually just loop counters → **O(1) space**. Verify this holds for *each* of my 15 — especially any where I built a string before printing.
+**Rule 2 — Drop lower-order terms.** n² + n + 10 → O(n²). When n = 10,000, the n² part is 100,000,000 and the n part is 10,000 — a rounding error. Keep only the biggest bully.
 
-### My audit table (fill in myself)
+**Rule 3 — Sequential loops ADD.** One loop *after* another: n + n = 2n → O(n). Making chai for all guests, then serving biscuits to all guests — still one pass each.
 
-| Problem | Time | Space | Why (one line) |
+**Rule 4 — Nested loops MULTIPLY.** One loop *inside* another: n × n → O(n²). For each guest, greet every guest.
+
+**Rule 5 — The triangle sum.** When the inner loop runs `i` times (like your patterns!):
+1 + 2 + 3 + ... + n = **n(n+1)/2** ≈ n²/2 → drop the ½ (Rule 1) → **O(n²)**.
+Your right triangle prints "only half" the square, but half of n² is still O(n²).
+
+**Rule 6 — Log base doesn't matter.** log₂ n, log₁₀ n differ only by a constant multiplier (log₂ n ≈ 3.3 × log₁₀ n), and constants get dropped. So we just write O(log n). Your digit loops (`num //= 10`) and the halving loops (`n //= 2`) belong to the same family.
+
+## 6. Best, average, worst case — the attendance register
+
+The teacher calls roll to find one student, top to bottom.
+
+- **Best case** — the student is roll number 1. One call. Lucky. Written with **Ω** (Omega): linear search is Ω(1).
+- **Worst case** — the student is last, or absent. All n calls. Written with **O**: linear search is O(n).
+- **Average case** — over many days, the student is somewhere in the middle on average → about n/2 calls → still O(n) after dropping the ½.
+
+**Interviews and this course mean the worst case when they say Big-O**, unless stated otherwise. Why? Because a promise is only useful if it holds on the bad days. "The train is usually on time" is not a guarantee; "the train is never more than 10 minutes late" is.
+
+Note: some algorithms don't vary at all — merge sort does its n log n work whether the data arrives sorted, reversed, or shuffled. Best = worst. Others swing wildly (quicksort behaves badly on a poorly chosen pivot).
+
+### A gentle Omega/Theta corner (30 seconds, don't fear it)
+
+- **O (Big-O)** = upper bound. "It takes *at most* this much." The ceiling.
+- **Ω (Omega)** = lower bound. "It takes *at least* this much." The floor.
+- **Θ (Theta)** = tight bound. Ceiling and floor match. "It takes *exactly* this shape."
+
+Merge sort is Θ(n log n) — always. Linear search is O(n) and Ω(1) — depends on luck. In casual use everyone says "Big-O" for all of it; now you know the precise words.
+
+### Amortized, in one line
+
+Python's `list.append()` occasionally does an expensive internal resize, but averaged over many appends each one costs O(1) — that averaged cost is called **amortized O(1)**. (More on this tomorrow.)
+
+## 7. Space complexity — the other half (preview)
+
+Time asks "how many steps?" **Space asks "how much extra memory do I create?"** — extra, meaning beyond the input itself.
+
+- A few loop counters and variables → **O(1)** space. (All your problems so far!)
+- Building a new list of n items → **O(n)** space.
+- Printed output does **not** count as stored space.
+
+```python
+def total(nums):
+    s = 0                  # one variable, however long nums is -> O(1) space
+    for x in nums:
+        s += x
+    return s
+
+def doubled(nums):
+    return [x * 2 for x in nums]   # new list of size n -> O(n) space
+```
+
+Tomorrow this becomes a full lesson. Today, just carry the question into your audit: *"what did my code create?"*
+
+## 8. Today's real task — the self-audit
+
+Now open your own solutions from this week and grade them yourself. **No copying complexities from the internet — the derivation is the exercise.**
+
+### The method (run it on every problem)
+
+1. **Find the loops.** No loop at all → almost certainly O(1).
+2. **Count how often each loop body runs as n grows.** Trap to respect: a loop doing `num //= 10` runs once per **digit** — that's O(log₁₀ n), not O(n).
+3. **Combine.** Loops in sequence → add. Loops nested → multiply. Inner loop bound depends on the outer counter → triangle sum → O(n²).
+4. **Simplify.** Drop constants and lower terms.
+5. **Space.** What did the code create that grows with input? Counters only → O(1).
+6. **Write the why in one line.** If you cannot write the why, you do not know the answer yet — go back to step 1.
+
+### Type-level hints (verify against your own code, don't assume)
+
+- Digit-loop problems (reverse, count digits, palindrome, Armstrong) — the loop consumes one digit per pass. How many digits does a number n have?
+- Sum of first N — does your loop run once per *value* up to N, or once per digit? Very different answers. And there is a famous O(1) formula — do you know it?
+- Pattern grids — roughly how many characters (spaces included) does an n-row pattern print? Full square vs triangle — does the answer's Big-O differ?
+- Prime check till √n — the loop bound itself is smaller than n. What's the class? (It's not one of the six! O(√n) sits between O(log n) and O(n). Big-O has more shapes than the famous six.)
+- GCD by Euclid — hard one; the values shrink fast, like halving. Which family does fast shrinking suggest?
+
+### My audit table (fill every row)
+
+| Problem | Time | Space | Why |
 |---|---|---|---|
-| Sum of first N | | | |
-| Reverse a number | | | |
-| Count digits | | | |
-| Palindrome number | | | |
-| Armstrong number | | | |
-| Pattern 1 | | | |
-| Pattern 2 | | | |
-| Pattern 3 | | | |
-| Pattern 4 | | | |
-| Pattern 5 | | | |
-| Pattern 6 | | | |
-| Pattern 7 | | | |
-| Pattern 8 | | | |
-| Pattern 9 | | | |
-| Pattern 10 | | | |
-| Pattern 11 | | | |
-| Pattern 12 | | | |
-| Pattern 13 | | | |
-| Pattern 14 | | | |
-| Pattern 15 | | | |
+| Sum of first N (Day 1) | | | |
+| Reverse a number (Day 1) | | | |
+| Count digits (Day 1) | | | |
+| Palindrome number (Day 1) | | | |
+| Armstrong number (Day 1) | | | |
+| Pattern 1 (Day 2) | | | |
+| Pattern 2 (Day 2) | | | |
+| Pattern 3 (Day 2) | | | |
+| Pattern 4 (Day 2) | | | |
+| Pattern 5 (Day 2) | | | |
+| Pattern 6 (Day 2) | | | |
+| Pattern 7 (Day 2) | | | |
+| Pattern 8 (Day 2) | | | |
+| Pattern 9 (Day 3) | | | |
+| Pattern 10 (Day 3) | | | |
+| Pattern 11 (Day 3) | | | |
+| Pattern 12 (Day 3) | | | |
+| Pattern 13 (Day 3) | | | |
+| Pattern 14 (Day 3) | | | |
+| Pattern 15 (Day 3) | | | |
+| Prime check (√n) (Day 3) | | | |
+| GCD by Euclid (Day 3) | | | |
+| LCM via GCD (Day 3) | | | |
 
-## Common mistakes
+## 9. Common mistakes
 
-- **Confusing the value of n with the size of n.** A digit-stripping loop on the number 1,000,000 runs ~7 times (7 digits), not a million times. Ask what one iteration *consumes*: one digit → O(log₁₀ n); one unit of the value → O(n).
-- **Thinking two sequential loops are O(n²).** Loops one after another ADD. Only *nested* loops multiply.
-- **Believing a shorter inner loop escapes O(n²).** 1 + 2 + ... + n = n(n+1)/2 is still quadratic.
-- **Keeping constants and small terms.** O(3n² + 5n + 20) is just O(n²). Nobody writes the rest.
-- **Reporting best case as "the" complexity.** "My search is O(1) if the item is first" — no. Default to worst case.
-- **Counting the input or the printed output as space.** Space complexity is the *extra* memory the program holds. Loop counters → O(1), even if the program prints a million stars.
-- **Assuming log means log base 2 only.** Halving loop → log₂, digit loop → log₁₀. Bases differ by a constant factor, and Big-O drops constants, so both are just O(log n).
-- **Saying "binary search, so O(log n)" on unsorted data.** Binary search only works on **sorted** data. On an unsorted list you are stuck with linear search — O(n).
+1. **"Two loops = O(n²)."** No — only *nested* loops multiply. Two loops one after the other add up to O(n).
+2. **Calling a digit loop O(n).** `num //= 10` runs per digit, not per value. 1,00,00,000 has only 8 digits.
+3. **Using binary search on unsorted data.** It silently returns wrong answers. Sorted first, always.
+4. **Keeping the constants.** Writing O(2n) or O(n²/2) in an answer. Big-O has already thrown those away.
+5. **Confusing best case with the answer.** "My linear search found it at index 0, so it's O(1)!" Big-O reports the worst day, not the lucky day.
+6. **Ignoring space entirely.** Interviewers ask both. Get in the habit now: every time answer has two parts.
+7. **Thinking O(1) means fast.** O(1) means *constant* — it could be a constant 5 seconds. It just doesn't get worse as n grows.
 
-## Quick recap
+## 10. Quick recap
 
-- Count **steps**, not seconds — same recipe, different stoves.
-- Big-O = how the step count **grows** when n grows.
-- O(1) UPI balance · O(log n) phone book · O(n) chai for guests · O(n log n) merge piles of exam papers · O(n²) wedding handshakes · O(2ⁿ) rumour doubling.
-- Drop constants, drop smaller terms. Sequential loops **add**, nested loops **multiply**, 1+2+...+n = n(n+1)/2 → O(n²).
-- Best / average / worst = first page / middle / last page of the attendance register. Interviews mean **worst** case.
-- Reference map: binary search (sorted!) → log n · linear search → n · good sorts → n log n · all pairs → n² · all subsets → 2ⁿ.
-- Advanced words: **Θ (tight bound)** = the exact growth shape; **amortized** = average over many operations (`list.append` → O(1) amortized).
-- Space = extra memory that grows with n. Loose variables → O(1).
-- The two audit questions, forever: **how many times does each loop body run?** and **what did I create that grows with n?**
+- Count **steps**, not seconds — steps judge the recipe, not the stove.
+- **n** = input size; Big-O answers "what happens when n doubles?"
+- Six shapes: O(1) UPI check, O(log n) phone book, O(n) chai for guests, O(n log n) exam-paper merge, O(n²) wedding handshakes, O(2ⁿ) rumour doubling.
+- Rules: drop constants, drop lower terms, sequential adds, nested multiplies, triangle = n(n+1)/2 → O(n²), log base irrelevant.
+- Big-O = worst case (ceiling), Ω = best case (floor), Θ = both match.
+- Space complexity = extra memory created; your week so far is all O(1) space.
+- The audit table is the day's real work. Fill every row with a *why*.
+
+## Learn more
+
+- GeeksforGeeks — Big-O analysis: <https://www.geeksforgeeks.org/dsa/analysis-algorithms-big-o-analysis/>
+- W3Schools — Time complexity theory: <https://www.w3schools.com/dsa/dsa_timecomplexity_theory.php>
+- GeeksforGeeks — Worst, average, best case: <https://www.geeksforgeeks.org/dsa/worst-average-and-best-case-analysis-of-algorithms/>
+- Big-O Cheat Sheet (visual growth chart): <https://www.bigocheatsheet.com/>
+
+---
+
+## Tomorrow
+
+Today was one half of the coin: **time**. Tomorrow, Day 5, is the other half — **memory**. Space complexity in full, plus Python's hidden costs: what a list *really* stores, why strings are sneakily expensive to build in a loop, and why `append` is cheap. Bring your audit table — the Space column gets an upgrade.

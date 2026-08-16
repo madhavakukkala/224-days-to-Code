@@ -1,159 +1,208 @@
-# Day 4 (night) — A Semantic CV Page, With ZERO CSS
+# Day 4 (night) — The Semantic CV: Zero CSS, Full Meaning
 
-Tonight's build: my CV as a plain HTML page. Not one line of CSS allowed. The point is to prove the **structure** is right before any styling exists.
+## So far → Tonight
+
+Three nights of collecting tags:
+
+- **Night 1** — the skeleton: doctype, head vs body, and the landmark tags.
+- **Night 2** — text, lists, links, images.
+- **Night 3** — forms and tables.
+
+Tonight everything combines into the **first real page**: my own CV. Not a toy example — a page I could actually send to a recruiter. And the rule that makes it a lesson: **not one line of CSS**. Structure only. If the page still reads perfectly, the structure is right.
 
 ---
 
 ## 1. Why structure-first?
 
-You don't paint a house before the walls are up. First the skeleton — walls, doors, rooms in the right places. Paint (CSS) comes later and only makes a good structure *look* good; it cannot fix a bad one.
+You don't paint a house before the walls are up. Walls, doors, rooms in the right places first; paint later. CSS is paint. It can make a good structure beautiful, but it cannot fix a broken one.
 
-**Semantic HTML** means choosing tags by *meaning*, not by looks. A `<section>` says "this is a distinct section of content". A `<div>` says nothing — it is just a plain box. Browsers render `<div>` and `<section>` the same, so why care?
+**Semantic HTML** means choosing tags by *meaning*, not by looks. `<section>` says "this is one themed block of content". `<div>` says nothing — it's a plain cardboard box with no label. Browsers draw both identically, so why care?
 
-- **Screen readers** (software that reads pages aloud for blind users) navigate by landmarks like `header`, `main`, `nav`. Divs give them nothing to jump to.
-- **Search engines** understand a page better when headings and sections are meaningful.
-- **Future me** reads the code and instantly knows what each block is.
+- **Screen readers** (software that reads pages aloud for blind users) jump between landmarks: header, nav, main, footer. A page of divs gives them nothing to jump to.
+- **Search engines** rank a page better when its headings and sections carry meaning.
+- **Recruiters' parsing software** (ATS) extracts your name, skills, and experience more reliably from clean structure.
+- **Future you** opens the file in a month and instantly knows what each block is.
 
-Think of it like a wedding invitation card. Even with no decoration, the order tells you everything: names on top, venue, date, RSVP at the bottom. Structure carries the meaning. Decoration is optional.
+Think of a wedding invitation card with zero decoration. The order alone tells you everything: family names on top, the couple, venue, date, RSVP at the bottom. Structure carries meaning. Decoration is optional. That is tonight's page.
 
----
-
-## 2. Which tag for which part of the CV
+## 2. Tag → CV section mapping
 
 | CV part | Tag | Why this tag |
 |---|---|---|
-| Name + contact block at top | `<header>` | The introductory strip of the page. Not just "stuff at the top" — it *introduces* the document. |
-| Links to jump to Education/Skills/etc. | `<nav>` | Navigation landmark. Only needed if the page links to its own sections; a short CV can skip it. |
-| Everything that IS the CV | `<main>` | The one unique main content area. **Only one `<main>` per page.** |
-| Education / Skills / Experience / Projects | `<section>` | Each is a thematic group with its own heading. |
-| Each individual job (or project) entry | `<article>` | An `<article>` is a self-contained piece that would make sense on its own — one job entry could be lifted out and still be complete, like one wicket's highlight clip out of a full match. |
-| List of skills | `<ul>` | Skills have no ranking order between the bullets → unordered list. (If I were ranking them, `<ol>`.) |
-| Declaration / copyright / "references on request" | `<footer>` | Closing information of the page. |
+| Name, title, contact strip at top | `<header>` | Introductory content for the whole document. |
+| Contact details inside the header | `<address>` | The tag *made* for contact info — see the caveat below. |
+| Jump links to Education / Skills / etc. | `<nav>` | Navigation landmark. Optional on a one-page CV; add it if the page links to its own sections. |
+| Everything that IS the CV | `<main>` | The one unique main-content area. **Exactly one per page.** |
+| Summary / Education / Skills / Experience / Projects | `<section>` | Each is a thematic group **with its own heading**. |
+| One job entry, one project entry | `<article>` | Self-contained; would still make sense lifted out alone — like one wicket's highlight clip cut from a full match. |
+| Skills list | `<ul>` + `<li>` | Bullets with no ranking → unordered. Ranking them? Then `<ol>`. |
+| Dates (jobs, degrees) | `<time datetime="...">` | Human text outside, machine date inside. |
+| Emphasis on a keyword ("led", "built") | `<strong>` | Importance with meaning, unlike `<b>` which is only looks. |
+| Declarations / languages / hobbies footer | `<footer>` | Closing matter of the document. |
 
-Skeleton:
+## 3. The full skeleton
+
+This is the shape, with placeholder content. Build yours from memory first, then compare.
 
 ```html
 <header>
-  <h1>Uday Kiran</h1>
+  <h1>Priya Sharma</h1>
+  <p>Aspiring Software Engineer</p>
   <address>
-    <a href="mailto:me@example.com">me@example.com</a>, Hyderabad
+    Email: <a href="mailto:priya@example.com">priya@example.com</a><br>
+    Phone: <a href="tel:+919876543210">+91 98765 43210</a><br>
+    Bengaluru, India
   </address>
+  <nav>
+    <a href="#education">Education</a>
+    <a href="#skills">Skills</a>
+    <a href="#projects">Projects</a>
+  </nav>
 </header>
 
 <main>
-  <section>
-    <h2>Experience</h2>
+  <section id="summary">
+    <h2>Summary</h2>
+    <p>Final-year student building one project a week. Strong in Python fundamentals.</p>
+  </section>
+
+  <section id="education">
+    <h2>Education</h2>
     <article>
-      <h3>Software Engineer — Some Company</h3>
-      <p><time datetime="2024-06">June 2024</time> – Present</p>
-      <ul>
-        <li>Built the payments dashboard.</li>
-      </ul>
+      <h3>B.Tech, Computer Science — XYZ Institute of Technology</h3>
+      <p><time datetime="2022-08">Aug 2022</time> – <time datetime="2026-05">May 2026</time> · CGPA 8.4</p>
     </article>
   </section>
 
-  <section>
+  <section id="skills">
     <h2>Skills</h2>
     <ul>
       <li>Python</li>
       <li>HTML</li>
+      <li>Problem solving (LeetCode)</li>
     </ul>
+  </section>
+
+  <section id="projects">
+    <h2>Projects</h2>
+    <article>
+      <h3>Daily DSA Tracker</h3>
+      <p>A public repo logging <strong>224 days</strong> of DSA practice with day-wise notes.</p>
+    </article>
   </section>
 </main>
 
 <footer>
-  <p>References available on request.</p>
+  <p>Languages: English, Hindi, Telugu</p>
+  <p>Updated on <time datetime="2026-08-16">16 August 2026</time></p>
 </footer>
 ```
 
-### The order of sections a recruiter expects
+Notice what is absent: no `<div>`, no `class=`, no `style=`. Every tag earns its place by meaning.
 
-A recruiter scans a CV for barely 30 seconds — like a TTE checking tickets, one quick glance each. The sections must arrive in the order they expect, strongest first:
+## 4. Heading hierarchy — the strict ladder
 
-1. **Name + contact** (header) — always on top.
-2. **One-line summary/objective** — optional, skip if it says nothing.
-3. For a **fresher**: Skills → Projects → Education → internships if any.
-4. For someone **experienced**: Experience climbs to the top; Education drops near the bottom.
-5. **Certifications / achievements**, then the declaration in the footer — always last.
+Headings are the page's table of contents, and screen readers literally use them as one.
 
-Semantic tags cannot fix a wrong order. Write the `<section>`s in reading order — because the source order IS the order a screen reader, a bot, and a skimming recruiter all get.
+- **Exactly one `<h1>`** — your name. It is the title of the document, and a CV's title is you.
+- Sections get `<h2>` (Education, Skills, Projects...).
+- Entries inside a section get `<h3>` (a degree, a job, a project).
+- **Never skip levels.** h1 → h3 with no h2 is like numbering chapters 1, 3 — the reader wonders what went missing. Going *back up* (h3 then a new h2 for the next section) is fine; that's just closing one chapter and opening another.
+- Never pick a heading tag for its size. Size is CSS's job later; the number is only about **rank**.
 
----
+## 5. The `<address>` caveat
 
-## 3. Heading hierarchy — one h1, never skip levels
+`<address>` is not for any street address in general — it is specifically for the **contact information of the author/owner of the page or article**. On your CV that is perfect: the page's author is you, so your email, phone, and city belong inside it. But the office address of a company you once worked at? That is *not* the page author's contact — leave it as a plain `<p>`.
 
-Headings are the page's table of contents, like a school textbook: chapter title → topic → sub-topic.
+Also: put `<address>` inside `<header>` or `<footer>`, but never nest a `<header>` or `<footer>` inside it.
 
-- **Exactly one `<h1>`** — the page's single subject. On a CV, that's my name.
-- `<h2>` for each major section: Education, Skills, Experience.
-- `<h3>` for entries inside a section: a degree name, a job title.
-- **Never skip levels.** `h1 → h3` is like a book jumping from Chapter 1 straight to sub-sub-topic 1.1.1 — a screen-reader user hears the gap and thinks content is missing.
-- Never pick a heading tag because of its *size* ("h4 looks about right here"). Size is CSS's job later. Headings encode *outline position* only.
+## 6. `<time>` and `datetime` — dates that machines can read
 
----
-
-## 4. `<address>` — contact info has its own tag
-
-`<address>` marks contact information for the page's author/owner. Inside a CV's `<header>`, it is exactly right:
+"May 2026" is easy for humans, useless for software. The `datetime` attribute carries the machine version:
 
 ```html
-<address>
-  <a href="mailto:udathak@example.com">udathak@example.com</a><br>
-  <a href="tel:+919000000000">+91 90000 00000</a><br>
-  Hyderabad, India
-</address>
+<time datetime="2026-05">May 2026</time>
+<time datetime="2024-06-15">15 June 2024</time>
 ```
 
-Common trap: `<address>` is **not** for any postal address appearing in content (like a company's office address in a job description). It is specifically "how to contact the author of this page/article".
+Format: `YYYY-MM-DD`, or just `YYYY-MM`, or just `YYYY`. Browsers, search engines, and CV-parsing tools read the attribute; humans read the text. Both are happy.
+
+## 7. Lists for skills — pick the honest one
+
+- `<ul>` — unordered: the bullets have no ranking. "Python, HTML, Git" — order doesn't claim anything.
+- `<ol>` — ordered: position means something. "Steps to run my project: 1, 2, 3."
+- Nesting works: a `<ul>` of categories (Languages, Tools), each `<li>` holding its own inner `<ul>`.
+
+A skills list as comma-separated text in a `<p>` is a missed opportunity — a list *is* the meaning here, so use a list tag.
+
+## 8. Section order — what recruiters expect
+
+Recruiters scan a CV in seconds; the order should hand them what they need first.
+
+**Fresher (you, right now):**
+1. Header — name, title, contact
+2. Summary / objective (2–3 lines max)
+3. **Education** (your strongest card — it comes early)
+4. **Skills**
+5. **Projects** (your substitute for experience — make it meaty)
+6. Achievements / certifications
+7. Footer — languages, declarations
+
+**Experienced:**
+1. Header
+2. Summary
+3. **Experience** (most recent job first — reverse chronological)
+4. Skills
+5. Projects (optional, if they add beyond the job)
+6. Education (drops near the bottom — the degree matters less than the work)
+7. Footer
+
+Same tags, different order. Structure is not just *which* tag — it's also *where*.
+
+## 9. The final test: read it naked
+
+Open your page in the browser. No CSS, so it will look plain — black text, default sizes, blue links. Now read it top to bottom and ask:
+
+- Does it read like a sensible document, in the right order?
+- Is my name obviously the title?
+- Can I tell where each section starts, just from the headings?
+- Do the dates, lists, and entries make sense without any visual styling?
+
+If yes — the structure is correct, and any CSS added later is pure decoration on a solid wall. If you feel the urge to "fix" something with styling, that is usually a structure problem in disguise. Fix the tags, not the paint.
+
+Second test, if you can: press Tab repeatedly. Focus should jump through your links in a sensible order. That's the keyboard-user's experience of your structure.
+
+## 10. Common mistakes
+
+1. **Div soup.** `<div class="header">` instead of `<header>`. The class name fools humans, not machines.
+2. **Multiple `<h1>`s.** One page, one title. Sections start at `<h2>`.
+3. **Skipping heading levels downward.** h2 → h4 because "h3 looked too big" — size is CSS's problem, not the heading number's.
+4. **Choosing tags for their default look.** Using `<blockquote>` for indenting, `<h4>` for small bold text. Meaning first, always.
+5. **`<address>` for every address.** It's for the page author's contact only.
+6. **`<section>` without a heading.** A section is a *titled* thematic block; no title usually means you wanted something else (or the section needs its `<h2>`).
+7. **`<article>` for everything (or nothing).** Test: would this block make sense alone, out of context? Yes → article. No → section or plain elements.
+8. **Forgetting `<main>`** — or using two of them. Exactly one.
+9. **Dates as bare text.** Wrap them in `<time datetime="...">` — free machine-readability.
+
+## 11. Quick recap
+
+- Semantics = tags chosen for **meaning**; CSS is paint that comes later and fixes nothing structural.
+- CV map: `header` (name + `address` contact) → `main` → one `section` per CV part → `article` per entry → `footer`.
+- One `<h1>` (your name), `h2` for sections, `h3` for entries, never skip down a level.
+- `<address>` = page author's contact only. `<time datetime="...">` = dates machines can parse.
+- Skills are a `<ul>` — a list should look like a list in the code, not just on screen.
+- Fresher order: Education → Skills → Projects. Experienced: Experience first, Education last.
+- The proof of good structure: the page reads perfectly top to bottom with **zero** CSS.
+
+## Learn more
+
+- W3Schools — Semantic elements: <https://www.w3schools.com/html/html5_semantic_elements.asp>
+- MDN — `<time>`: <https://developer.mozilla.org/en-US/docs/Web/HTML/Element/time>
+- MDN — `<address>`: <https://developer.mozilla.org/en-US/docs/Web/HTML/Element/address>
+- MDN — Heading elements and document structure: <https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Heading_Elements>
 
 ---
 
-## 5. `<time>` — dates that machines can read
+## Tomorrow night
 
-Humans read "June 2024". Machines prefer `2024-06`. The `<time>` tag gives both:
-
-```html
-<time datetime="2024-06">June 2024</time> – <time datetime="2025-03">March 2025</time>
-```
-
-- The visible text can be in any human style — "Diwali 2024", "Jun '24".
-- The `datetime` attribute holds the machine format: `YYYY`, `YYYY-MM`, or `YYYY-MM-DD`.
-- Why bother? Search engines and parsing tools (including résumé scanners) can extract exact dates without guessing what "3/6/24" means — is that 3rd June or 6th March? The `datetime` attribute removes the doubt, like writing the date in figures AND words on a cheque.
-
----
-
-## 6. The real test: read it with no CSS
-
-Open the page. It is plain black-on-white browser-default styling. Now read it top to bottom.
-
-- Does it read like a proper CV? Name first, then contact, then sections in a sensible order, each with a clear heading?
-- Can you tell where Experience ends and Skills begin, using headings alone?
-- Do the lists read as lists, the dates as dates?
-
-**If a page still reads perfectly with zero CSS, the semantics are right.** This is exactly how a screen reader, a search engine bot, or the "reader mode" button experiences the page — none of them see your CSS. A dabbawala can deliver the right tiffin using only the code painted on the lid, no fancy packaging needed. The markup is that code.
-
-If instead the no-CSS page is a soup of same-looking text, the structure was being faked by styling — and that's the bug to fix *before* writing any CSS tomorrow.
-
----
-
-## Common mistakes
-
-- **Div soup.** `<div class="header">` instead of `<header>`. The class name means nothing to browsers or screen readers; the tag does.
-- **Multiple `<h1>`s** (one per section). One page, one h1. Sections get h2.
-- **Skipping heading levels** because a smaller heading "looked better". Looks are CSS's problem.
-- **More than one `<main>`**, or putting header/footer inside `<main>`. `<main>` wraps only the unique content between them.
-- **Using `<article>` for things that can't stand alone** (a single skill bullet) or `<section>` without any heading. Section = themed group *with* a heading.
-- **`<address>` for every address on the page.** It is only for the author's contact info.
-- **`<time>` without `datetime`**, or a `datetime` in a non-standard format like `06/2024`. Use `2024-06`.
-- **Using `<br>` chains or empty paragraphs to create spacing.** Spacing is styling. If the structure needs a gap to make sense, the structure is wrong.
-
----
-
-## Quick recap
-
-- Structure first, decoration later — walls before paint.
-- CV map: `header` (name + `address`) → optional `nav` → one `main` → `section` per topic → `article` per job → `ul` for skills → `footer`.
-- Section order = recruiter order: contact first, strongest section next (fresher: skills/projects/education), declaration last. Source order is what everyone gets.
-- One `h1`, ordered heading levels, never skip.
-- `<time datetime="2024-06">` = human text outside, machine date inside.
-- Final exam for the markup: switch off all CSS. If it still reads perfectly top to bottom, the semantics pass.
+The CV gets interactive. Tomorrow we return to its contact form and make it actually **validate input** — required fields, email format checks, number ranges — using HTML's built-in validation before a single line of JavaScript. Structure tonight, behaviour tomorrow.

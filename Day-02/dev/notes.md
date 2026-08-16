@@ -1,311 +1,274 @@
-# Day 2 (Night) — HTML: Text, Lists, Links, Images, Attributes, Paths
+# Day 2 — HTML Flesh: Text, Lists, Links, Images
 
-Yesterday was the skeleton of an HTML page. Today is about actually putting content on it — the stuff people read, click, and see.
+**Yesterday → Today:** Yesterday you built the skeleton — the boilerplate, `head` vs `body`, and semantic tags that give a page its bones. Today we put flesh on that skeleton: real text with proper headings, lists that organise, links that connect pages, and images that bring it alive.
 
 ---
 
-## 1. Text elements
+## 1. Headings — `<h1>` to `<h6>`
 
-### Headings: h1 to h6
-
-Six levels of headings, `<h1>` (biggest, most important) to `<h6>` (smallest). Think of a newspaper: the front-page banner headline is `h1`, section titles like "Sports" are `h2`, individual match reports are `h3`, and so on.
+Six levels of headings, from loudest to softest:
 
 ```html
-<h1>India Wins the Series</h1>
-<h2>Match Highlights</h2>
-<h3>First Innings</h3>
+<h1>India</h1>
+<h2>Telangana</h2>
+<h3>Hyderabad</h3>
+<h4>Charminar Area</h4>
+<h5>Laad Bazaar</h5>
+<h6>Shop No. 12</h6>
 ```
 
-Rules of thumb:
+Think of a newspaper: `<h1>` is the front-page headline, `<h2>` the section titles, `<h3>` the article titles inside a section. Rules that matter:
 
-- **One `h1` per page.** It is the page's main title.
-- Don't skip levels (`h1` → `h3`) just because you like the size. Headings are structure, not styling. Size can be changed with CSS later.
-- Search engines and screen readers use headings to understand your page's outline.
+- **One `<h1>` per page.** It's the page's main title. Two headlines on one front page confuses both readers and Google.
+- **Never skip levels for looks.** Don't jump `h1 → h4` because `h4` "looks the right size". Headings carry *meaning* (structure), not styling — size is CSS's job (coming soon).
+- Search engines and screen readers use headings as the page's table of contents. Break the hierarchy and you break their map.
 
-### Paragraph: p
-
-`<p>` wraps a paragraph of text. The browser automatically adds spacing above and below.
+## 2. Paragraphs — `<p>`
 
 ```html
-<p>Chai without biscuits is just hot water with attitude.</p>
+<p>Hyderabadi biryani is layered, not mixed. That is the whole secret.</p>
+<p>The second secret is patience. Dum means slow.</p>
 ```
 
-### strong vs b, em vs i
+Each `<p>` is one paragraph — the browser adds a gap between them automatically. Important: the browser **collapses whitespace**. Ten spaces or five Enter presses inside your HTML file become ONE space on screen. Layout comes from tags, not from your spacebar.
 
-All four make text look different, but two of them carry **meaning** and two are purely visual:
-
-| Tag | Looks | Meaning |
-|---|---|---|
-| `<strong>` | **bold** | This text is IMPORTANT (urgency, seriousness) |
-| `<b>` | **bold** | Just make it bold, no special importance |
-| `<em>` | *italic* | Emphasis — you would stress this word while speaking |
-| `<i>` | *italic* | Just italic — book titles, foreign words like *jugaad* |
-
-Why does it matter if they look the same? **Screen readers** (software that reads pages aloud for blind users) may change tone for `<strong>` and `<em>`, but not for `<b>` and `<i>`. Meaning-first tags are called *semantic* tags. Prefer `<strong>` and `<em>` when the emphasis is real.
+## 3. `<strong>`/`<b>` and `<em>`/`<i>` — same look, different meaning
 
 ```html
-<p><strong>Warning:</strong> Train departs at <em>exactly</em> 8:02. It will not wait.</p>
+<p><strong>Warning:</strong> platform 3 changed to platform 7.</p>
+<p>The train is <em>actually</em> on time today.</p>
+<p><b>Menu</b> — <i>Paneer Butter Masala</i></p>
 ```
 
-### br and hr
+- `<strong>` = **importantly bold** — "this matters, pay attention". Screen readers stress it.
+- `<b>` = bold with **no extra meaning** — just visually thick.
+- `<em>` = *emphasised* — spoken with stress ("the train is *actually* on time" vs plain "actually").
+- `<i>` = italic with no extra meaning — book titles, foreign words, dish names.
 
-- `<br>` — a line **br**eak. Forces the next text onto a new line without starting a new paragraph. Good for addresses or poems. Do NOT use a pile of `<br>` tags to create spacing — that's a CSS job.
-- `<hr>` — a **h**orizontal **r**ule, a dividing line across the page. Marks a change of topic, like the line a shopkeeper draws in his hisaab notebook between two days' accounts.
+They *look* identical in the browser, so beginners think they're the same. They're not — one speaks meaning, the other only paints pixels. Prefer `<strong>` and `<em>` when the emphasis is real.
 
-Both are **empty elements** — they have no closing tag, because they wrap nothing.
+## 4. `<br>` and `<hr>` — small breaks
 
 ```html
-<p>Flat 12, Shanti Niwas<br>MG Road<br>Pune 411001</p>
+<p>Flat 402, Sri Sai Residency<br>Madhapur<br>Hyderabad - 500081</p>
 <hr>
+<p>Next section starts here.</p>
 ```
 
-### div and span — the plain containers (a peek ahead)
+- `<br>` = line break *within* text — perfect for addresses and song lyrics. It has no closing tag (an "empty" element).
+- `<hr>` = horizontal rule — a full-width line marking a thematic shift, like the line a shopkeeper draws in the ledger after each day's accounts.
 
-Two tags that mean nothing on their own — they exist purely to *group* things so CSS can style them later.
+Don't use `<br><br><br>` to create spacing — that's the spacebar habit again. Spacing is CSS's job.
 
-- `<div>` — a **block** box. Takes the full width and starts on a new line. Like a shipping carton you pack other things into.
-- `<span>` — an **inline** wrapper. Sits inside a line of text, wrapping just a few words. Like a highlighter stroke in the middle of a sentence.
+## 5. `<div>` vs `<span>` — plain boxes
 
 ```html
 <div>
-  <p>Aaj ka special: <span>Masala Dosa</span> at half price</p>
+  <h2>Chai Corner</h2>
+  <p>Best cutting chai in the <span>whole</span> colony.</p>
 </div>
 ```
 
-For today, just recognise them when you see them. They become powerful the day CSS arrives.
+- `<div>` = a **block** container — takes the full width and starts on a new line. A big carton you pack other things into.
+- `<span>` = an **inline** container — sits within a line of text without breaking it. A highlighter stroke over a few words.
 
----
+Both are meaning-less on their own — they exist to be grouped and styled with CSS later. Prefer the semantic tags from yesterday (`header`, `section`...) when one fits; reach for `div`/`span` when nothing semantic applies.
 
-## 2. Lists
+## 6. Lists — `<ul>`, `<ol>`, `<li>`
 
-### Unordered list: ul — order does not matter
-
-`<ul>` = **u**nordered **l**ist. Bullet points. Use when the order is irrelevant, like a grocery list.
+**Unordered list `<ul>`** — order doesn't matter, browser shows bullets. A shopping list:
 
 ```html
 <ul>
-  <li>Milk</li>
-  <li>Sugar</li>
-  <li>Tea leaves</li>
+  <li>Tomatoes</li>
+  <li>Onions</li>
+  <li>Coriander</li>
 </ul>
 ```
 
-`<li>` = **l**ist **i**tem. Every single item goes inside its own `<li>`.
-
-### Ordered list: ol — order matters
-
-`<ol>` = **o**rdered **l**ist. Numbered automatically by the browser. Use for steps, rankings, anything where sequence matters.
+**Ordered list `<ol>`** — order IS the point, browser numbers them. A recipe:
 
 ```html
 <ol>
   <li>Boil water</li>
-  <li>Add tea leaves and masala</li>
-  <li>Add milk, boil again</li>
-  <li>Strain and serve</li>
+  <li>Add tea powder</li>
+  <li>Add milk and sugar</li>
 </ol>
 ```
 
-Note: you never type the numbers. The browser numbers them. Add an item in the middle and everything renumbers itself — that's the whole point.
+Every item — in both — is an `<li>` (list item). Only `<li>` elements go directly inside `<ul>`/`<ol>`.
 
-### Bonus: ol attributes — start and type
+### Nesting lists
 
-Two handy attributes on `<ol>`:
-
-```html
-<ol start="5">        <!-- numbering begins at 5, not 1 -->
-  <li>Fifth step</li>
-  <li>Sixth step</li>
-</ol>
-
-<ol type="i">         <!-- roman numerals: i, ii, iii -->
-  <li>Intro</li>
-  <li>Chapter one</li>
-</ol>
-```
-
-`type` accepts `1` (default numbers), `a`/`A` (letters), `i`/`I` (roman numerals — exam-paper style). `start` is useful when a list continues after some text in between.
-
-### Nested lists — a restaurant menu
-
-A list inside a list. Think of a restaurant menu: categories, and dishes under each category. The inner `<ul>` goes **inside an `<li>`** of the outer list — not directly inside the outer `<ul>`.
+A list inside a list item — note the inner list lives *inside* an `<li>`, before its closing tag:
 
 ```html
 <ul>
   <li>South Indian
     <ul>
-      <li>Masala Dosa</li>
-      <li>Idli Sambar</li>
+      <li>Dosa</li>
+      <li>Idli</li>
     </ul>
   </li>
   <li>North Indian
     <ul>
       <li>Chole Bhature</li>
-      <li>Rajma Chawal</li>
     </ul>
   </li>
 </ul>
 ```
 
-You can mix them too — an `<ol>` of steps where one step has a `<ul>` of options.
+### `<ol>` extras — `start` and `type`
+
+```html
+<ol start="5">          <!-- numbering begins at 5: 5, 6, 7... -->
+  <li>Fifth step</li>
+  <li>Sixth step</li>
+</ol>
+
+<ol type="A">           <!-- A, B, C like exam options -->
+  <li>Option one</li>
+  <li>Option two</li>
+</ol>
+```
+
+`type` accepts `1` (default), `A`, `a`, `I`, `i` (Roman numerals — like book chapter numbering).
+
+*(Bonus for the curious: there's also a description list — `<dl>` with `<dt>` terms and `<dd>` definitions — handy for glossaries.)*
+
+## 7. Links — `<a href="...">`
+
+The `<a>` (anchor) tag is what makes the web a *web*:
+
+```html
+<a href="https://www.wikipedia.org">Visit Wikipedia</a>
+```
+
+`href` = the destination. The text between the tags is what the visitor clicks. Four kinds of destinations:
+
+```html
+<!-- 1. Absolute URL — full address, goes anywhere on the internet -->
+<a href="https://leetcode.com">LeetCode</a>
+
+<!-- 2. Relative URL — another page of YOUR site, relative to this file -->
+<a href="about.html">About me</a>
+<a href="../Day-01/dev/index.html">Yesterday's page</a>
+
+<!-- 3. #id — jump to a section ON THIS PAGE (a bookmark) -->
+<a href="#recap">Jump to recap</a>
+...
+<h2 id="recap">Quick recap</h2>
+
+<!-- 4. mailto: — opens the visitor's email app -->
+<a href="mailto:hello@example.com">Email me</a>
+```
+
+The `#id` trick is how "Back to top" and table-of-contents links work — the `id` attribute is a name-tag you pin on any element, and `#thatname` scrolls to it.
+
+### `target="_blank"` + `rel="noopener"`
+
+```html
+<a href="https://leetcode.com" target="_blank" rel="noopener">LeetCode (new tab)</a>
+```
+
+- `target="_blank"` opens the link in a **new tab** — the default `_self` replaces the current page.
+- Always pair it with `rel="noopener"`: without it, the new page gets a handle back to your page (`window.opener`) and a shady site can misuse it. Habit: `_blank` and `noopener` travel together, like helmet and bike.
+
+Use new tabs for *external* sites (so visitors don't lose your page); keep internal navigation in the same tab.
+
+*(You can also add `title="..."` to any link — a tooltip appears on hover.)*
+
+## 8. Images — `<img>`
+
+```html
+<img src="charminar.jpg" alt="Charminar monument at night" width="400" height="300">
+```
+
+`<img>` is an empty element — no closing tag. Its attributes do all the work:
+
+- **`src`** — the path to the image file (rules in Section 10). Wrong path = broken-image icon.
+- **`alt`** — text shown if the image can't load, and read aloud by screen readers for blind users. Describe *what's in* the picture ("Charminar monument at night"), not "image" or "photo123". Every image needs an `alt`. Non-negotiable.
+- **`width` / `height`** — size in pixels. Giving both lets the browser reserve the space *before* the image downloads, so the page doesn't jump around while loading. Keep the original proportion, or the Charminar becomes a squashed Charminar.
+
+Extras worth knowing:
+
+```html
+<!-- external image from another server — needs the full absolute URL -->
+<img src="https://example.com/photos/tajmahal.jpg" alt="Taj Mahal at sunrise">
+
+<!-- clickable image: img wrapped inside a link -->
+<a href="gallery.html"><img src="thumb.jpg" alt="Open the photo gallery"></a>
+```
+
+Common formats: `.jpg` (photos), `.png` (screenshots, transparency), `.gif` (animations — yes, GIFs are just `<img>` too), `.svg` (logos/icons that scale without blurring).
+
+## 9. Attributes — the recap
+
+You've now used a pile of attributes. The universal shape:
+
+```html
+<tagname attribute="value">content</tagname>
+```
+
+- Always written in the **opening tag**, as `name="value"` pairs separated by spaces.
+- Always put the value in **quotes** (technically optional sometimes, always safer).
+- Met so far: `href`, `target`, `rel`, `title`, `src`, `alt`, `width`, `height`, `start`, `type`, `id`, and `lang` from yesterday's boilerplate.
+- Some are boolean-ish or element-specific; wrong attribute on wrong tag is silently ignored — HTML doesn't crash, it just quietly does nothing. That's why typos in HTML are sneaky.
+
+## 10. File paths — where is that file?
+
+Your `src` and `href` need addresses. Two families:
+
+**Absolute path** — the complete public address, works from anywhere:
+
+```html
+<img src="https://www.example.com/images/pic.jpg" alt="...">
+```
+
+**Relative path** — directions from the *current file's* location, like telling a friend "from my house, two lanes left":
+
+| Path | Meaning |
+|---|---|
+| `pic.jpg` or `./pic.jpg` | same folder as this HTML file (`./` = "start here") |
+| `images/pic.jpg` | inside the `images` subfolder next to this file |
+| `../pic.jpg` | one folder UP from here |
+| `../../pic.jpg` | two folders up |
+| `/images/pic.jpg` | from the website's ROOT folder (leading `/`) |
+
+Example from this repo: from `Day-02/dev/`, reaching a file in `Day-01/dev/` is `../../Day-01/dev/index.html` — up out of `dev`, up out of `Day-02`, then walk down.
+
+**Prefer relative paths for your own files.** They keep working when the site moves — localhost today, a real domain later. An absolute path to your own machine like `C:\Users\you\Desktop\pic.jpg` works ONLY on your computer — the number one reason beginners' images break the moment anyone else opens the page.
+
+## 11. Common mistakes today
+
+1. **Skipping heading levels** or using headings for font size — hierarchy is meaning, not styling.
+2. **Multiple `<h1>`s** on one page.
+3. **`<br>` spam for spacing** — use paragraphs and (soon) CSS.
+4. **Forgetting `alt`** on images — broken for screen readers and for failed loads.
+5. **`target="_blank"` without `rel="noopener"`.**
+6. **Putting the nested `<ul>` *outside* the `<li>`** — it must sit inside the parent item, before `</li>`.
+7. **Content directly inside `<ul>`/`<ol>`** that isn't wrapped in `<li>`.
+8. **Backslashes in paths** — the web uses `/` always, even on Windows.
+9. **Absolute local paths** (`C:\Users\...`) — works only on your machine.
+10. **Spaces/capitals mismatch in filenames** — `Pic.JPG` vs `pic.jpg` are different files on real servers; use lowercase-with-hyphens names.
+
+## 12. Quick recap
+
+- `<h1>`–`<h6>`: one `<h1>`, never skip levels; `<p>` for paragraphs; browser collapses whitespace.
+- `<strong>`/`<em>` carry meaning; `<b>`/`<i>` only paint.
+- `<br>` breaks a line, `<hr>` breaks a topic; `<div>` = block box, `<span>` = inline box.
+- `<ul>` bullets, `<ol>` numbers (`start`, `type`), everything in `<li>`; nest inside the `<li>`.
+- `<a href>`: absolute, relative, `#id` bookmark, `mailto:`; `_blank` + `noopener` together.
+- `<img src alt width height>`: alt always; sizes stop page-jump.
+- Paths: `./` here, `../` up one, `/` from root; relative for your own files.
+
+## 13. Learn more
+
+- [W3Schools — HTML Lists](https://www.w3schools.com/html/html_lists.asp)
+- [W3Schools — HTML Links](https://www.w3schools.com/html/html_links.asp)
+- [W3Schools — HTML Images](https://www.w3schools.com/html/html_images.asp)
+- [W3Schools — HTML File Paths](https://www.w3schools.com/html/html_filepaths.asp)
 
 ---
 
-## 3. Links: the a tag
-
-`<a>` = **a**nchor. It turns text (or an image) into something clickable.
-
-```html
-<a href="https://www.irctc.co.in">Book train tickets</a>
-```
-
-- `href` = **h**ypertext **ref**erence — the destination address. Without `href`, the link goes nowhere.
-- The text between `<a>` and `</a>` is what the user sees and clicks.
-- Make link text meaningful: "Book train tickets", not "click here". Screen reader users often jump link-to-link, and ten "click here"s in a row tell them nothing.
-
-### Opening in a new tab
-
-```html
-<a href="https://www.cricbuzz.com" target="_blank" rel="noopener">Live score</a>
-```
-
-- `target="_blank"` opens the link in a new tab, so the user doesn't lose your page. Use it for external sites; for pages within your own site, stay in the same tab.
-- Habit worth building: add `rel="noopener"` with `target="_blank"` — it stops the new page from getting access to yours (a small security hole otherwise).
-
-### Linking to a section on the same page (#id)
-
-First give the target element an `id` (a unique name for one element on the page). Then link to it with `#` + that id.
-
-```html
-<h2 id="contact">Contact Us</h2>
-
-<a href="#contact">Jump to Contact section</a>
-```
-
-Clicking scrolls the page to that heading. This is how "Back to top" links and table-of-contents links work. You can even combine both: `href="menu.html#desserts"` opens another page AND scrolls to its desserts section.
-
-### Email links: mailto:
-
-```html
-<a href="mailto:owner@chaiwala.in">Email the owner</a>
-```
-
-Clicking opens the user's email app with the "To" field already filled in. Same `<a>` tag — only the `href` changes its style. So one tag covers three destinations: another website, a spot on the same page (`#id`), and an email address (`mailto:`).
-
----
-
-## 4. Images: the img tag
-
-```html
-<img src="taj-mahal.jpg" alt="The Taj Mahal at sunrise, reflected in the pool">
-```
-
-- `<img>` is an empty element — no closing tag.
-- `src` = **s**ou**rc**e — where the image file lives (a path or URL).
-- `alt` = **alt**ernative text — a short description of the image.
-
-### Why alt text matters (really)
-
-1. **Screen readers.** A blind user's screen reader cannot "see" the photo. It reads the alt text aloud. Without it, they just hear "image" — useless.
-2. **Broken images.** If the file fails to load (wrong path, slow network — very common on 2G in a train), the browser shows the alt text instead of an empty broken icon. The page still makes sense.
-3. **Search engines** read alt text to understand what the image is, which helps your page show up in image search.
-
-Write alt text like you're describing the photo to a friend on the phone. If an image is purely decorative (a border flourish), use an empty `alt=""` so screen readers skip it — but never omit the attribute entirely.
-
-### width and height
-
-```html
-<img src="taj-mahal.jpg" alt="The Taj Mahal at sunrise" width="600" height="400">
-```
-
-Plain numbers, measured in pixels — no `px`, no units, inside the attribute. Setting both tells the browser the image's size **before** the file loads, so it reserves that space on the page. Without it, the text below suddenly jumps down when the photo finally arrives — that jump is why you mis-tap buttons on slow news sites. Fancy sizing is CSS's job later, but width and height on `<img>` remain a good habit even then.
-
----
-
-## 5. Attributes in general
-
-An **attribute** gives extra information about an element. It always sits **inside the opening tag** and follows the pattern:
-
-```
-name="value"
-```
-
-```html
-<a href="https://example.com" target="_blank">link</a>
-<img src="photo.jpg" alt="description" width="300">
-<h2 id="contact">Contact</h2>
-```
-
-Rules:
-
-- Written as `name="value"` pairs, separated by spaces.
-- Always in the **opening** tag, never the closing one.
-- Values go in quotes. (HTML sometimes forgives missing quotes; don't rely on its mercy.)
-- Some attributes are global (work on any element): `id`, `class`, `title`, `style`. Others belong to specific tags: `href` for `<a>`, `src` and `alt` for `<img>`.
-- `id` must be **unique** on the page — one element, one id. Like a roll number: two students can't share it.
-
----
-
-## 6. Absolute vs relative paths
-
-A **path** tells the browser where a file is. Two styles:
-
-### Absolute path — full postal address
-
-The complete address from the start, works from anywhere:
-
-```html
-<img src="https://example.com/images/logo.png">
-```
-
-Like writing: "Flat 12, Shanti Niwas, MG Road, Pune, Maharashtra, 411001, India." Anyone, anywhere in the world, can find it. Use absolute paths for things on OTHER websites.
-
-### Relative path — directions from where you stand
-
-The address relative to the **current file's location**:
-
-```html
-<img src="logo.png">              <!-- same folder as this HTML file -->
-<img src="./logo.png">            <!-- "./" = this file's own folder; same as the line above -->
-<img src="images/logo.png">       <!-- inside the 'images' folder next to this file -->
-<img src="../logo.png">           <!-- one folder UP from this file -->
-```
-
-Like telling a neighbour: "two houses down the street." Short and convenient — but only works if you're standing on the right street. `./` means "start right here" (`./logo.png` and `logo.png` are the same thing; some people write `./` just to be explicit). `../` means "go up one folder" — and you can chain it: `../../`.
-
-### Which to use?
-
-- **Your own files** (your images, your other pages): relative paths. The whole project stays portable — move the folder anywhere, zip it, upload it to a server, and all links still work because files keep the same positions relative to each other.
-- **Other websites' resources**: absolute URLs — you have no other option.
-
-Classic bug: the image shows fine on your laptop but breaks after upload. Usually the `src` was an absolute path to your own hard disk, like `C:\Users\me\Desktop\photo.jpg`. The server has no such disk. Relative paths avoid this completely.
-
----
-
-## Common mistakes
-
-1. Choosing heading levels by size instead of meaning, or using five `<h1>`s on one page.
-2. Using `<b>`/`<i>` everywhere when the emphasis is genuine — use `<strong>`/`<em>` for real importance.
-3. Stacking `<br><br><br>` to create vertical space. Spacing is CSS's job.
-4. Putting text directly inside `<ul>`/`<ol>` without an `<li>` wrapper.
-5. Nesting a `<ul>` directly inside another `<ul>` instead of inside an `<li>`.
-6. Typing numbers manually in an ordered list ("1. Boil water" inside the `<li>`)— the browser already numbers them, so you'd see "1. 1. Boil water".
-7. Forgetting `alt` on images, or writing useless alt text like `alt="image123"`.
-8. "Click here" as link text.
-9. Forgetting the `#` when linking to an id (`href="contact"` goes looking for a *file* named contact).
-10. Absolute paths to your own hard disk (`C:\...`) — breaks the moment the page leaves your machine.
-11. Putting attributes in the closing tag, or forgetting the quotes around values.
-12. Writing units inside the width attribute (`width="300px"`) — plain numbers only. Units belong to CSS.
-
----
-
-## Quick recap
-
-- `h1`–`h6` = structure, like newspaper headline levels. One `h1`, don't skip levels.
-- `<p>` for paragraphs; `<br>` = line break, `<hr>` = topic-divider line; both have no closing tag.
-- `<strong>`/`<em>` carry meaning (screen readers care); `<b>`/`<i>` are just looks.
-- `<div>` = block carton, `<span>` = inline highlighter — meaningless alone, powerful with CSS.
-- `<ul>` = bullets (order doesn't matter), `<ol>` = numbers (order matters), items always in `<li>`, nested lists go inside an `<li>` — like menu categories with dishes. Bonus: `<ol start type>` controls the numbering.
-- `<a href="...">` makes links; `target="_blank"` + `rel="noopener"` for new tabs; `href="#id"` jumps to a section; `mailto:` opens the email app.
-- `<img src alt>` — alt text is for screen readers, broken images, and search. Non-negotiable. `width`/`height` (plain pixel numbers) reserve space so the page doesn't jump.
-- Attributes = `name="value"` pairs in the opening tag; `id` must be unique.
-- Absolute path = full postal address (other sites). Relative path = "two houses down" (your own files — keeps the project portable).
+**Tomorrow:** so far the page only *talks* to the visitor. Day 3 flips the conversation — **forms**: text boxes, buttons, checkboxes — letting the visitor talk back.
