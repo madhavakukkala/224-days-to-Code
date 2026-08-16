@@ -32,9 +32,14 @@ Day-XX/
 
 | Time | What |
 |------|------|
+| 06:30 – 06:50 | Revision — clear the spaced-repetition queue (due at day 2, 5 and 10) |
 | 06:50 – 07:50 | Learn a new DSA/Python concept |
 | 07:50 – 09:20 | Practise problems on it |
+| 09:20 – 09:30 | Log every problem — difficulty, approach in one line, confidence /5 |
 | 21:00 – 23:45 | Web development |
+| 23:45 – 00:00 | Commit and push. Write tomorrow's first task on a sticky note. |
+
+Every 7th day is a **consolidation day** — no new topics, just re-solving the week's hardest problems from a blank file.
 
 ## Progress so far
 
@@ -46,8 +51,9 @@ Day-XX/
 | [Day 04](Day-04) | Big-O: O(1) to O(2ⁿ), best/avg/worst → complexity audit of every problem so far | Semantic CV page from scratch — structure only, zero CSS |
 | [Day 05](Day-05) | Space complexity, recursion stack, Python performance traps → Striver patterns 16+ | Forms deep-dive: validation, fieldset, accessibility. Contact form on the CV |
 | [Day 06](Day-06) | Lists: indexing, slicing, aliasing vs copy vs deepcopy, comprehensions → array basics | Meta tags, favicon, Open Graph, W3C validation |
+| [Day 07](Day-07) | Consolidation: 3 hardest patterns from a blank file + Big-O cheat sheet in my own words | Core CS: interpreter, bytecode, memory — what really happens when you run a Python file |
 
-*(This table grows every day — 218 to go.)*
+*(This table grows every day — 217 to go.)*
 
 ## How to use this repo
 
