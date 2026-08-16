@@ -65,6 +65,38 @@ Classic beginner bug: writing visible content in the head. The browser may still
 
 ---
 
+## Two small tools: comments and attributes
+
+### Comments — notes the browser ignores
+
+```html
+<!-- This is a comment. The browser skips it completely. -->
+```
+
+A comment is a pencil note in the margin of your textbook — useful for the reader (you), invisible in the exam (the rendered page). Use them to label chunks of a long file: `<!-- navbar starts -->` ... `<!-- navbar ends -->`.
+
+One catch: comments ARE visible if someone does right-click → View Page Source. So never put passwords or secrets in them.
+
+### Attributes — extra settings on a tag
+
+An **attribute** sits inside the *opening* tag and gives extra information. The shape is always `name="value"`:
+
+```html
+<a href="/about">About</a>       <!-- href = where the link goes -->
+<meta charset="UTF-8">           <!-- charset = which character set -->
+<html lang="en">                 <!-- lang = the page's language -->
+```
+
+Think of a tag as a courier packet and attributes as the fields filled on its label: `to="..."`, `weight="..."`. The packet type stays the same; the fields fine-tune it.
+
+Three small rules:
+
+- Value goes in quotes: `href="/about"`, not `href=/about`.
+- No spaces around the `=`.
+- Attributes live only in the opening tag — never in a closing tag like `</a>`.
+
+---
+
 ## Semantic tags — the newspaper analogy
 
 **Semantic** just means "having meaning". A semantic tag's *name tells you what's inside it*.
@@ -163,6 +195,36 @@ Rule of thumb: reach for a semantic tag first; use `<div>` only when no semantic
 
 ---
 
+## Nesting — last opened, first closed
+
+Tags sit inside each other like steel dabbas in a tiffin stack. The one rule: **the tag you opened last must be closed first**. No overlapping.
+
+```html
+<!-- CORRECT — article closes fully inside section -->
+<section>
+  <article>
+    <p>India wins by 6 wickets</p>
+  </article>
+</section>
+
+<!-- WRONG — section closes while article is still open (overlap!) -->
+<section>
+  <article>
+</section>
+  </article>
+```
+
+The wrong version is like closing the big dabba while the small dabba is half in, half out. The browser tries to auto-fix bad nesting, and its guesses cause weird bugs later.
+
+Two habits that keep you safe:
+
+1. Type the closing tag *immediately* after the opening tag, then fill the middle.
+2. Indent one level every time you go deeper — the visual staircase makes overlaps jump out.
+
+And remember the containment order you've already seen: `<head>` and `<body>` sit directly inside `<html>`, visible things sit inside `<body>`, and sections hold articles — the newspaper order.
+
+---
+
 ## Common mistakes
 
 1. **Putting visible content in `<head>`.** Head is about the page, body is on the page.
@@ -171,6 +233,8 @@ Rule of thumb: reach for a semantic tag first; use `<div>` only when no semantic
 4. **Using `<header>` when you mean `<h1>`.** `<header>` is a container region; `<h1>` is a heading text. Different things.
 5. **Div-soup by habit.** Ask "what IS this block?" before typing `<div>` — usually a semantic tag answers.
 6. **Skipping `<!DOCTYPE html>`.** Without it the browser drops into old-compatibility mode ("quirks mode") and styling behaves weirdly later.
+7. **Overlap-closing tags.** `<section><article></section></article>` closes the outer box before the inner one. Last opened, first closed — always.
+8. **Attribute typos.** Missing quotes (`href=/about`) or spaces around `=` (`href = "/about"`). Keep it tight: `href="/about"`.
 
 ---
 
@@ -179,5 +243,8 @@ Rule of thumb: reach for a semantic tag first; use `<div>` only when no semantic
 - HTML = the brick structure of the house. CSS = paint, JS = electricity (coming later).
 - Fixed skeleton: `<!DOCTYPE html>` → `<html>` → `<head>` + `<body>`.
 - **Head = about the page** (title, meta). **Body = on the page** (visible content).
+- `<!-- comment -->` = pencil note in the margin; the browser ignores it (but View Source shows it).
+- Attributes: `name="value"` inside the opening tag — `<a href="/about">`. Quotes on, no spaces around `=`.
 - Newspaper map: `header` = masthead, `nav` = index, `main` = the main story (only one), `section` = sports/business sections, `article` = one self-contained story, `footer` = publisher info at the bottom.
+- Nesting: last opened, first closed — dabbas in a tiffin stack, no overlaps.
 - Semantic tags beat div-soup: readable, accessible, SEO-friendly, kind to future-you.

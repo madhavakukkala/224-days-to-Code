@@ -160,10 +160,12 @@ So:
 Full parameter order (worth memorising for interviews):
 
 ```python
-def f(normal, default=1, *args, **kwargs):
+def f(normal, default=1, *args, keyword_only=10, **kwargs):
 ```
 
-normal params → defaults → `*args` → `**kwargs`. Any other order errors out.
+normal params → defaults → `*args` → keyword-only params → `**kwargs`. Any other order errors out.
+
+**Keyword-only?** Any parameter written *after* `*args` can only be passed by name — `f(1, 2, keyword_only=99)` works, but there is no position that reaches it. Even without `*args`, a lone `*` in the def line does the same job: `def f(a, *, mode)` forces `mode` to be passed as `mode=...`. Libraries use this so calls stay readable.
 
 ---
 
@@ -204,9 +206,43 @@ Two more things:
 - `return` **immediately exits** the function. Lines after it never run. (Useful: return early when the answer is known.)
 - Rule of thumb for DSA: functions should **return** answers. Printing is only for the final display step. `lcm` can only reuse `gcd` if `gcd` *returns* its answer.
 
+### Returning more than one value
+
+A function can hand back several things at once — like a parcel with two items packed together:
+
+```python
+def min_max(nums):
+    return min(nums), max(nums)    # comma = Python packs them into a tuple
+
+result = min_max([4, 9, 1, 7])     # (1, 9) — one tuple, two values inside
+lo, hi = min_max([4, 9, 1, 7])     # tuple unpacking: lo = 1, hi = 9
+```
+
+Secretly there is still only **one** return value — a tuple. The comma on the `return` line packs; the comma on the left of `=` unpacks. Just keep the counts matching: two names on the left need exactly two values in the parcel, else `ValueError`.
+
 ---
 
-## 8. Local vs global scope
+## 8. Docstrings — the label on the jar
+
+Mom's pickle jars have labels: "Mango, extra spicy, March 2025." Without the label you open every jar and sniff. A **docstring** is that label for a function — a string, in triple quotes, as the **first line** of the body:
+
+```python
+def gcd(a, b):
+    """Return the greatest common divisor of a and b."""
+    while b:
+        a, b = b, a % b
+    return a
+```
+
+- Triple quotes `""" """` let the text span multiple lines if needed. One clear sentence is usually enough: what it takes, what it returns.
+- It is not a comment — Python stores it, and `help(gcd)` prints it. That's how `help(print)` and `help(len)` work too: their docstrings.
+- Good habit from day one: every non-trivial function gets a one-line docstring. In interviews it reads as professionalism; six months later it reads as mercy on future-me.
+
+**Modern-practice note — type hints (one line):** you'll often see `def gcd(a: int, b: int) -> int:` — those `: int` and `-> int` are **type hints**, notes for humans and tools about what goes in and comes out. Python does not enforce them; they're documentation that editors can check. Just recognise them for now.
+
+---
+
+## 9. Local vs global scope
 
 **Scope** = the region of code where a variable exists.
 
@@ -262,6 +298,32 @@ When Python meets a name, it searches in this order:
 
 First match wins. This is also why naming a variable `list` or `print` is a bad idea — it hides the built-in.
 
+**Advanced one-liner:** for a function *inside* a function, `nonlocal` is the cousin of `global` — it reassigns a variable from the Enclosing layer instead of the Global one. File it away; it matters when I reach closures and decorators.
+
+---
+
+## 10. Lambda — the one-line throwaway function (advanced note)
+
+Sometimes I need a tiny function for **one moment** — like borrowing a pen just to sign, not to keep. A **lambda** is a nameless one-liner function:
+
+```python
+square = lambda x: x * x     # same as: def square(x): return x * x
+```
+
+Shape: `lambda inputs: expression`. No `def`, no name, no `return` — the expression's value *is* the return. Only one expression allowed; no multi-line logic.
+
+Where it actually shines — passed straight into another function, like a sorting rule:
+
+```python
+students = [("Rahul", 82), ("Priya", 95), ("Aman", 74)]
+students.sort(key=lambda s: s[1])    # sort by marks, not by name
+# [('Aman', 74), ('Rahul', 82), ('Priya', 95)]
+
+doubles = list(map(lambda x: x * 2, [1, 2, 3]))   # [2, 4, 6]
+```
+
+`key=` asks "what should I compare?" and the lambda answers "the marks, `s[1]`". Rule of thumb: if the function deserves a name or a second line, use `def`. Lambda is for tiny, use-once rules.
+
 ---
 
 ## Common mistakes
@@ -274,6 +336,8 @@ First match wins. This is also why naming a variable `list` or `print` is a bad 
 6. **Confusing `*args` (tuple, positional) with `**kwargs` (dict, named).**
 7. **Assigning to a global inside a function** without `global` → `UnboundLocalError`.
 8. **Shadowing built-ins** — naming a variable `sum`, `list`, `max` and then wondering why the built-in stopped working.
+9. **Unpacking count mismatch** — `a, b = f()` when `f` returns one or three values → `ValueError`. Names on the left must match values in the tuple.
+10. **Stuffing real logic into a lambda.** If it needs a name, an `if/else` chain, or two lines — it wants to be a `def`.
 
 ---
 
@@ -451,8 +515,11 @@ Test: (4, 6) → 12; (7, 5) → 35 (co-prime, gcd = 1, so lcm = product).
 - Function = recipe written once, called many times. `def` writes it; `name()` runs it.
 - **Parameter** = placeholder in `def`; **argument** = actual value in the call.
 - Defaults fill in missing arguments; never use a mutable (list/dict) as a default.
-- `*args` = tiffin box → tuple of unnamed extras. `**kwargs` = masala dabba → dict of named extras. Order: normal, defaults, `*args`, `**kwargs`.
+- `*args` = tiffin box → tuple of unnamed extras. `**kwargs` = masala dabba → dict of named extras. Order: normal, defaults, `*args`, keyword-only, `**kwargs`.
 - `return` hands the value back (usable); `print` only displays it and the function returns `None`. Storing a printed "result" is the classic bug.
-- Locals live and die inside the function; globals are readable everywhere but need `global` to be reassigned. Lookup order: LEGB.
+- `return a, b` packs a tuple; `x, y = f()` unpacks it — multiple answers from one function.
+- Docstring = `"""one-line label"""` as the first line; `help(f)` reads it back. Type hints (`a: int) -> int`) are optional notes, not enforced.
+- Locals live and die inside the function; globals are readable everywhere but need `global` to be reassigned (`nonlocal` for the nested-function case). Lookup order: LEGB.
+- Lambda = nameless one-expression function; best as a `key=` rule for `sort`/`sorted` or inside `map`. Anything bigger deserves a `def`.
 - Diamond = pyramid + inverted pyramid. One never-resetting counter → increasing triangle. `chr(65)` = `'A'` unlocks alphabet patterns.
 - Prime: divisors pair up, so checking up to √n suffices. GCD: keep taking remainders till zero. LCM = (a×b) ÷ gcd — possible only because gcd *returns*.

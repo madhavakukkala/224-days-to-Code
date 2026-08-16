@@ -59,6 +59,21 @@ Both are **empty elements** — they have no closing tag, because they wrap noth
 <hr>
 ```
 
+### div and span — the plain containers (a peek ahead)
+
+Two tags that mean nothing on their own — they exist purely to *group* things so CSS can style them later.
+
+- `<div>` — a **block** box. Takes the full width and starts on a new line. Like a shipping carton you pack other things into.
+- `<span>` — an **inline** wrapper. Sits inside a line of text, wrapping just a few words. Like a highlighter stroke in the middle of a sentence.
+
+```html
+<div>
+  <p>Aaj ka special: <span>Masala Dosa</span> at half price</p>
+</div>
+```
+
+For today, just recognise them when you see them. They become powerful the day CSS arrives.
+
 ---
 
 ## 2. Lists
@@ -91,6 +106,24 @@ Both are **empty elements** — they have no closing tag, because they wrap noth
 ```
 
 Note: you never type the numbers. The browser numbers them. Add an item in the middle and everything renumbers itself — that's the whole point.
+
+### Bonus: ol attributes — start and type
+
+Two handy attributes on `<ol>`:
+
+```html
+<ol start="5">        <!-- numbering begins at 5, not 1 -->
+  <li>Fifth step</li>
+  <li>Sixth step</li>
+</ol>
+
+<ol type="i">         <!-- roman numerals: i, ii, iii -->
+  <li>Intro</li>
+  <li>Chapter one</li>
+</ol>
+```
+
+`type` accepts `1` (default numbers), `a`/`A` (letters), `i`/`I` (roman numerals — exam-paper style). `start` is useful when a list continues after some text in between.
 
 ### Nested lists — a restaurant menu
 
@@ -150,6 +183,14 @@ First give the target element an `id` (a unique name for one element on the page
 
 Clicking scrolls the page to that heading. This is how "Back to top" links and table-of-contents links work. You can even combine both: `href="menu.html#desserts"` opens another page AND scrolls to its desserts section.
 
+### Email links: mailto:
+
+```html
+<a href="mailto:owner@chaiwala.in">Email the owner</a>
+```
+
+Clicking opens the user's email app with the "To" field already filled in. Same `<a>` tag — only the `href` changes its style. So one tag covers three destinations: another website, a spot on the same page (`#id`), and an email address (`mailto:`).
+
 ---
 
 ## 4. Images: the img tag
@@ -169,6 +210,14 @@ Clicking scrolls the page to that heading. This is how "Back to top" links and t
 3. **Search engines** read alt text to understand what the image is, which helps your page show up in image search.
 
 Write alt text like you're describing the photo to a friend on the phone. If an image is purely decorative (a border flourish), use an empty `alt=""` so screen readers skip it — but never omit the attribute entirely.
+
+### width and height
+
+```html
+<img src="taj-mahal.jpg" alt="The Taj Mahal at sunrise" width="600" height="400">
+```
+
+Plain numbers, measured in pixels — no `px`, no units, inside the attribute. Setting both tells the browser the image's size **before** the file loads, so it reserves that space on the page. Without it, the text below suddenly jumps down when the photo finally arrives — that jump is why you mis-tap buttons on slow news sites. Fancy sizing is CSS's job later, but width and height on `<img>` remain a good habit even then.
 
 ---
 
@@ -216,11 +265,12 @@ The address relative to the **current file's location**:
 
 ```html
 <img src="logo.png">              <!-- same folder as this HTML file -->
+<img src="./logo.png">            <!-- "./" = this file's own folder; same as the line above -->
 <img src="images/logo.png">       <!-- inside the 'images' folder next to this file -->
 <img src="../logo.png">           <!-- one folder UP from this file -->
 ```
 
-Like telling a neighbour: "two houses down the street." Short and convenient — but only works if you're standing on the right street. `../` means "go up one folder" (you can chain it: `../../`).
+Like telling a neighbour: "two houses down the street." Short and convenient — but only works if you're standing on the right street. `./` means "start right here" (`./logo.png` and `logo.png` are the same thing; some people write `./` just to be explicit). `../` means "go up one folder" — and you can chain it: `../../`.
 
 ### Which to use?
 
@@ -244,6 +294,7 @@ Classic bug: the image shows fine on your laptop but breaks after upload. Usuall
 9. Forgetting the `#` when linking to an id (`href="contact"` goes looking for a *file* named contact).
 10. Absolute paths to your own hard disk (`C:\...`) — breaks the moment the page leaves your machine.
 11. Putting attributes in the closing tag, or forgetting the quotes around values.
+12. Writing units inside the width attribute (`width="300px"`) — plain numbers only. Units belong to CSS.
 
 ---
 
@@ -252,8 +303,9 @@ Classic bug: the image shows fine on your laptop but breaks after upload. Usuall
 - `h1`–`h6` = structure, like newspaper headline levels. One `h1`, don't skip levels.
 - `<p>` for paragraphs; `<br>` = line break, `<hr>` = topic-divider line; both have no closing tag.
 - `<strong>`/`<em>` carry meaning (screen readers care); `<b>`/`<i>` are just looks.
-- `<ul>` = bullets (order doesn't matter), `<ol>` = numbers (order matters), items always in `<li>`, nested lists go inside an `<li>` — like menu categories with dishes.
-- `<a href="...">` makes links; `target="_blank"` + `rel="noopener"` for new tabs; `href="#id"` jumps to a section.
-- `<img src alt>` — alt text is for screen readers, broken images, and search. Non-negotiable.
+- `<div>` = block carton, `<span>` = inline highlighter — meaningless alone, powerful with CSS.
+- `<ul>` = bullets (order doesn't matter), `<ol>` = numbers (order matters), items always in `<li>`, nested lists go inside an `<li>` — like menu categories with dishes. Bonus: `<ol start type>` controls the numbering.
+- `<a href="...">` makes links; `target="_blank"` + `rel="noopener"` for new tabs; `href="#id"` jumps to a section; `mailto:` opens the email app.
+- `<img src alt>` — alt text is for screen readers, broken images, and search. Non-negotiable. `width`/`height` (plain pixel numbers) reserve space so the page doesn't jump.
 - Attributes = `name="value"` pairs in the opening tag; `id` must be unique.
 - Absolute path = full postal address (other sites). Relative path = "two houses down" (your own files — keeps the project portable).

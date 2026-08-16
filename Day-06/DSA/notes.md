@@ -20,6 +20,18 @@ marks = [45, 67, 89, 23, 90]
 
 `marks[0]` is 45. `marks[4]` is 90. Length is `len(marks)` → 5, but the **last index is 4** (always `len - 1`). This off-by-one detail causes half of all beginner bugs.
 
+### Ways to create a list
+
+```python
+marks = [45, 67, 89]        # literal — the usual way
+empty = []                  # empty list, fill later
+chars = list("abc")         # list() converts any iterable → ['a', 'b', 'c']
+nums  = list(range(5))      # [0, 1, 2, 3, 4]
+mixed = [1, "chai", 3.5, [2, 4]]   # mixed types allowed — even a list inside a list
+```
+
+Python does not force one type per list like C arrays do. Handy — but in DSA problems I will almost always keep one type per list anyway.
+
 ---
 
 ## 2. Indexing (including negative indexing)
@@ -101,7 +113,123 @@ That last swap line is pure gold for today's reverse problem.
 
 ---
 
-## 5. THE BIG ONE — Aliasing vs Copy vs Deepcopy
+## 5. More methods — and what each one costs
+
+`append`, `insert`, `pop`, `remove` are above. These complete the toolbox.
+
+### `extend` vs `append(list)` — the classic mix-up
+
+```python
+a = [3, 1, 2]
+a.extend([4, 5])    # a is [3, 1, 2, 4, 5] — items poured in one by one
+a.append([4, 5])    # a is [3, 1, 2, 4, 5, [4, 5]] — the WHOLE list as ONE item!
+```
+
+Two bags of laddoos: `extend` = pour one bag into the other. `append` = drop the entire bag in, bag and all. If the length grew by exactly 1 when I expected more — I appended when I meant to extend.
+
+### `sort()` vs `sorted()` — in place vs photocopy
+
+```python
+a = [3, 1, 2]
+a.sort()           # sorts a IN PLACE, returns None
+b = sorted(a)      # returns a NEW sorted list, a untouched
+```
+
+`a.sort()` changes `a` itself and returns `None`. So `a = a.sort()` is a classic disaster — it throws away the list and stores `None`. `sorted(a)` is the safe photocopy version. Both accept `reverse=True` for descending.
+
+Same pattern for reversing: `a.reverse()` flips in place (returns `None`); `a[::-1]` gives a reversed copy and leaves `a` alone.
+
+### `index()` and `count()`
+
+```python
+a = [10, 20, 10, 30]
+a.index(20)    # 1 — index of the FIRST match; ValueError if not found
+a.count(10)    # 2 — how many times 10 appears
+```
+
+### Cost cheat-sheet (why DSA cares)
+
+| Operation | Cost | Why |
+|---|---|---|
+| `a.append(x)` / `a.pop()` | O(1) | work at the end — nobody shifts |
+| `a.insert(0, x)` / `a.pop(0)` | O(n) | everyone behind shifts one seat |
+| `a.remove(x)` / `a.index(x)` / `x in a` | O(n) | must walk and search |
+| `a.sort()` / `sorted(a)` | O(n log n) | full sorting work |
+
+Rule of thumb: the **back of the list is the cheap end**. Anything at the front makes the whole train shuffle.
+
+---
+
+## 6. `in`, `not in`, `+` and `*`
+
+Membership check reads like plain English:
+
+```python
+menu = ["idli", "dosa", "poha"]
+"dosa" in menu        # True
+"pizza" not in menu   # True
+```
+
+Note: `in` walks the whole list to check — O(n). Fine for small lists; for lakhs of lookups a set is the right tool (coming later in the plan).
+
+`+` joins two lists into a NEW list. `*` repeats:
+
+```python
+[1, 2] + [3, 4]   # [1, 2, 3, 4]  — new list, originals untouched
+[0] * 5           # [0, 0, 0, 0, 0]  — quick way to pre-fill
+```
+
+Trap for later: `[[0]] * 3` repeats the SAME inner list three times (aliasing again — see the big section below). For independent rows, use a comprehension.
+
+---
+
+## 7. Looping over a list — three ways
+
+```python
+prices = [40, 60, 25]
+
+# Way 1: just the items (use this by default)
+for p in prices:
+    print(p)
+
+# Way 2: by index (only when I need to WRITE into the list)
+for i in range(len(prices)):
+    prices[i] = prices[i] + 5
+
+# Way 3: enumerate — index AND item together
+for i, p in enumerate(prices):
+    print(i, p)
+```
+
+**Why `enumerate` beats `range(len())`:** no `prices[i]` typing everywhere, no off-by-one risk, and it says what I mean — "give me position and value". Keep `range(len())` only for writing into the list by index (like today's rotate problem).
+
+One-line bonus — `zip` walks two lists side by side:
+
+```python
+names, scores = ["Asha", "Ravi"], [91, 78]
+for name, score in zip(names, scores):
+    print(name, score)    # Asha 91, then Ravi 78
+```
+
+---
+
+## 8. Free helpers: `min`, `max`, `sum`
+
+```python
+marks = [45, 67, 89, 23, 90]
+min(marks)                 # 23
+max(marks)                 # 90
+sum(marks)                 # 314
+sum(marks) / len(marks)    # average
+```
+
+All three walk the list once — O(n). On an empty list, `min`/`max` raise `ValueError`; `sum([])` is just 0.
+
+Today's problem 2 asks me to build min/max **by hand** — the built-ins exist, but interviews want to see the loop.
+
+---
+
+## 9. THE BIG ONE — Aliasing vs Copy vs Deepcopy
 
 This topic is where interviewers catch people. Slow down here.
 
@@ -171,7 +299,7 @@ Deep copy = new outer carrier AND brand-new duplicate small dabbas inside, all t
 
 ---
 
-## 6. List comprehensions — the one-line list builder
+## 10. List comprehensions — the one-line list builder
 
 The old way to build a list of squares:
 
@@ -197,11 +325,47 @@ words = ["chai", "vada pav", "dosa"]
 caps  = [w.upper() for w in words if len(w) > 4]     # ['VADA PAV']
 ```
 
-Pattern to remember: `[expression for item in iterable if condition]`. Use it whenever the loop's only job is "build a list". If the loop does printing, counting, or complex logic — keep the normal loop.
+Pattern to remember: `[expression for item in iterable if condition]`.
+
+### `if` at the end vs `if-else` at the front — two different jobs
+
+```python
+# if at the END = filter (some items get dropped)
+passed = [m for m in [30, 80, 50] if m >= 35]              # [80, 50]
+
+# if-else at the FRONT = transform (ALL items kept, in one of two forms)
+result = ["pass" if m >= 35 else "fail" for m in [30, 80, 50]]
+# ['fail', 'pass', 'pass']
+```
+
+The end-`if` decides *whether* an item enters the list. The front `if-else` decides *what form* it enters in — every item still enters.
+
+### Advanced: nested comprehension (one example is enough)
+
+```python
+pairs = [(x, y) for x in [1, 2] for y in ["a", "b"]]
+# [(1, 'a'), (1, 'b'), (2, 'a'), (2, 'b')] — the LEFT loop is the outer loop
+```
+
+### When NOT to use a comprehension
+
+Use it whenever the loop's only job is "build a list". If the loop does printing, counting, or complex logic — keep the normal loop. And the moment a comprehension needs a second read to understand (nested loops AND conditions AND function calls), a plain loop with a good variable name wins. Clever is not the goal; clear is.
 
 ---
 
-## 7. Today's problems — approach and hints only
+## 11. Bonus (advanced) — unpacking with `*`
+
+```python
+a, b = [10, 20]                 # a=10, b=20
+first, *rest = [1, 2, 3, 4]     # first=1, rest=[2, 3, 4]
+*rest, last = [1, 2, 3, 4]      # rest=[1, 2, 3], last=4
+```
+
+The starred name soaks up "everything left over" as a list. Handy for head-and-tail style problems. Not needed today — just know it exists.
+
+---
+
+## 12. Today's problems — approach and hints only
 
 Solutions go in `main.py`. Notes only carry the thinking.
 
@@ -264,12 +428,22 @@ Hints:
 7. **Initializing min/max with 0 instead of `a[0]`.** Breaks on all-negative or all-large inputs.
 8. **Modifying a list while looping over it** (removing items mid-loop). Items get skipped. Loop over a copy, or build a new list.
 9. **Using `a[::-1]` when the problem says "in place".** That creates a new list — different thing.
+10. **`a = a.sort()` stores `None`.** `sort()` works in place and returns nothing. Either `a.sort()` alone, or `b = sorted(a)`.
+11. **`append`-ing a list when you meant `extend`.** `a.append([4, 5])` adds ONE item (the whole list); `a.extend([4, 5])` adds two.
+12. **`[[0]] * 3` for a grid.** All three rows are the SAME inner list — change one, all three change.
 
 ## Quick recap
 
 - List = train with numbered coaches; index starts at 0, `-1` is the last coach.
-- Slice `a[start:stop:step]`; stop is excluded; `a[::-1]` = reversed copy; `a[:]` = shallow copy.
+- Create: literal `[...]`, `list()` on any iterable, mixed types allowed.
+- Slice `a[start:stop:step]`; stop is excluded; `a[::-1]` = reversed copy; `a[:]` = shallow copy; slices never crash on out-of-range.
 - Lists are mutable (editable in place); strings are not.
+- Cheap end = back: `append`/`pop()` are O(1); `insert(0, x)`/`pop(0)` are O(n); `in`/`remove`/`index` are O(n); sorting is O(n log n).
+- `sort()`/`reverse()` change in place and return `None`; `sorted()`/`[::-1]` give a new list.
+- `extend` pours items in; `append` adds one item — even if that item is a whole list.
+- Loop with `for item in a` by default; `enumerate(a)` when index + value are both needed; `range(len(a))` only for writing by index.
+- `min`/`max`/`sum` — one-pass built-ins; `min`/`max` crash on an empty list.
 - `b = a` → alias (same box, two names). `a.copy()` → new outer box, shared inner boxes. `copy.deepcopy(a)` → fully independent.
-- Comprehension: `[expr for x in iterable if cond]` — one-line list builder.
+- Comprehension: `[expr for x in iterable if cond]`; end-`if` filters, front `if-else` transforms; keep it readable.
+- Unpacking: `first, *rest = a` — the star soaks up the leftovers.
 - Today's tools: two-pointer swap, single-pass best-so-far, track two maxima with careful order, save-shift-place for rotation.

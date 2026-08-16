@@ -162,9 +162,92 @@ rooms_set  = set(rooms_list)     # one-time O(n) conversion
 
 The set is not free — it is a second copy of the data, so it costs **O(n) extra space**. You *spend memory to save time*. This trade is one of the most common moves in all of DSA: seen-before checks, duplicate detection, two-sum — all use it. Rule of thumb: **many membership checks → convert to a set first.**
 
+The reverse trade exists too: sometimes you *spend time to save memory*. That is the whole idea of the next section.
+
 ---
 
-## 6. Patterns 16–22
+## 6. In-place vs Extra-space Solutions
+
+Many problems have two honest solutions. The classic example: **reverse a list**.
+
+```python
+# Way 1: reverse into a COPY — easy, but O(n) extra space
+def reversed_copy(arr):
+    out = []
+    for x in arr:
+        out.append(x)
+    out.reverse()
+    return out          # a second full list exists now
+
+# Way 2: reverse IN-PLACE — two pointers, O(1) auxiliary space
+def reverse_in_place(arr):
+    left, right = 0, len(arr) - 1
+    while left < right:
+        arr[left], arr[right] = arr[right], arr[left]  # swap ends
+        left += 1
+        right -= 1      # walk inward until the pointers meet
+```
+
+**In-place** = rearrange the input inside its own memory, using only a fixed few variables. Like rearranging furniture **inside your own room** instead of renting a second room to hold everything while you shuffle.
+
+The trade-off, honestly:
+
+- **Copy way**: original stays safe and untouched. Cost: double the memory.
+- **In-place way**: O(1) auxiliary space. Cost: the **original is destroyed** — if some other code still needed the old order, you just broke it.
+
+Neither is "always right". Interviewers love asking *"can you do it in-place?"* — that question means: can you reach **O(1) auxiliary space**? Say the trade-off out loud when you answer; it shows you understand *why*, not just *how*.
+
+One sneaky trap here: `arr[::-1]` reverses in one line, but **slicing builds a brand-new list** — that is the copy way in disguise, O(n) space, not in-place.
+
+---
+
+## 7. Advanced Corner: Strings in Loops + a Cost Cheat-Sheet
+
+### Why building a string with `+=` is a hidden cost
+
+Python strings are **immutable** — once created, they can never be changed. So `s += ch` does NOT extend `s`. It builds a **brand-new string**, copying every character of the old one plus the new one, then throws the old one away.
+
+Like getting a wedding invitation card **reprinted from scratch** every time one more guest name is added. One name added, whole card reprinted. Do that n times and you have copied ~1 + 2 + 3 + ... + n characters → **O(n²) time**, plus a trail of throwaway strings for the garbage collector to clean.
+
+```python
+# BAD: each += copies everything built so far
+s = ""
+for ch in parts:
+    s += ch            # new string every single time → O(n²)
+
+# GOOD: collect in a list (append is cheap), print the card ONCE
+pieces = []
+for ch in parts:
+    pieces.append(ch)  # O(1) each
+s = "".join(pieces)    # one O(n) pass — total O(n)
+```
+
+Rule of thumb: **many string additions in a loop → build a list, `join` once.**
+
+### Cheat-sheet: what common Python operations really cost
+
+| Operation | Cost | Why |
+|---|---|---|
+| `arr.append(x)` | O(1) amortized* | last seat is free |
+| `arr.pop()` (from end) | O(1) | remove last, nobody shifts |
+| `arr.pop(0)` (from front) | O(n) | everyone shifts left |
+| `arr.insert(0, x)` | O(n) | everyone shifts right |
+| `x in arr` (list) | O(n) | door-to-door check |
+| `x in s` (set/dict) | ~O(1) | hash → straight to the shelf |
+| `arr.sort()` | O(n log n) | comparison sorting's proven floor |
+| `len(arr)` | O(1) | Python stores the count, no counting |
+| `arr[a:b]` (slicing) | O(k) | **copies** k items — new list! |
+
+\* *Amortized* = averaged over many calls. Once in a while `append` must move the whole list to a bigger memory block (O(n) that one time), but it grabs extra room while doing so — spread across all appends, each one averages O(1). Like a hostel warden who, when beds run out, shifts everyone to a hall with double the beds — a big move, but rare enough that per-student cost stays tiny.
+
+Two rows deserve a second look:
+
+- `len()` being O(1) is why `while len(arr) > 0:` is fine — no hidden counting.
+- Slicing being a **copy** is the quiet one: `arr[:]`, `arr[::-1]`, `arr[1:]` all allocate new lists. In a loop, that is an easy accidental O(n²) in both time and space.
+
+---
+
+## 8. Patterns 16–22
 
 New tool for letter patterns: `chr()` and `ord()`. Every character has a standard code number (ASCII). **`chr(65)` is `'A'`**, `chr(66)` is `'B'` ... `chr(90)` is `'Z'`. `ord('A')` goes the other way and gives 65. So "the i-th capital letter" is simply `chr(65 + i)`. Everything else is the same row/column thinking from patterns 1–15.
 
@@ -269,7 +352,7 @@ Hint: a `(2n-1) × (2n-1)` grid where each cell's value = `n` minus its distance
 
 ---
 
-## 7. Maths Problems — Approach + Hints Only
+## 9. Maths Problems — Approach + Hints Only
 
 ### Trailing zeroes in n! (factorial)
 
@@ -308,6 +391,8 @@ Two ways:
 - Mixing up auxiliary and total space. When asked "space complexity" in an interview, they almost always mean **auxiliary**.
 - Using `insert(0, x)` inside a loop and wondering why the code is slow — that is an accidental O(n²).
 - Writing `x in some_list` inside a loop. Convert to a set first when there are many lookups.
+- Claiming O(1) space after reversing with `arr[::-1]` — slicing **copies**, that is O(n) extra. In-place means the two-pointer swap.
+- Building a string with `+=` inside a loop — immutable strings mean a full reprint every time, O(n²). Collect in a list, `join` once.
 - Forgetting the base case in recursion → infinite calls → `RecursionError` at depth ~1000.
 - In pattern 17, printing the peak letter twice — the descent must start immediately *after* the middle column.
 - In trailing zeroes, counting 2s or actually computing n! — count only 5s, with the `//25`, `//125` corrections.
@@ -320,6 +405,9 @@ Two ways:
 - Space complexity = growth of **extra** memory. Auxiliary = your scratch space (your tiffin); total = auxiliary + input (plus the customer's dabba). "O(1) space" in interviews = auxiliary.
 - Every unfinished recursive call is a plate on the mess stack. Space = **max depth**. Python's stack limit ≈ 1000.
 - `insert(0, x)` shifts every element (train-berth seat 1) → O(n); in a loop → O(n²). Use `append` + one reverse, or `deque.appendleft`.
-- `x in list` = knocking every room, O(n). `x in set` = hotel register via hashing, ~O(1), at the cost of O(n) extra space.
+- `x in list` = knocking every room, O(n). `x in set` = hotel register via hashing, ~O(1), at the cost of O(n) extra space. Spend memory to buy speed — and sometimes the reverse.
+- In-place = rearrange inside the input's own memory (two-pointer reverse, O(1) auxiliary) but the original is destroyed; the copy way is safe but doubles memory. "Do it in-place?" = "reach O(1) auxiliary?".
+- Strings are immutable → `s += ch` in a loop reprints the whole card each time, O(n²). Fix: list + `"".join()`.
+- Cost cheat-sheet: `append`/`pop()`/`len` O(1), `pop(0)`/`insert(0)`/`in list` O(n), `in set` ~O(1), `sort` O(n log n), slicing O(k) **and it copies**.
 - Letter patterns run on `chr(65 + i)`; hill pattern climbs then descends; butterfly/hourglass = stars + gap + stars; hollow rectangle = border `if`; rings = `n − min(distance to each edge)`.
 - Trailing zeroes in n! = count of 5s: `n//5 + n//25 + ...`. Digit sum = `%10` and `//10`. Digit count without loop = `len(str(n))` or `floor(log10(n)) + 1`.

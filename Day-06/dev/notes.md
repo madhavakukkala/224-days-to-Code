@@ -24,6 +24,11 @@ Meta tags live inside `<head>` and describe the page *about* itself. Like the la
 
 Without this, a phone pretends to be a ~980px desktop screen and shrinks the whole page — text becomes ant-sized and users pinch-zoom to read. This tag says: "render at the device's real width, at 100% zoom." One line, and the page respects mobile screens. Non-negotiable in 2026 — most Indian traffic is mobile.
 
+What each part of `content` means:
+
+- `width=device-width` — "use the phone's REAL screen width", not the fake 980px desktop width.
+- `initial-scale=1.0` — "start at 100% zoom", no auto-shrinking when the page loads.
+
 ### `description` — the line under your link on Google
 
 ```html
@@ -31,6 +36,14 @@ Without this, a phone pretends to be a ~980px desktop screen and shrinks the who
 ```
 
 This is the grey text Google usually shows under your page title in search results. It does not directly boost ranking, but a good one makes people actually click. Keep it 150–160 characters, honest, and specific.
+
+### `robots` — one-line bonus
+
+```html
+<meta name="robots" content="noindex">
+```
+
+Tells search engines "do not list this page in results". The default (no tag) is index + follow, so normal pages never need it — useful only for admin/test pages you want hidden from Google.
 
 Full starter `<head>`:
 
@@ -87,6 +100,8 @@ Why care: a link with a nice card gets tapped far more than a plain URL. It's th
 
 Note: these use `property="og:..."` (not `name=`) — that's just how the Open Graph standard was defined.
 
+One-liner for Twitter/X: `<meta name="twitter:card" content="summary_large_image">` — asks Twitter for the big-image card style, and it happily reuses the `og:` tags for the title, description and image.
+
 ---
 
 ## 4. W3C Validator — the pollution certificate for your HTML
@@ -138,8 +153,9 @@ Fix errors **top to bottom** — one early mistake (like an unclosed tag) often 
 ## Quick recap
 
 - `<meta charset="UTF-8">` — read text correctly, first tag in `<head>`.
-- `<meta name="viewport" ...>` — page renders properly on mobile.
+- `<meta name="viewport" ...>` — page renders properly on mobile (`device-width` = real width, `initial-scale=1.0` = 100% zoom).
 - `<meta name="description" ...>` — the grey line under your Google result.
+- `<meta name="robots" content="noindex">` — optional; hides a page from search engines.
 - Favicon: `<link rel="icon" href="favicon.png">` — the tab's tiny logo.
-- Open Graph (`og:title`, `og:description`, `og:image`, `og:url`) — turns a shared link into a preview card on WhatsApp/LinkedIn; `og:image` must be an absolute URL.
+- Open Graph (`og:title`, `og:description`, `og:image`, `og:url`) — turns a shared link into a preview card on WhatsApp/LinkedIn; `og:image` must be an absolute URL. `twitter:card` one-liner covers Twitter/X.
 - W3C validator (validator.w3.org): upload page → fix every error and warning → green "no errors" message = clean HTML, like a fresh PUC certificate.

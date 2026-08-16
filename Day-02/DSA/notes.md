@@ -40,6 +40,86 @@ Two rules that save you from bugs:
 
 Also note the **colon** `:` at the end of each condition line, and the **indentation** (the 4 spaces). In Python, indentation is not decoration — it is how Python knows which lines belong inside the `if`.
 
+### `==` vs `=` — and the rest of the comparison family
+
+`=` **stores**, `==` **asks**. `x = 5` puts 5 into the box named `x`. `x == 5` asks "is the box holding 5?" and answers `True` or `False`. Writing `if x = 5:` is a syntax error — Python refuses to even run it.
+
+| Operator | Asks |
+|---|---|
+| `==` | equal? |
+| `!=` | not equal? |
+| `<` , `>` | strictly smaller / bigger? |
+| `<=` , `>=` | smaller-or-equal / bigger-or-equal? |
+
+Every comparison produces a `True` or `False` — and that is exactly what `if` eats.
+
+**Chained comparison** — a Python speciality. Instead of writing `1 < x and x < 10`, write it like maths:
+
+```python
+if 1 < x < 10:
+    print("x sits between 1 and 10")
+```
+
+Both ends get checked in one go. Reads exactly like the maths teacher wrote it on the board.
+
+### Combining checks: `and`, `or`, `not`
+
+Real decisions often need two conditions at once. Metro smart-card gate: it opens only if the card is valid **and** the balance covers the minimum fare.
+
+```python
+card_valid = True
+balance = 12
+
+if card_valid and balance >= 10:
+    print("Gate opens")
+```
+
+- `and` — True only when **both** sides are True. Strict parent: homework done AND room clean, only then TV.
+- `or` — True when **at least one** side is True. Priority queue at the bank: senior citizen OR differently-abled → separate line.
+- `not` — flips the answer. `not True` is `False`.
+
+The classic trap: `if x == 5 or 6:` does NOT mean "x is 5 or 6". Python reads it as `(x == 5) or (6)`, and a bare `6` counts as True on its own — so the condition is *always* true. Repeat the variable: `if x == 5 or x == 6:`.
+
+### Nested ifs — a check inside a check
+
+An `if` can sit inside another `if`. Airport security: the first gate checks your ticket; only after you pass that does the baggage scan even happen.
+
+```python
+has_ticket = True
+bag_ok = True
+
+if has_ticket:
+    if bag_ok:
+        print("Board the flight")
+    else:
+        print("Bag needs a re-check")
+else:
+    print("No entry without a ticket")
+```
+
+Each level goes 4 more spaces in. Two levels are fine; three or more usually means the logic can be flattened. Notice: if both failures gave the *same* message, `if has_ticket and bag_ok:` would do the whole job in one line — nest only when the different failures need different handling.
+
+### One-line if — the ternary
+
+When each branch just picks a value, Python has a one-liner:
+
+```python
+result = "Pass" if marks >= 35 else "Fail"
+```
+
+Read it left to right: "result is Pass — if marks ≥ 35 — otherwise Fail." Same as a four-line `if/else`, but for simple pick-one-of-two cases. If it stops reading like a sentence, go back to the full `if`.
+
+### Advanced note: truthiness — what counts as False
+
+`if` does not strictly need a `True`/`False`. Give it any value and it asks: "is this *something* or *nothing*?" The "nothing" values — called **falsy** — are:
+
+- `0` and `0.0`
+- `""` (empty string)
+- `[]` (empty list — you will meet lists in a few days)
+- `None`
+
+Everything else is truthy — including `-1` and even the string `"False"`. So `if name:` is Pythonic shorthand for "if name is not empty". Handy — and it is also exactly why the `x == 5 or 6` trap above always fires: the bare `6` is truthy.
+
 ---
 
 ## 2. `for` vs `while` — when to use which
@@ -65,6 +145,22 @@ print("Full! Bucket has", bucket)
 ```
 
 The `while` loop checks the condition **before** every round. The moment `bucket < capacity` becomes false, the loop ends and the line after it runs.
+
+### Two ways to `for`-loop: by counter, or over the items
+
+`for` can walk a counter (`range`) — or walk **directly over the items** of anything that holds items, like the letters of a string:
+
+```python
+name = "CHAI"
+
+for i in range(len(name)):   # by counter: i = 0, 1, 2, 3
+    print(i, name[i])
+
+for letter in name:          # over items: letter = 'C', 'H', 'A', 'I'
+    print(letter)
+```
+
+The second style is cleaner when you only need each item. Use the counter style when you also need the **position** (the index). Same choice comes back with lists in a few days — remember it.
 
 **Danger with `while`:** if you forget the line that changes `bucket`, the condition never becomes false and the loop runs forever. That is called an **infinite loop**. Rule of thumb: every `while` loop must have a line inside it that pushes it towards the exit.
 
@@ -152,6 +248,35 @@ for ball in range(1, 7):
 Memory hook: **break = out of the loop. continue = on to the next round.**
 
 One more subtlety for interviews: in a *nested* loop, `break` only exits the **innermost** loop it sits in — the outer loop keeps going.
+
+### `pass` — the do-nothing placeholder
+
+`pass` means "nothing here, carry on". Python refuses an empty block — every `if`, `for`, `while` must contain at least one line. `pass` is the legal filler while the real code is still pending, like a "Work in Progress" board on a dug-up road.
+
+```python
+for ball in range(1, 7):
+    if ball == 3:
+        pass        # TODO: decide later what happens on ball 3
+    print("Ball", ball)
+# prints ALL six balls — pass changed nothing
+```
+
+Do not confuse it with `continue`: `continue` skips the rest of that round; `pass` skips nothing at all — it is pure filler.
+
+### Advanced note: the loop's `else` clause
+
+A `for` or `while` loop can carry an `else` block. Strange but true: it runs when the loop finished **without hitting `break`**.
+
+```python
+for seat in range(1, 6):        # searching this row for seat 10
+    if seat == 10:
+        print("Found it!")
+        break
+else:
+    print("Not in this row")    # loop ended naturally → no break happened
+```
+
+Memory hook: loop-`else` = "**no break happened**". Its classic use is exactly this search-and-report-failure shape. Rarely written in real code, but interviewers love asking what it does.
 
 ---
 
@@ -319,13 +444,21 @@ Hint: Pattern 7 flipped — now spaces grow and stars shrink by 2 per row. The t
 6. **Infinite `while` loops** — no line inside moves the condition towards false.
 7. **Wrong `elif` order** — a wide condition placed above a narrow one swallows all the cases.
 8. **Guessing formulas instead of tabling them** — write row vs count, check both edge rows (`i = 1` and `i = n`), then code.
+9. **`=` instead of `==` in a condition** — `=` stores, `==` asks. Python at least throws a syntax error for this one.
+10. **`x == 5 or 6`** — always True, because the bare `6` is truthy. Repeat the variable: `x == 5 or x == 6`.
+11. **`pass` when you meant `continue`** — `pass` does nothing; the rest of the round still runs.
 
 ## Quick recap
 
 - `if / elif / else`: top-to-bottom checks, first true wins, exactly one block runs.
+- `=` stores, `==` asks. Comparisons (`==`, `!=`, `<`, `<=`...) return True/False; chain them like maths: `1 < x < 10`.
+- `and` = both sides true, `or` = at least one, `not` flips. Falsy values: `0`, `""`, `[]`, `None` — everything else is truthy.
+- Ternary for simple picks: `x if cond else y`. Nested ifs = check inside a check; flatten with `and` when messages don't differ.
 - `for` = known count (20 overs). `while` = unknown count, known stopping condition (bucket full).
 - `range(start, stop, step)`: stop is **excluded**; negative step counts down (and then start > stop).
 - Nested loops: one full inner-loop run per single outer-loop step. Outer = rows, inner = inside a row.
-- `break` exits the loop (batsman out); `continue` skips to the next round (dot ball). `break` only exits the innermost loop.
+- `for` walks a counter (`range`) when you need positions, or walks items directly when you don't.
+- `break` exits the loop (batsman out); `continue` skips to the next round (dot ball). `break` only exits the innermost loop. `pass` = do-nothing filler.
+- Loop `else` runs only when the loop finished with **no `break`** — the search-failed reporter.
 - Pattern recipe: rows → table → formula in `i` → `print(..., end="")` inside, bare `print()` per row.
 - Verify every formula at the edges: first row and last row. If both match, you are done.

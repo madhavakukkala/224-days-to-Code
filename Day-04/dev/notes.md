@@ -66,6 +66,18 @@ Skeleton:
 </footer>
 ```
 
+### The order of sections a recruiter expects
+
+A recruiter scans a CV for barely 30 seconds — like a TTE checking tickets, one quick glance each. The sections must arrive in the order they expect, strongest first:
+
+1. **Name + contact** (header) — always on top.
+2. **One-line summary/objective** — optional, skip if it says nothing.
+3. For a **fresher**: Skills → Projects → Education → internships if any.
+4. For someone **experienced**: Experience climbs to the top; Education drops near the bottom.
+5. **Certifications / achievements**, then the declaration in the footer — always last.
+
+Semantic tags cannot fix a wrong order. Write the `<section>`s in reading order — because the source order IS the order a screen reader, a bot, and a skimming recruiter all get.
+
 ---
 
 ## 3. Heading hierarchy — one h1, never skip levels
@@ -141,6 +153,7 @@ If instead the no-CSS page is a soup of same-looking text, the structure was bei
 
 - Structure first, decoration later — walls before paint.
 - CV map: `header` (name + `address`) → optional `nav` → one `main` → `section` per topic → `article` per job → `ul` for skills → `footer`.
+- Section order = recruiter order: contact first, strongest section next (fresher: skills/projects/education), declaration last. Source order is what everyone gets.
 - One `h1`, ordered heading levels, never skip.
 - `<time datetime="2024-06">` = human text outside, machine date inside.
 - Final exam for the markup: switch off all CSS. If it still reads perfectly top to bottom, the semantics pass.

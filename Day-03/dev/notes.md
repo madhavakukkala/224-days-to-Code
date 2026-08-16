@@ -58,7 +58,9 @@ The important types:
 
 Same `name="payment"`, different `value`. The chosen `value` is what reaches the server.
 
-Useful extras: `required` (browser blocks submit if empty), `checked` (pre-ticked), `value` (pre-filled / what gets sent).
+Useful extras: `required` (browser blocks submit if empty), `checked` (pre-ticked), `value` (pre-filled / what gets sent). `required` is just the trailer — the full validation story (`pattern`, `minlength`, styling invalid fields) comes on Day 5.
+
+Other types worth recognising (no need to master today): `tel` (phone — shows the number keypad on mobiles), `url` (checks for a link shape), `file` (upload a file), `hidden` (travels with the form but user never sees it — e.g. an order ID), `range` (a slider), `color` (a colour picker).
 
 ---
 
@@ -229,7 +231,7 @@ Accessibility isn't charity work — it's correctness. And the semantic version 
 ## Quick recap
 
 - Form = digital bank challan: `<form action method>` wraps inputs; `get` reads, `post` sends.
-- `<input type>` decides behaviour: text, email, password, number, date, checkbox (many), radio (one — grouped by same `name`).
+- `<input type>` decides behaviour: text, email, password, number, date, checkbox (many), radio (one — grouped by same `name`). Also exist: tel, url, file, hidden, range, color. `required` blocks empty submits; deeper validation is Day 5.
 - Every input needs a `name` (to travel) and a `<label for>` ↔ `id` pairing (to be clickable and announced).
 - `<select>`/`<option>` = dropdown; `<textarea>` = multi-line; content goes between its tags.
 - Button types: `submit` sends, `button` is for JS, missing type = `submit` (trap!).

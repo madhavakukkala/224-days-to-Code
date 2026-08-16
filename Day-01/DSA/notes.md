@@ -29,6 +29,7 @@ Rules worth remembering:
 
 - No need to declare a type. Python figures it out from the value. This is called **dynamic typing**.
 - Names are case-sensitive: `Runs` and `runs` are two different dabbas.
+- Names can't start with a digit: `1st_innings` is a SyntaxError; `innings_1` is fine. Letters, digits and underscores only — no spaces, no hyphens.
 - Use snake_case: `total_price`, not `TotalPrice`.
 - `type(x)` tells you what kind of value `x` holds.
 
@@ -36,6 +37,23 @@ Rules worth remembering:
 print(type(runs))   # <class 'int'>
 print(type(price))  # <class 'float'>
 ```
+
+### Multiple assignment — and the famous swap
+
+Python can fill many dabbas in one line:
+
+```python
+a, b = 1, 2                       # a gets 1, b gets 2
+runs, balls, fours = 82, 53, 9    # three at once
+```
+
+And swapping two variables needs no third dabba:
+
+```python
+a, b = b, a    # done! Python computes the whole right side first, then assigns
+```
+
+In most languages a swap needs a temporary variable — like needing an empty plate to exchange two ladoos between two plates. Python just exchanges them mid-air. Interviewers love that you know this one-liner.
 
 ---
 
@@ -47,6 +65,17 @@ print(type(price))  # <class 'float'>
 print("Chai ready")
 print("Score:", 74)     # comma adds a space automatically
 ```
+
+`print()` also has two useful dials — `sep=` and `end=`:
+
+```python
+print("roti", "sabzi", "dal")             # roti sabzi dal   — default separator is a space
+print("roti", "sabzi", "dal", sep=", ")   # roti, sabzi, dal — sep= changes the separator
+print("Loading", end="")                  # end= replaces the newline at the end
+print("...done")                          # → Loading...done  (same line!)
+```
+
+By default every `print()` ends by jumping to a new line. `end=""` stops that jump, so the next print continues on the same line.
 
 **`input()`** asks the user to type something and waits.
 
@@ -75,10 +104,14 @@ To do maths, convert first (next section).
 ```python
 int("25")      # 25       string → integer
 float("10.5")  # 10.5     string → float
+float(7)       # 7.0      int → float (always safe, nothing lost)
 str(74)        # "74"     number → string
 int(10.9)      # 10       float → int CHOPS the decimal, no rounding!
 int("10.5")    # CRASH — "10.5" is not a whole-number string
+int("abc")     # CRASH — letters can never become a number
 ```
+
+If you really need `"10.5"` as a whole number, go in two steps: `int(float("10.5"))` → 10.
 
 The standard pattern for reading a number:
 
@@ -155,6 +188,18 @@ while num > 0:
 Dry run with 453: see digit 3 (num becomes 45) → see digit 5 (num becomes 4) → see digit 4 (num becomes 0) → loop stops. Three digits, three rounds. This one loop, with different "do something" lines, solves problems 2–5 below.
 
 One more friend: `**` means "to the power of". `5 ** 3` is 125.
+
+### All the maths operators in one place
+
+| Operator | Meaning | Example |
+|---|---|---|
+| `+` `-` `*` | add, subtract, multiply | `7 * 6` → 42 |
+| `/` | division — **always gives a float** | `10 / 2` → `5.0`, not 5 |
+| `//` | floor division — drops the decimals | `10 // 3` → 3 |
+| `%` | remainder | `10 % 3` → 1 |
+| `**` | power | `2 ** 10` → 1024 |
+
+The one that surprises everyone: `/` gives a float even when the division is exact. `10 / 2` is `5.0`, not `5`. If you want an int, that's `//`'s job.
 
 ---
 
@@ -279,15 +324,20 @@ Notice: you never even need the digit's *value* here — only the number of chop
 7. **Naming a variable `sum`** — it works, but `sum` is also a built-in Python function; `total` is safer.
 8. **Forgetting `num //= 10` inside a while loop** — the number never shrinks, the loop never ends (infinite loop). If your program hangs, check this first.
 9. **Ignoring 0 as an input** — `while num > 0` skips entirely for 0; decide what the answer should be.
+10. **Starting a variable name with a digit** — `1st_run = 5` is a SyntaxError. Put the digit at the end: `run_1`.
+11. **Expecting `/` to give an int** — `10 / 2` is `5.0`. Exact division or not, `/` always hands you a float.
 
 ---
 
 ## 9. Quick recap
 
 - Variable = labelled dabba; the label stays, contents can change.
+- Swap without a third dabba: `a, b = b, a`.
+- `print(..., sep=", ")` changes the separator; `end=""` keeps the next print on the same line.
 - `input()` ALWAYS gives a string → wrap in `int()` for maths.
 - f-string: `f"{name} scored {runs}"` — blanks filled in a template.
-- Casting: `int()`, `float()`, `str()`; `int(10.9)` chops to 10, no rounding.
+- Casting: `int()`, `float()`, `str()`; `int(10.9)` chops to 10, no rounding; `int("abc")` and `int("10.5")` crash.
+- `/` always gives a float — even `10 / 2` is `5.0`. Want an int? Use `//`.
 - `num % 10` → last digit (bottom coin off the stack). `num // 10` → number minus its last digit.
 - Universal digit loop: peel with `%`, chop with `//`, stop at 0. Runs once per digit → O(log n).
 - Reverse trick: `new = new * 10 + digit`.

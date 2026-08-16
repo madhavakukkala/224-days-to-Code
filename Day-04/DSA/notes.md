@@ -79,7 +79,18 @@ A teacher sorting 100 answer sheets by roll number: split the stack into small p
 - The number of levels is how many times you can halve the stack → log n levels.
 - Total: n work × log n levels = **O(n log n)**.
 
-This is the speed of good sorting algorithms (merge sort, and Python's built-in `sort()`). Slightly worse than O(n), massively better than O(n²).
+```python
+def merge_levels(n):
+    work = 0
+    size = n
+    while size > 1:              # log n levels of piles
+        for sheet in range(n):   # each level touches all n sheets
+            work += 1
+        size = size // 2
+    return work                  # ≈ n × log n
+```
+
+A halving loop with a full n-loop inside it = O(n log n). This is the speed of good sorting algorithms (merge sort, and Python's built-in `sort()`). Slightly worse than O(n), massively better than O(n²).
 
 ### O(n²) — quadratic — *wedding handshakes*
 
@@ -98,6 +109,16 @@ A loop **inside** a loop, both running about n times = O(n²).
 
 One person hears a rumour. Every hour, everyone who knows it tells one new person. Knowers: 1 → 2 → 4 → 8 → 16... After 30 hours, over a **billion** people. Adding just one to n **doubles** the work.
 
+The shape: every item has a yes/no choice — take it or leave it. n items → 2 × 2 × ... × 2 = 2ⁿ combinations.
+
+```python
+def count_combinations(n):
+    total = 1
+    for _ in range(n):
+        total *= 2       # each new item DOUBLES the possibilities
+    return total         # 2ⁿ combinations to try
+```
+
 Code that tries *every possible combination* (every subset, every yes/no choice) behaves like this. O(2ⁿ) is fine for n up to ~20 and hopeless beyond that. If your solution is exponential, the interviewer is waiting for a better idea.
 
 ### The pecking order
@@ -108,6 +129,19 @@ fast  ────────────────────────�
 ```
 
 For n = 1000: 1 step, ~10 steps, 1000 steps, ~10,000 steps, 1,000,000 steps, more-steps-than-atoms-in-your-body.
+
+### Where the famous things sit — my reference map
+
+When someone names an algorithm, this is the shelf it lives on:
+
+| Task | Class | Why |
+|---|---|---|
+| Grab an item by index, check even/odd, use a formula | O(1) | No loop — n doesn't matter |
+| **Binary search** (on *sorted* data only) | O(log n) | Throws away half each step, like the phone book |
+| **Linear search**, one pass over a list | O(n) | Checks items one by one |
+| Good sorting: **merge sort**, Python's built-in `sort()` | O(n log n) | log n levels × n work per level |
+| Compare all pairs, simple sorts (bubble sort) | O(n²) | Every item against every item |
+| Try **every subset** / brute-force every combination | O(2ⁿ) | Each item doubles the choices |
 
 ## 4. Rules of thumb for calculating Big-O
 
@@ -157,6 +191,11 @@ I'm searching for my name in the college attendance register, page by page.
 - **Worst case:** my name is on the last page — or not in the register at all. All n pages. O(n).
 
 When someone says "the complexity is X" with no qualifier, they almost always mean the **worst case** — the guarantee. Interviews want worst case unless they say otherwise. Best case is trivia; worst case is a promise.
+
+### Advanced corner — words interviewers throw around (just recognise them)
+
+- **Ω (Omega) and Θ (Theta).** Big-O technically means "at most this much" (an upper bound). Ω means "at least this much" (a lower bound). Θ means "exactly this shape" — both at once. When an interviewer asks for the **tight bound**, they mean Θ: the true growth shape, not a lazy over-estimate. In everyday interview talk, saying "it's O(n)" is usually already meant as the tight bound — I just need to recognise the symbols.
+- **Amortized.** The average cost per operation over a long run. Python's `list.append` is **O(1) amortized** — once in a while the list must grow behind the scenes (an expensive step), but spread across many appends, each one averages out to constant. Like a yearly train pass: one big payment, tiny cost per ride.
 
 ## 6. Space complexity — the second question
 
@@ -217,6 +256,7 @@ Today's real task. For every problem from Day 1 to Day 3, I open my own code and
 - **Reporting best case as "the" complexity.** "My search is O(1) if the item is first" — no. Default to worst case.
 - **Counting the input or the printed output as space.** Space complexity is the *extra* memory the program holds. Loop counters → O(1), even if the program prints a million stars.
 - **Assuming log means log base 2 only.** Halving loop → log₂, digit loop → log₁₀. Bases differ by a constant factor, and Big-O drops constants, so both are just O(log n).
+- **Saying "binary search, so O(log n)" on unsorted data.** Binary search only works on **sorted** data. On an unsorted list you are stuck with linear search — O(n).
 
 ## Quick recap
 
@@ -225,5 +265,7 @@ Today's real task. For every problem from Day 1 to Day 3, I open my own code and
 - O(1) UPI balance · O(log n) phone book · O(n) chai for guests · O(n log n) merge piles of exam papers · O(n²) wedding handshakes · O(2ⁿ) rumour doubling.
 - Drop constants, drop smaller terms. Sequential loops **add**, nested loops **multiply**, 1+2+...+n = n(n+1)/2 → O(n²).
 - Best / average / worst = first page / middle / last page of the attendance register. Interviews mean **worst** case.
+- Reference map: binary search (sorted!) → log n · linear search → n · good sorts → n log n · all pairs → n² · all subsets → 2ⁿ.
+- Advanced words: **Θ (tight bound)** = the exact growth shape; **amortized** = average over many operations (`list.append` → O(1) amortized).
 - Space = extra memory that grows with n. Loose variables → O(1).
 - The two audit questions, forever: **how many times does each loop body run?** and **what did I create that grows with n?**

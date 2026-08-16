@@ -9,7 +9,9 @@ Imagine your Python file is a speech written in Hindi, and the computer only und
 - A **compiler** is a translator who takes your whole speech home, translates the entire thing into the computer's language, and hands you back a finished translated book (an `.exe` file). Slow to prepare, but the speech itself then runs at full native speed. C and C++ work this way.
 - An **interpreter** is a live translator standing next to you, translating as you speak — sentence by sentence. You can start immediately and change lines on the fly, but every sentence pays a small translation cost while running. Python works this way.
 
-That's the honest reason Python is slower than C — and also why it's so comfortable to learn and experiment in. You trade raw speed for speed of *thinking*.
+That's the honest reason Python is slower than C — and also why it's so comfortable to learn and experiment in. You trade raw speed for speed of *thinking*. And that trade is usually fine: for most programs the computer waits on *you* (or the disk, or the network), not the other way round. When raw speed truly matters, the heavy libraries do their maths in C underneath anyway.
+
+(Advanced bonus, one line only: CPython also has a rule called the **GIL** — only one thread runs Python bytecode at a time. You'll meet it properly later; today just recognise the name.)
 
 ## The actual journey of `python main.py`
 
@@ -31,6 +33,8 @@ def add(a, b):
 dis.dis(add)
 ```
 
+One more name worth knowing: the Python you installed is actually **CPython** — the default, official implementation, written in C. When people say "Python does X", they almost always mean CPython. (Advanced bonus: there's a faster cousin called **PyPy** that can speed up long-running programs a lot — just know the name for now.)
+
 ## Memory: names and objects — the sticker system
 
 The most useful mental model in all of Python:
@@ -45,7 +49,7 @@ b = a           # NO new dabba — a second sticker "b" on the SAME dabba
 
 This is exactly why the Day-06 aliasing surprise happens — two stickers, one dabba. Change through either name, both "see" it.
 
-**Reference counting:** Python keeps count of how many stickers each dabba has. When the last sticker comes off (variable reassigned, function ends), the count hits zero and Python's **garbage collector** throws the dabba away and frees the memory — like a hotel cleaning a room the moment the last guest checks out. You never free memory manually in Python; this is why.
+**Reference counting:** Python keeps count of how many stickers each dabba has. When the last sticker comes off (variable reassigned, function ends), the count hits zero and Python's **garbage collector** throws the dabba away and frees the memory — like a hotel cleaning a room the moment the last guest checks out. You never free memory manually in Python; this is why. (Advanced one-liner: if two dabbas point at *each other*, their counts never hit zero — a separate **cycle collector** hunts those down periodically. Just know it exists.)
 
 Two quick fun checks:
 
@@ -89,4 +93,5 @@ Already done — this repo is it! Quick health checklist worth keeping for the w
 - Interpreter = live translator (start fast, run slower). Compiler = whole book first (prepare slow, run fast).
 - Variables are stickers; values are dabbas. Reference count hits zero → garbage collector frees it.
 - Call stack holds running functions; heap holds the objects.
+- Your Python is **CPython** (the default implementation). PyPy, the cycle collector and the GIL are just names to recognise for now.
 - Repo is live — from tonight, the 23:45 commit is a daily non-negotiable.

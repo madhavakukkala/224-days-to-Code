@@ -74,6 +74,24 @@ It's tempting to think "real developers validate with JavaScript". But start wit
 
 The right mental model: HTML validation is the **ticket checker at the station gate** — cheap, always on duty, catches the obvious cases. JavaScript is for the EXTRA checks HTML can't do (like "do these two password fields match?"). And the golden rule: **the server must validate again anyway** — anyone can bypass the browser, so the browser check is for user convenience, the server check is for safety.
 
+### When does the browser actually check?
+
+At **submit time** — the moment you press the submit button, the ticket checker looks at every field, stops at the first bad one, and shows its bubble. It does NOT nag you while you're still typing. (The one exception: `maxlength`, which simply refuses extra characters as you type.)
+
+### Switching it off: `novalidate`
+
+Put `novalidate` on the `<form>` tag and the browser skips ALL its checks — the ticket checker goes on chai break.
+
+```html
+<form action="/send" method="post" novalidate>
+```
+
+Why would anyone want that? Two honest reasons: to **test** what your server does with bad data, and when JavaScript will handle validation with custom-designed messages. For normal forms: leave it out.
+
+### A peek ahead: `:valid` and `:invalid`
+
+CSS can *see* validation state: the `:valid` and `:invalid` selectors match a field based on whether it currently passes its checks — so you can, say, give a bad field a red border, live. One line to remember for now; it becomes useful the day CSS starts.
+
 ---
 
 ## 3. Grouping with `<fieldset>` and `<legend>`
@@ -154,6 +172,10 @@ Why placeholder-only fails:
 
 Placeholder's real job: an example of the FORMAT, next to a real label. Label says "Mobile number", placeholder says "9876543210".
 
+### Error messages must reach everyone
+
+A principle to carry forward: whatever shows an error, a **screen reader user must hear it too**. An error that is only a red border is invisible to a blind user — the form just silently refuses to submit. The browser's built-in bubbles handle this well (another point for HTML-first validation: the browser announces them). The day I write custom JavaScript errors, they must be real text near the field, wired up so screen readers announce them — not just a colour change.
+
 ### Small extras that matter
 
 - Keep a sensible top-to-bottom order in the HTML — keyboard users move with Tab, and Tab follows the code order.
@@ -189,13 +211,17 @@ The plan for `index.html`: a contact section with name, email, mobile, message, 
 - Confusing `minlength` (characters) with `min` (numeric value).
 - Writing a `pattern` but no `title` — the user gets a vague "match the requested format" with no clue what format.
 - Trusting browser validation as security. It's convenience; the server must re-check everything.
+- Leaving a stray `novalidate` on the form after testing — every check silently switches off and bad data walks straight through to the server.
+- Showing errors as colour only (red border, red text). A screen reader user hears nothing — the error must exist as real, announced text.
 - Regex too strict: `pattern="[0-9]{10}"` rejects `+91 98765 43210`. Decide the accepted format first, then write the pattern, and show the format in the placeholder.
 
 ## Quick recap
 
-- HTML validates for free: `required`, `minlength`/`maxlength` (characters), `min`/`max` (values), `pattern` (regex, e.g. `[0-9]{10}` = exactly 10 digits), `type="email"`.
+- HTML validates for free: `required`, `minlength`/`maxlength` (characters), `min`/`max` (values), `pattern` (regex, e.g. `[0-9]{10}` = exactly 10 digits), `type="email"` / `"url"` / `"tel"`.
 - Built-in beats JS-first: zero code, error messages in the user's own language, works even without JavaScript. JS only for checks HTML can't express; server always re-validates.
+- Checks run at **submit time** (only `maxlength` blocks while typing). `novalidate` on the `<form>` switches them all off — for testing, or when JS takes over. CSS's `:valid`/`:invalid` can style fields by their state — a hook for later.
 - `<fieldset>` + `<legend>` = sections of an OMR form; screen readers announce the section name.
 - `autocomplete="name" / "email" / "tel"` lets the browser auto-fill from saved data.
 - Every input gets a `<label for=...>` matched to its `id`. Placeholder is a format example, never a label — it vanishes when you type.
+- Errors must be hearable, not just seeable — real text a screen reader announces, never colour alone.
 - Contact form checklist is ready — next session: build it into the CV page and run the four tests.
